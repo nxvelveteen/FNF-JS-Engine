@@ -2,13 +2,12 @@ package;
 
 import flixel.FlxGame;
 import openfl.Lib;
+import openfl.display.Sprite;
 import debug.FPSCounter;
 import lime.app.Application;
 #if desktop
 import DiscordClient;
 #end
-import haxe.io.Input;
-import haxe.io.BytesBuffer;
 import backend.SSPlugin as ScreenShotPlugin;
 // crash handler stuff
 #if CRASH_HANDLER
@@ -31,7 +30,7 @@ using StringTools;
 	#define GAMEMODE_AUTO
 ')
 #end
-class Main extends openfl.display.Sprite {
+class Main extends Sprite {
 	var game = {
 		width: 1280,
 		height: 720,
@@ -115,10 +114,7 @@ class Main extends openfl.display.Sprite {
 		SetProcessDPIAware()
 		')
 		#end
-		// Credits to MAJigsaw77 (he's the og author for this code)
-		#if ios
-		Sys.setCwd(lime.system.System.applicationStorageDirectory);
-		#end
+
 		setupGame();
 	}
 
@@ -135,13 +131,15 @@ class Main extends openfl.display.Sprite {
 			game.skipSplash = true; // if the default flixel splash screen should be skipped
 		};
 
+		FlxG.save.bind('funkin', CoolUtil.getSavePath());
+		Highscore.load();
+		Controls.instance = new Controls();
 		ClientPrefs.loadDefaultKeys();
 
 		addChild(new FlxGame(game.width, game.height, game.initialState, #if (flixel < "5.0.0") game.zoom, #end game.framerate, game.framerate, game.skipSplash, game.startFullscreen));
 
 		fpsVar = new FPSCounter(3, 3, 0x00FFFFFF);
 		addChild(fpsVar);
-
 		if (fpsVar != null) {
 			fpsVar.visible = ClientPrefs.showFPS;
 		}
@@ -164,6 +162,26 @@ class Main extends openfl.display.Sprite {
 		#end
 
 		#if DISCORD_ALLOWED DiscordClient.prepare(); #end
+
+		// shader coords fix
+		FlxG.signals.gameResized.add(function (w, h) {
+			if (FlxG.cameras != null) {
+			  	for (cam in FlxG.cameras.list) {
+			   		if (cam != null && cam.filters != null)
+				   		resetSpriteCache(cam.flashSprite);
+			  	}
+		   	}
+
+		   if (FlxG.game != null)
+		   resetSpriteCache(FlxG.game);
+	   });
+	}
+
+	static function resetSpriteCache(sprite:Sprite):Void {
+		@:privateAccess {
+		        sprite.__cacheBitmap = null;
+			sprite.__cacheBitmapData = null;
+		}
 	}
 
 	public static function changeFPSColor(color:FlxColor) {
