@@ -1005,7 +1005,7 @@ class PlayState extends MusicBeatState
 		}
 		stagesFunc(function(stage:BaseStage) stage.createPost());
 
-		callOnLuas('onCreate', []);
+		callOnLuas('onCreate');
 
 		var file:String = Paths.json(songName + '/dialogue'); //Checks for json/Psych Engine dialogue
 		if (OpenFlAssets.exists(file)) {
@@ -1846,7 +1846,7 @@ class PlayState extends MusicBeatState
 			FlxG.stage.addEventListener(KeyboardEvent.KEY_DOWN, onKeyPress);
 			FlxG.stage.addEventListener(KeyboardEvent.KEY_UP, onKeyRelease);
 		}
-		callOnLuas('onCreatePost', []);
+		callOnLuas('onCreatePost');
 
 		super.create();
 
@@ -2539,12 +2539,12 @@ class PlayState extends MusicBeatState
 	public function startCountdown():Void
 	{
 		if(startedCountdown) {
-			callOnLuas('onStartCountdown', []);
+			callOnLuas('onStartCountdown');
 			return;
 		}
 
 		inCutscene = false;
-		var ret:Dynamic = callOnLuas('onStartCountdown', [], false);
+		var ret:Dynamic = callOnLuas('onStartCountdown');
 
 		if (SONG.song.toLowerCase() == 'anti-cheat-song')
 		{
@@ -2581,7 +2581,7 @@ class PlayState extends MusicBeatState
 			startedCountdown = true;
 			Conductor.songPosition = -Conductor.crochet * 5;
 			setOnLuas('startedCountdown', true);
-			callOnLuas('onCountdownStarted', []);
+			callOnLuas('onCountdownStarted');
 
 			var swagCounter:Int = 0;
 
@@ -2692,7 +2692,7 @@ class PlayState extends MusicBeatState
 				for (group in [notes, sustainNotes]) group.forEachAlive(function(note:Note) {
 					if(ClientPrefs.opponentStrums || !ClientPrefs.opponentStrums || middleScroll || !note.mustPress)
 					{
-							note.alpha *= 0.35;
+						note.alpha *= 0.35;
 					}
 					if(ClientPrefs.opponentStrums || !ClientPrefs.opponentStrums || note.mustPress)
 					{
@@ -2707,7 +2707,6 @@ class PlayState extends MusicBeatState
 				callOnLuas('onCountdownTick', [swagCounter]);
 
 				swagCounter += 1;
-				// generateSong('fresh');
 			}, 5);
 		}
 	}
@@ -2982,7 +2981,7 @@ class PlayState extends MusicBeatState
 		DiscordClient.changePresence(detailsText, SONG.song + " (" + storyDifficultyText + ")", iconP2.getCharacter(), true, songLength);
 		#end
 		setOnLuas('songLength', songLength);
-		callOnLuas('onSongStart', []);
+		callOnLuas('onSongStart');
 	}
 
 	var ogSongSpeed:Float = 0;
@@ -3550,7 +3549,7 @@ class PlayState extends MusicBeatState
 				timer.active = true;
 			}
 			paused = false;
-			callOnLuas('onResume', []);
+			callOnLuas('onResume');
 
 			#if DISCORD_ALLOWED
 			if (startTimer != null && startTimer.finished)
@@ -4018,7 +4017,7 @@ class PlayState extends MusicBeatState
 
 		if (controls.PAUSE && startedCountdown && canPause && !heyStopTrying)
 		{
-			final ret:Dynamic = callOnLuas('onPause', [], false);
+			final ret:Dynamic = callOnLuas('onPause');
 			if(ret != LuaUtils.Function_Stop)
 				openPauseMenu();
 		}
@@ -4498,7 +4497,7 @@ class PlayState extends MusicBeatState
 			{
 				restartSong(true);
 			}
-			var ret:Dynamic = callOnLuas('onGameOver', [], false);
+			var ret:Dynamic = callOnLuas('onGameOver');
 			if(ret != LuaUtils.Function_Stop) {
 				boyfriend.stunned = true;
 				deathCounter++;
@@ -6772,7 +6771,7 @@ class PlayState extends MusicBeatState
 		}
 		
 		setOnLuas('curStep', curStep);
-		callOnLuas('onStepHit', []);
+		callOnLuas('onStepHit');
 	}
 
 	var lastBeatHit:Int = -1;
@@ -6850,7 +6849,7 @@ class PlayState extends MusicBeatState
 		lastBeatHit = curBeat;
 
 		setOnLuas('curBeat', curBeat); //DAWGG?????
-		callOnLuas('onBeatHit', []);
+		callOnLuas('onBeatHit');
 	}
 
 	var usingBopIntervalEvent = false;
@@ -6883,7 +6882,7 @@ class PlayState extends MusicBeatState
 		}
 
 		setOnLuas('curSection', curSection);
-		callOnLuas('onSectionHit', []);
+		callOnLuas('onSectionHit');
 	}
 
 	public function bopIcons(?bopBF:Bool = false)
@@ -7167,32 +7166,52 @@ class PlayState extends MusicBeatState
 	}
 	#end
 
-	public function callOnLuas(event:String, args:Array<Dynamic>, ignoreStops = true, exclusions:Array<String> = null, excludeValues:Array<Dynamic> = null):Dynamic {
-		var returnVal = LuaUtils.Function_Continue;
+	public function callOnLuas(funcToCall:String, args:Array<Dynamic> = null, ignoreStops = false, exclusions:Array<String> = null, excludeValues:Array<Dynamic> = null):Dynamic {
+		var returnVal:Dynamic = LuaUtils.Function_Continue;
 		#if LUA_ALLOWED
+		if(args == null) args = [];
 		if(exclusions == null) exclusions = [];
-		if(excludeValues == null) excludeValues = [];
+		if(excludeValues == null) excludeValues = [LuaUtils.Function_Continue];
 
-		for (script in luaArray) {
+		var arr:Array<FunkinLua> = [];
+		for (script in luaArray)
+		{
+			if(script.closed)
+			{
+				arr.push(script);
+				continue;
+			}
+
 			if(exclusions.contains(script.scriptName))
 				continue;
 
-			final myValue = script.call(event, args);
-			if(myValue == LuaUtils.Function_StopLua && !ignoreStops)
-				break;
-			
-			if(myValue != null && myValue != LuaUtils.Function_Continue) {
+			var myValue:Dynamic = script.call(funcToCall, args);
+			if(myValue == LuaUtils.Function_StopLua && !excludeValues.contains(myValue) && !ignoreStops)
+			{
 				returnVal = myValue;
+				break;
 			}
+
+			if(myValue != null && !excludeValues.contains(myValue))
+				returnVal = myValue;
+
+			if(script.closed) arr.push(script);
 		}
+
+		if(arr.length > 0)
+			for (script in arr)
+				luaArray.remove(script);
 		#end
 		return returnVal;
 	}
 
-	public function setOnLuas(variable:String, arg:Dynamic) {
-		#if LUA_ALLOWED
-		for (i in 0...luaArray.length) {
-			luaArray[i].set(variable, arg);
+	public function setOnLuas(variable:String, arg:Dynamic, exclusions:Array<String> = null) {
+		if(exclusions == null) exclusions = [];
+		for (script in luaArray) {
+			if(exclusions.contains(script.scriptName))
+				continue;
+
+			script.set(variable, arg);
 		}
 		#end
 	}
@@ -7239,7 +7258,7 @@ class PlayState extends MusicBeatState
 		setOnLuas('combo', combo);
 		if (badHit) missRecalcsPerFrame += 1;
 
-		var ret:Dynamic = callOnLuas('onRecalculateRating', [], false);
+		var ret:Dynamic = callOnLuas('onRecalculateRating');
 		if(ret != LuaUtils.Function_Stop)
 		{
 			if(totalPlayed < 1) //Prevent divide by 0

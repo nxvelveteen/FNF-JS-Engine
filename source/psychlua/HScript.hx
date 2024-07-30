@@ -12,7 +12,7 @@ class HScript
 		if(parent.hscript == null)
 		{
 			trace('initializing haxe interp for: ${parent.scriptName}');
-			parent.hscript = new HScript(parent);
+			parent.hscript = new HScript();
 		}
 	}
 
@@ -88,7 +88,7 @@ class HScript
 				retVal = execute(codeToRun);
 			}
 			catch (e:Dynamic) {
-				FunkinLua.luaTrace(funk.scriptName + ":" + lastCalledFunction + " - " + e, false, false, FlxColor.RED);
+				FunkinLua.luaTrace(funk.scriptName + ":" + funk.lastCalledFunction + " - " + e, false, false, FlxColor.RED);
 			}
 			#else
 			FunkinLua.luaTrace("runHaxeCode: HScript isn't supported on this platform!", false, false, FlxColor.RED);

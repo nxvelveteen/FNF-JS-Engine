@@ -1367,7 +1367,7 @@ class FunkinLua {
 				onComplete: function(twn:FlxTween)
 				{
 					PlayState.instance.modchartTweens.remove(tag);
-					if(PlayState.instance != null) PlayState.instance.callOnLuas('onTweenCompleted', [originalTag]);
+					if(PlayState.instance != null) PlayState.instance.callOnLuas('onTweenCompleted', [tag]);
 				}
 			}));
 		}
@@ -1426,7 +1426,7 @@ class FunkinLua {
 		return null;
 	}
 
-	var lastCalledFunction:String = '';
+	public var lastCalledFunction:String = '';
 	public static var lastCalledScript:FunkinLua = null;
 	public function call(func:String, args:Array<Dynamic>):Dynamic {
 		#if LUA_ALLOWED
