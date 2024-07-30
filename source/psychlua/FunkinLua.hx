@@ -1,8 +1,5 @@
 package psychlua;
 
-import openfl.display.BitmapData;
-
-import animateatlas.AtlasFrameMaker;
 import flixel.input.keyboard.FlxKey;
 import flixel.FlxBasic;
 import flixel.FlxObject;
@@ -34,7 +31,7 @@ class FunkinLua {
 	public var closed:Bool = false;
 
 	#if hscript
-	public static var hscript:HScript = null;
+	public var hscript:HScript = null;
 	#end
 
 	public var callbacks:Map<String, Dynamic> = new Map<String, Dynamic>();
@@ -421,7 +418,7 @@ class FunkinLua {
 			var testicle:StrumNote = game.strumLineNotes.members[note % game.strumLineNotes.length];
 
 			if(testicle != null) {
-				game.modchartTweens.set(tag, FlxTween.tween(testicle, {x: value}, duration / game.playbackRate, {ease: LuaUtils.getFlxEaseByString(ease),
+				game.modchartTweens.set(tag, FlxTween.tween(testicle, {x: value}, duration / game.playbackRate, {ease: LuaUtils.getTweenEaseByString(ease),
 					onComplete: function(twn:FlxTween) {
 						game.callOnLuas('onTweenCompleted', [tag]);
 						game.modchartTweens.remove(tag);
@@ -435,7 +432,7 @@ class FunkinLua {
 			var testicle:StrumNote = game.strumLineNotes.members[note % game.strumLineNotes.length];
 
 			if(testicle != null) {
-				game.modchartTweens.set(tag, FlxTween.tween(testicle, {y: value}, duration / game.playbackRate, {ease: LuaUtils.getFlxEaseByString(ease),
+				game.modchartTweens.set(tag, FlxTween.tween(testicle, {y: value}, duration / game.playbackRate, {ease: LuaUtils.getTweenEaseByString(ease),
 					onComplete: function(twn:FlxTween) {
 						game.callOnLuas('onTweenCompleted', [tag]);
 						game.modchartTweens.remove(tag);
@@ -449,7 +446,7 @@ class FunkinLua {
 			var testicle:StrumNote = game.strumLineNotes.members[note % game.strumLineNotes.length];
 
 			if(testicle != null) {
-				game.modchartTweens.set(tag, FlxTween.tween(testicle, {angle: value}, duration / game.playbackRate, {ease: LuaUtils.getFlxEaseByString(ease),
+				game.modchartTweens.set(tag, FlxTween.tween(testicle, {angle: value}, duration / game.playbackRate, {ease: LuaUtils.getTweenEaseByString(ease),
 					onComplete: function(twn:FlxTween) {
 						game.callOnLuas('onTweenCompleted', [tag]);
 						game.modchartTweens.remove(tag);
@@ -463,7 +460,7 @@ class FunkinLua {
 			var testicle:StrumNote = game.strumLineNotes.members[note % game.strumLineNotes.length];
 
 			if(testicle != null) {
-				game.modchartTweens.set(tag, FlxTween.tween(testicle, {direction: value}, duration / game.playbackRate, {ease: LuaUtils.getFlxEaseByString(ease),
+				game.modchartTweens.set(tag, FlxTween.tween(testicle, {direction: value}, duration / game.playbackRate, {ease: LuaUtils.getTweenEaseByString(ease),
 					onComplete: function(twn:FlxTween) {
 						game.callOnLuas('onTweenCompleted', [tag]);
 						game.modchartTweens.remove(tag);
@@ -478,7 +475,7 @@ class FunkinLua {
 			var testicle:StrumNote = game.strumLineNotes.members[note % game.strumLineNotes.length];
 
 			if(testicle != null) {
-				game.modchartTweens.set(tag, FlxTween.tween(testicle, {angle: value}, duration / game.playbackRate, {ease: LuaUtils.getFlxEaseByString(ease),
+				game.modchartTweens.set(tag, FlxTween.tween(testicle, {angle: value}, duration / game.playbackRate, {ease: LuaUtils.getTweenEaseByString(ease),
 					onComplete: function(twn:FlxTween) {
 						game.callOnLuas('onTweenCompleted', [tag]);
 						game.modchartTweens.remove(tag);
@@ -492,7 +489,7 @@ class FunkinLua {
 			var testicle:StrumNote = game.strumLineNotes.members[note % game.strumLineNotes.length];
 
 			if(testicle != null) {
-				game.modchartTweens.set(tag, FlxTween.tween(testicle, {alpha: value}, duration / game.playbackRate, {ease: LuaUtils.getFlxEaseByString(ease),
+				game.modchartTweens.set(tag, FlxTween.tween(testicle, {alpha: value}, duration / game.playbackRate, {ease: LuaUtils.getTweenEaseByString(ease),
 					onComplete: function(twn:FlxTween) {
 						game.callOnLuas('onTweenCompleted', [tag]);
 						game.modchartTweens.remove(tag);
@@ -539,7 +536,7 @@ class FunkinLua {
 		});
 
 		Lua_helper.add_callback(lua, "runTimer", function(tag:String, time:Float = 1, loops:Int = 1) {
-			Luatils.cancelTimer(tag);
+			LuaUtils.cancelTimer(tag);
 			game.modchartTimers.set(tag, new FlxTimer().start(time, function(tmr:FlxTimer) {
 				if(tmr.finished) game.modchartTimers.remove(tag);
 				game.callOnLuas('onTimerCompleted', [tag, tmr.loops, tmr.loopsLeft]);
@@ -830,7 +827,7 @@ class FunkinLua {
 			LuaUtils.resetSpriteTag(tag);
 			var leSprite:ModchartSprite = new ModchartSprite(x, y);
 
-			loadFrames(leSprite, image, spriteType);
+			LuaUtils.loadFrames(leSprite, image, spriteType);
 			leSprite.antialiasing = ClientPrefs.globalAntialiasing;
 			game.modchartSprites.set(tag, leSprite);
 		});
@@ -1021,23 +1018,27 @@ class FunkinLua {
 			return game.modchartSounds.exists(tag);
 		});
 
-		Lua_helper.add_callback(lua, "setHealthBarColors", function(leftHex:String, rightHex:String) {
+		Lua_helper.add_callback(lua, "setHealthBarColors", function(left:String, right:String) {
 			var left_color:Null<FlxColor> = null;
 			var right_color:Null<FlxColor> = null;
 			if (left != null && left != '')
 				left_color = CoolUtil.colorFromString(left);
 			if (right != null && right != '')
 				right_color = CoolUtil.colorFromString(right);
-			game.healthBar.setColors(left_color, right_color);
+
+			PlayState.instance.healthBar.createFilledBar(left_color, right_color);
+			PlayState.instance.healthBar.updateBar();
 		});
-		Lua_helper.add_callback(lua, "setTimeBarColors", function(leftHex:String, rightHex:String) {
+		Lua_helper.add_callback(lua, "setTimeBarColors", function(left:String, right:String) {
 			var left_color:Null<FlxColor> = null;
 			var right_color:Null<FlxColor> = null;
 			if (left != null && left != '')
 				left_color = CoolUtil.colorFromString(left);
 			if (right != null && right != '')
 				right_color = CoolUtil.colorFromString(right);
-			game.timeBar.setColors(left_color, right_color);
+
+			PlayState.instance.timeBar.createFilledBar(right_color, left_color);
+			PlayState.instance.timeBar.updateBar();
 		});
 
 		Lua_helper.add_callback(lua, "setObjectCamera", function(obj:String, camera:String = '') {
@@ -1350,7 +1351,7 @@ class FunkinLua {
 	#if (MODS_ALLOWED && !flash && sys)
 	public var runtimeShaders:Map<String, Array<String>> = new Map<String, Array<String>>();
 	#end
-	function initLuaShader(name:String, ?glslVersion:Int = 120)
+	public function initLuaShader(name:String, ?glslVersion:Int = 120)
 	{
 		if(!ClientPrefs.shaders) return false;
 

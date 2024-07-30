@@ -7,6 +7,7 @@ import haxe.Constraints;
 // Functions that use a high amount of Reflections, which are somewhat CPU intensive
 // These functions are held together by duct tape
 //
+using StringTools;
 class ReflectionFunctions
 {
 	static final instanceStr:Dynamic = "##PSYCHLUA_STRINGTOOBJ";

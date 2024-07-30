@@ -63,7 +63,7 @@ class LegacyShaderFunctions {
 
         // shader clear
         Lua_helper.add_callback(lua, "clearShadersFromCamera", function(cameraName) {
-            cameraFromString(cameraName).filters = [];
+            LuaUtils.cameraFromString(cameraName).filters = [];
         });	
         Lua_helper.add_callback(lua, "clearEffects", function(camera:String) {
             PlayState.instance.clearShaderFromCamera(camera);

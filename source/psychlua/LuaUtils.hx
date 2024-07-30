@@ -1,5 +1,6 @@
 package psychlua;
 
+import animateatlas.AtlasFrameMaker;
 import openfl.display.BlendMode;
 import Type.ValueType;
 

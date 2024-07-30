@@ -6,7 +6,7 @@ import openfl.utils.Assets;
 //
 // Things to trivialize some dumb stuff like splitting strings on older Lua
 //
-
+using StringTools;
 class ExtraFunctions
 {
 	public static function implement(funk:FunkinLua)

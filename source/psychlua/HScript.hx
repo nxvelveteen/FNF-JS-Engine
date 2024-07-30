@@ -73,9 +73,9 @@ class HScript
 	public function execute(codeToRun:String):Dynamic
 	{
 		@:privateAccess
-		HScript.parser.line = 1;
-		HScript.parser.allowTypes = true;
-		return interp.execute(HScript.parser.parseString(codeToRun));
+		parser.line = 1;
+		parser.allowTypes = true;
+		return interp.execute(parser.parseString(codeToRun));
 	}
 
     public static function implement(funk:FunkinLua) {
@@ -85,13 +85,13 @@ class HScript
 			#if hscript
 			initHaxeModule(funk);
 			try {
-				retVal = hscript.execute(codeToRun);
+				retVal = execute(codeToRun);
 			}
 			catch (e:Dynamic) {
-				luaTrace(scriptName + ":" + lastCalledFunction + " - " + e, false, false, FlxColor.RED);
+				FunkinLua.luaTrace(scriptName + ":" + lastCalledFunction + " - " + e, false, false, FlxColor.RED);
 			}
 			#else
-			luaTrace("runHaxeCode: HScript isn't supported on this platform!", false, false, FlxColor.RED);
+			FunkinLua.luaTrace("runHaxeCode: HScript isn't supported on this platform!", false, false, FlxColor.RED);
 			#end
 
 			if(retVal != null && !LuaUtils.isOfTypes(retVal, [Bool, Int, Float, String, Array])) retVal = null;
@@ -110,10 +110,10 @@ class HScript
                 if (c == null)
                     c = Type.resolveEnum(str + libName);
 
-				hscript.variables.set(libName, c);
+				interp.variables.set(libName, c);
 			}
 			catch (e:Dynamic) {
-				luaTrace(scriptName + ":" + lastCalledFunction + " - " + e, false, false, FlxColor.RED);
+				FunkinLua.luaTrace(scriptName + ":" + lastCalledFunction + " - " + e, false, false, FlxColor.RED);
 			}
 			#end
 		});

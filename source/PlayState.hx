@@ -2563,7 +2563,7 @@ class PlayState extends MusicBeatState
 			laneunderlay.screenCenter(X);
 		}
 
-		if(ret != FunkinLua.Function_Stop) {
+		if(ret != LuaUtils.Function_Stop) {
 			if (skipCountdown || startOnTime > 0) skipArrowStartTween = true;
 
 			generateStaticArrows(0);
@@ -4019,7 +4019,7 @@ class PlayState extends MusicBeatState
 		if (controls.PAUSE && startedCountdown && canPause && !heyStopTrying)
 		{
 			final ret:Dynamic = callOnLuas('onPause', [], false);
-			if(ret != FunkinLua.Function_Stop)
+			if(ret != LuaUtils.Function_Stop)
 				openPauseMenu();
 		}
 
@@ -4499,7 +4499,7 @@ class PlayState extends MusicBeatState
 				restartSong(true);
 			}
 			var ret:Dynamic = callOnLuas('onGameOver', [], false);
-			if(ret != FunkinLua.Function_Stop) {
+			if(ret != LuaUtils.Function_Stop) {
 				boyfriend.stunned = true;
 				deathCounter++;
 
@@ -4982,11 +4982,24 @@ class PlayState extends MusicBeatState
 				}
 
 			case 'Set Property':
-				var killMe:Array<String> = value1.split('.');
-				if(killMe.length > 1) {
-					FunkinLua.setVarInArray(FunkinLua.getPropertyLoopThingWhatever(killMe, true, true), killMe[killMe.length-1], value2);
-				} else {
-					FunkinLua.setVarInArray(this, value1, value2);
+				try
+				{
+					var split:Array<String> = value1.split('.');
+					if(split.length > 1) {
+						LuaUtils.setVarInArray(LuaUtils.getPropertyLoop(split), split[split.length-1], value2);
+					} else {
+						LuaUtils.setVarInArray(this, value1, value2);
+					}
+				}
+				catch(e:Dynamic)
+				{
+					var len:Int = e.message.indexOf('\n') + 1;
+					if(len <= 0) len = e.message.length;
+					#if LUA_ALLOWED
+					addTextToDebug('ERROR ("Set Property" Event) - ' + e.message.substr(0, len), FlxColor.RED);
+					#else
+					FlxG.log.warn('ERROR ("Set Property" Event) - ' + e.message.substr(0, len));
+					#end
 				}
 		}
 		stagesFunc(function(stage:BaseStage) stage.eventCalled(eventName, value1, value2, flValue1, flValue2, strumTime));
@@ -5214,7 +5227,7 @@ class PlayState extends MusicBeatState
 			#end
 
 			var ret:Dynamic = callOnLuas('onEndSong', [], true);
-			if(ret != FunkinLua.Function_Stop && !transitioning) {
+			if(ret != LuaUtils.Function_Stop && !transitioning) {
 				if (!cpuControlled && !playerIsCheating && ClientPrefs.safeFrames <= 10)
 				{
 					#if !switch
@@ -6595,14 +6608,10 @@ class PlayState extends MusicBeatState
 			lua.call('onDestroy', []);
 			lua.stop();
 		}
-		luaArray = [];
+		luaArray = null;
 
 		camFollow.put();
 		strumLine.put();
-
-		#if hscript
-		if(FunkinLua.hscript != null) FunkinLua.hscript = null;
-		#end
 
 		if(!ClientPrefs.controllerMode)
 		{
@@ -6632,6 +6641,7 @@ class PlayState extends MusicBeatState
 		Paths.splashConfigs.clear();
 		Paths.splashAnimCountMap.clear();
 
+		instance = null;
 		super.destroy();
 	}
 
@@ -7230,7 +7240,7 @@ class PlayState extends MusicBeatState
 		if (badHit) missRecalcsPerFrame += 1;
 
 		var ret:Dynamic = callOnLuas('onRecalculateRating', [], false);
-		if(ret != FunkinLua.Function_Stop)
+		if(ret != LuaUtils.Function_Stop)
 		{
 			if(totalPlayed < 1) //Prevent divide by 0
 				ratingName = '?';
@@ -7238,7 +7248,6 @@ class PlayState extends MusicBeatState
 			{
 				// Rating Percent
 				ratingPercent = Math.min(1, Math.max(0, totalNotesHit / totalPlayed));
-				//trace((totalNotesHit / totalPlayed) + ', Total: ' + totalPlayed + ', notes hit: ' + totalNotesHit);
 
 			if (Math.isNaN(ratingPercent))
 				ratingString = '?';

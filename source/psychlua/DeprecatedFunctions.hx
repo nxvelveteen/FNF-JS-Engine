@@ -4,7 +4,7 @@ package psychlua;
 // This is simply where i store deprecated functions for it to be more organized.
 // I would suggest not messing with these, as it could break mods.
 //
-
+using StringTools;
 class DeprecatedFunctions
 {
 	public static function implement(funk:FunkinLua)

@@ -1,5 +1,6 @@
 package psychlua;
 
+using StringTools;
 class TextFunctions
 {
 	public static function implement(funk:FunkinLua)
