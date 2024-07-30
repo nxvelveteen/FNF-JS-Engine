@@ -25,6 +25,7 @@ import StageData;
 import psychlua.FunkinLua;
 import psychlua.LuaUtils;
 import psychlua.ModchartSprite;
+import psychlua.ModchartText;
 import DialogueBoxPsych;
 import Conductor.Rating;
 import Character.Boyfriend;
