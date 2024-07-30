@@ -5,9 +5,6 @@ import openfl.Lib;
 import openfl.display.Sprite;
 import debug.FPSCounter;
 import lime.app.Application;
-#if desktop
-import DiscordClient;
-#end
 import backend.SSPlugin as ScreenShotPlugin;
 // crash handler stuff
 #if CRASH_HANDLER

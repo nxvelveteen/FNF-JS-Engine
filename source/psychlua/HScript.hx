@@ -1,7 +1,9 @@
 package psychlua;
 
-
 #if hscript
+import hscript.Parser;
+import hscript.Interp;
+import hscript.Expr;
 class HScript
 {
 	public var parentLua:FunkinLua;

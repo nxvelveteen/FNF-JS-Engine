@@ -1,8 +1,5 @@
 package;
 
-#if DISCORD_ALLOWED
-import DiscordClient;
-#end
 import Section.SwagSection;
 import Song.SwagSong;
 import flixel.FlxObject;

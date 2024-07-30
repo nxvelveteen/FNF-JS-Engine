@@ -24,16 +24,6 @@ import Type.ValueType;
 import Controls;
 import DialogueBoxPsych;
 
-#if hscript
-import hscript.Parser;
-import hscript.Interp;
-import hscript.Expr;
-#end
-
-#if desktop
-import DiscordClient;
-#end
-
 using StringTools;
 
 class FunkinLua {
