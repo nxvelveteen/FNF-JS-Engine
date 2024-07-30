@@ -862,7 +862,7 @@ class PlayState extends MusicBeatState
 				{
 					if(file.endsWith('.lua') && !filesPushed.contains(file))
 					{
-						luaArray.push(new FunkinLua(folder + file));
+						new FunkinLua(folder + file);
 						if (Std.string(file) == 'extra keys hscript.lua')
 						{
 						trace ('theres a lua extra keys file');
@@ -881,18 +881,14 @@ class PlayState extends MusicBeatState
 		if(luaFiles.length > 0){
 			for(luaFile in luaFiles)
 			{
-				var lua = new FunkinLua(luaFile);
-				luaArray.push(lua);
-				achievementArray.push(lua);
+				achievementArray.push(new FunkinLua(luaFile));
 			}
 		}
 
 		var achievementMetas = Achievements.getModAchievementMetas().copy();
 		for (i in achievementMetas) {
 			if(i.lua_code != null) {
-				var lua = new FunkinLua(null, i.lua_code);
-				luaArray.push(lua);
-				achievementArray.push(lua);
+				achievementArray.push(new FunkinLua(null, i.lua_code));
 			}
 			if(i.week_nomiss != null) {
 				achievementWeeks.push(i.week_nomiss);
@@ -1825,7 +1821,7 @@ class PlayState extends MusicBeatState
 				{
 					if(file.endsWith('.lua') && !filesPushed.contains(file))
 					{
-						luaArray.push(new FunkinLua(folder + file));
+						new FunkinLua(folder + file)
 						filesPushed.push(file);
 					}
 				}
@@ -2093,7 +2089,7 @@ class PlayState extends MusicBeatState
 			{
 				if(script.scriptName == luaFile) return;
 			}
-			luaArray.push(new FunkinLua(luaFile));
+			new FunkinLua(luaFile);
 		}
 		#end
 	}
@@ -7152,7 +7148,7 @@ class PlayState extends MusicBeatState
 		var luaToLoad:String = Paths.modFolders(luaFile);
 		if(FileSystem.exists(luaToLoad))
 		{
-			luaArray.push(new FunkinLua(luaToLoad));
+			new FunkinLua(luaFile);
 			return true;
 		}
 		else
@@ -7160,7 +7156,7 @@ class PlayState extends MusicBeatState
 			luaToLoad = Paths.getPreloadPath(luaFile);
 			if(FileSystem.exists(luaToLoad))
 			{
-				luaArray.push(new FunkinLua(luaToLoad));
+				new FunkinLua(luaFile);
 				return true;
 			}
 		}
@@ -7168,7 +7164,7 @@ class PlayState extends MusicBeatState
 		var luaToLoad:String = Paths.getPreloadPath(luaFile);
 		if(OpenFlAssets.exists(luaToLoad))
 		{
-			luaArray.push(new FunkinLua(luaToLoad));
+			new FunkinLua(luaFile);
 			return true;
 		}
 		#end
