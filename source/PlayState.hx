@@ -1822,7 +1822,7 @@ class PlayState extends MusicBeatState
 				{
 					if(file.endsWith('.lua') && !filesPushed.contains(file))
 					{
-						new FunkinLua(folder + file)
+						new FunkinLua(folder + file);
 						filesPushed.push(file);
 					}
 				}
