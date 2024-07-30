@@ -25,6 +25,7 @@ import StageData;
 import psychlua.FunkinLua;
 import psychlua.LuaUtils;
 import psychlua.ModchartSprite;
+import psychlua.DebugLuaText;
 import DialogueBoxPsych;
 import Conductor.Rating;
 import Character.Boyfriend;
@@ -1986,14 +1987,14 @@ class PlayState extends MusicBeatState
 
 	public function addTextToDebug(text:String, color:FlxColor) {
 		#if LUA_ALLOWED
-		var newText:psychlua.DebugLuaText = luaDebugGroup.recycle(psychlua.DebugLuaText);
+		var newText:psychlua.DebugLuaText = luaDebugGroup.recycle(DebugLuaText);
 		newText.text = text;
 		newText.color = color;
 		newText.disableTime = 6;
 		newText.alpha = 1;
 		newText.setPosition(10, 8 - newText.height);
 
-		luaDebugGroup.forEachAlive(function(spr:psychlua.DebugLuaText) {
+		luaDebugGroup.forEachAlive(function(spr:DebugLuaText) {
 			spr.y += newText.height + 2;
 		});
 		luaDebugGroup.add(newText);
