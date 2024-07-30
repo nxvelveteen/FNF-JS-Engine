@@ -7213,7 +7213,6 @@ class PlayState extends MusicBeatState
 
 			script.set(variable, arg);
 		}
-		#end
 	}
 
 	function StrumPlayAnim(isDad:Bool, id:Int, time:Float) {
