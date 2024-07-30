@@ -110,7 +110,7 @@ class HScript
                 if (c == null)
                     c = Type.resolveEnum(str + libName);
 
-				interp.variables.set(libName, c);
+				funk.hscript.interp.variables.set(libName, c);
 			}
 			catch (e:Dynamic) {
 				FunkinLua.luaTrace(funk.scriptName + ":" + funk.lastCalledFunction + " - " + e, false, false, FlxColor.RED);
