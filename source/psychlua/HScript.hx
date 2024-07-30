@@ -85,7 +85,7 @@ class HScript
 			#if hscript
 			initHaxeModule(funk);
 			try {
-				retVal = execute(codeToRun);
+				retVal = funk.hscript.execute(codeToRun);
 			}
 			catch (e:Dynamic) {
 				FunkinLua.luaTrace(funk.scriptName + ":" + funk.lastCalledFunction + " - " + e, false, false, FlxColor.RED);
@@ -113,7 +113,7 @@ class HScript
 				interp.variables.set(libName, c);
 			}
 			catch (e:Dynamic) {
-				FunkinLua.luaTrace(funk.scriptName + ":" + lastCalledFunction + " - " + e, false, false, FlxColor.RED);
+				FunkinLua.luaTrace(funk.scriptName + ":" + funk.lastCalledFunction + " - " + e, false, false, FlxColor.RED);
 			}
 			#end
 		});
