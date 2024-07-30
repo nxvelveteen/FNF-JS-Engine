@@ -9,6 +9,11 @@ import sys.io.*;
 import js.html.*;
 #end
 
+#if LUA_ALLOWED
+import llua.*;
+import llua.Lua;
+#end
+
 #if flxanimate
 import flxanimate.*;
 #end
