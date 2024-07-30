@@ -24,6 +24,7 @@ import Achievements;
 import StageData;
 import psychlua.FunkinLua;
 import psychlua.LuaUtils;
+import psychlua.ModchartSprite;
 import DialogueBoxPsych;
 import Conductor.Rating;
 import Character.Boyfriend;
