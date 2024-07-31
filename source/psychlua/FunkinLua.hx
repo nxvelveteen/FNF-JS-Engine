@@ -73,6 +73,7 @@ class FunkinLua {
 		set('weekRaw', PlayState.storyWeek);
 		set('week', WeekData.weeksList[PlayState.storyWeek]);
 		set('seenCutscene', PlayState.seenCutscene);
+		set('hasVocals', PlayState.SONG.needsVoices);
 
 		// Camera poo
 		set('cameraX', 0);
@@ -82,7 +83,8 @@ class FunkinLua {
 		set('screenWidth', FlxG.width);
 		set('screenHeight', FlxG.height);
 
-		// PlayState cringe ass nae nae bullcrap
+		// PlayState variables
+		set('curSection', 0);
 		set('curBeat', 0);
 		set('curStep', 0);
 		set('curDecBeat', 0);
@@ -159,19 +161,8 @@ class FunkinLua {
 		set('scriptName', scriptName);
 		set('currentModDirectory', Paths.currentModDirectory);
 
-		#if windows
-		set('buildTarget', 'windows');
-		#elseif linux
-		set('buildTarget', 'linux');
-		#elseif mac
-		set('buildTarget', 'mac');
-		#elseif html5
-		set('buildTarget', 'browser');
-		#elseif android
-		set('buildTarget', 'android');
-		#else
-		set('buildTarget', 'unknown');
-		#end
+		// build target (windows, mac, linux, etc.)
+		set('buildTarget', LuaUtils.getBuildTarget());
 
 		Lua_helper.add_callback(lua, "giveAchievement", function(name:String) {
 			var me = this;
@@ -378,6 +369,37 @@ class FunkinLua {
 				return;
 			}
 			luaTrace("setObjectOrder: Object " + obj + " doesn't exist!", false, false, FlxColor.RED);
+		});
+
+		// gay ass tweens
+		Lua_helper.add_callback(lua, "startTween", function(tag:String, vars:String, values:Any = null, duration:Float, options:Any = null) {
+			var penisExam:Dynamic = LuaUtils.tweenPrepare(tag, vars);
+			if(penisExam != null) {
+				if(values != null) {
+					var myOptions:LuaTweenOptions = LuaUtils.getLuaTween(options);
+					game.modchartTweens.set(tag, FlxTween.tween(penisExam, values, duration, {
+						type: myOptions.type,
+						ease: myOptions.ease,
+						startDelay: myOptions.startDelay,
+						loopDelay: myOptions.loopDelay,
+
+						onUpdate: function(twn:FlxTween) {
+							if(myOptions.onUpdate != null) game.callOnLuas(myOptions.onUpdate, [tag, vars]);
+						},
+						onStart: function(twn:FlxTween) {
+							if(myOptions.onStart != null) game.callOnLuas(myOptions.onStart, [tag, vars]);
+						},
+						onComplete: function(twn:FlxTween) {
+							if(myOptions.onComplete != null) game.callOnLuas(myOptions.onComplete, [tag, vars]);
+							if(twn.type == FlxTweenType.ONESHOT || twn.type == FlxTweenType.BACKWARD) game.modchartTweens.remove(tag);
+						}
+					}));
+				} else {
+					luaTrace('startTween: No values on 2nd argument!', false, false, FlxColor.RED);
+				}
+			} else {
+				luaTrace('startTween: Couldnt find object: ' + vars, false, false, FlxColor.RED);
+			}
 		});
 
 		Lua_helper.add_callback(lua, "doTweenX", function(tag:String, vars:String, value:Dynamic, duration:Float, ease:String) {
