@@ -24,6 +24,7 @@ class LuaUtils
 
 	public static function getLuaTween(options:Dynamic)
 	{
+		if (options == null) options = {}
 		return {
 			type: getTweenTypeByString(options.type),
 			startDelay: options.startDelay,

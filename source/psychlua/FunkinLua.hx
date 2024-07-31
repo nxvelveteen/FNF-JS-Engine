@@ -35,6 +35,7 @@ class FunkinLua {
 	#end
 
 	public var callbacks:Map<String, Dynamic> = new Map<String, Dynamic>();
+	public static var customFunctions:Map<String, Dynamic> = new Map<String, Dynamic>();
 
 	public function new(script:String, ?scriptCode:String) {
 		#if LUA_ALLOWED
@@ -163,6 +164,12 @@ class FunkinLua {
 
 		// build target (windows, mac, linux, etc.)
 		set('buildTarget', LuaUtils.getBuildTarget());
+
+		for (name => func in customFunctions)
+		{
+			if(func != null)
+				Lua_helper.add_callback(lua, name, func);
+		}
 
 		Lua_helper.add_callback(lua, "giveAchievement", function(name:String) {
 			var me = this;
@@ -342,21 +349,7 @@ class FunkinLua {
 		});
 
 		//shitass stuff for epic coders like me B)  *image of obama giving himself a medal*
-		Lua_helper.add_callback(lua, "getObjectOrder", function(obj:String) {
-			var split:Array<String> = obj.split('.');
-			var leObj:FlxBasic = LuaUtils.getObjectDirectly(split[0]);
-			if(split.length > 1) {
-				leObj = LuaUtils.getVarInArray(LuaUtils.getPropertyLoop(split), split[split.length-1]);
-			}
-
-			if(leObj != null)
-			{
-				return LuaUtils.getTargetInstance().members.indexOf(leObj);
-			}
-			luaTrace("getObjectOrder: Object " + obj + " doesn't exist!", false, false, FlxColor.RED);
-			return -1;
-		});
-		Lua_helper.add_callback(lua, "setObjectOrder", function(obj:String, position:Int) {
+		Lua_helper.add_callback(lua, "getObjectOrder", function(obj:String, ?group:String = null) {
 			var split:Array<String> = obj.split('.');
 			var leObj:FlxBasic = LuaUtils.getObjectDirectly(split[0]);
 			if(split.length > 1) {
@@ -364,8 +357,27 @@ class FunkinLua {
 			}
 
 			if(leObj != null) {
-				LuaUtils.getTargetInstance().remove(leObj, true);
-				LuaUtils.getTargetInstance().insert(position, leObj);
+				var groupObj:Dynamic = LuaUtils.getObjectDirectly(group);
+				if (groupObj == null) groupObj = LuaUtils.getTargetInstance();
+
+				return groupObj.members.indexOf(leObj);
+			}
+			luaTrace("getObjectOrder: Object " + obj + " doesn't exist!", false, false, FlxColor.RED);
+			return -1;
+		});
+		Lua_helper.add_callback(lua, "setObjectOrder", function(obj:String, position:Int, ?group:String = null) {
+			var split:Array<String> = obj.split('.');
+			var leObj:FlxBasic = LuaUtils.getObjectDirectly(split[0]);
+			if(split.length > 1) {
+				leObj = LuaUtils.getVarInArray(LuaUtils.getPropertyLoop(split), split[split.length-1]);
+			}
+
+			if(leObj != null) {
+				var groupObj:Dynamic = LuaUtils.getObjectDirectly(group);
+				if (groupObj == null) groupObj = LuaUtils.getTargetInstance();
+
+				groupObj.remove(leObj, true);
+				groupObj.insert(position, leObj);
 				return;
 			}
 			luaTrace("setObjectOrder: Object " + obj + " doesn't exist!", false, false, FlxColor.RED);
@@ -928,7 +940,11 @@ class FunkinLua {
 				return;
 			}
 
-			var poop:FlxSprite = Reflect.getProperty(LuaUtils.getTargetInstance(), obj);
+			var split:Array<String> = obj.split('.');
+			var poop:FlxSprite = LuaUtils.getObjectDirectly(split[0]);
+			if(split.length > 1) {
+				poop = LuaUtils.getVarInArray(LuaUtils.getPropertyLoop(split), split[split.length-1]);
+			}
 			if(poop != null) {
 				poop.updateHitbox();
 				return;

@@ -23,11 +23,9 @@ class ReflectionFunctions
 		Lua_helper.add_callback(lua, "setProperty", function(variable:String, value:Dynamic, ?allowMaps:Bool = false) {
 			var split:Array<String> = variable.split('.');
 			if(split.length > 1) {
-				LuaUtils.setVarInArray(LuaUtils.getPropertyLoop(split, true, allowMaps), split[split.length-1], value, allowMaps);
-				return true;
+				return LuaUtils.setVarInArray(LuaUtils.getPropertyLoop(split, true, allowMaps), split[split.length-1], value, allowMaps);
 			}
-			LuaUtils.setVarInArray(LuaUtils.getTargetInstance(), variable, value, allowMaps);
-			return true;
+			return LuaUtils.setVarInArray(LuaUtils.getTargetInstance(), variable, value, allowMaps);
 		});
 		Lua_helper.add_callback(lua, "getPropertyFromClass", function(classVar:String, variable:String, ?allowMaps:Bool = false) {
 			var myClass:Dynamic = Type.resolveClass(classVar);
@@ -51,7 +49,7 @@ class ReflectionFunctions
 			var myClass:Dynamic = Type.resolveClass(classVar);
 			if(myClass == null)
 			{
-				FunkinLua.luaTrace('getPropertyFromClass: Class $classVar not found', false, false, FlxColor.RED);
+				FunkinLua.luaTrace('setPropertyFromClass: Class $classVar not found', false, false, FlxColor.RED);
 				return null;
 			}
 
@@ -147,7 +145,7 @@ class ReflectionFunctions
 		
 				if(myType == null)
 				{
-					FunkinLua.luaTrace('createInstance: Variable $variableToSave is already being used and cannot be replaced!', false, false, FlxColor.RED);
+					FunkinLua.luaTrace('createInstance: Class $className not found.', false, false, FlxColor.RED);
 					return false;
 				}
 
@@ -187,6 +185,7 @@ class ReflectionFunctions
 
 	static function parseInstances(args:Array<Dynamic>)
 	{
+		if (args == null) return [];
 		for (i in 0...args.length)
 		{
 			var myArg:String = cast args[i];
@@ -198,8 +197,8 @@ class ReflectionFunctions
 					myArg = myArg.substring(index+2);
 					var lastIndex:Int = myArg.lastIndexOf('::');
 
-					var split:Array<String> = myArg.split('.');
-					args[i] = (lastIndex > -1) ? Type.resolveClass(myArg.substring(0, lastIndex)) : PlayState.instance;
+					var split:Array<String> = lastIndex > -1 ? myArg.substring(0, lastIndex).split('.') : myArg.split('.');
+					args[i] = (lastIndex > -1) ? Type.resolveClass(myArg.substring(lastIndex+2)) : PlayState.instance;
 					for (j in 0...split.length)
 					{
 						args[i] = LuaUtils.getVarInArray(args[i], split[j].trim());
