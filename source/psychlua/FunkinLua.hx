@@ -376,7 +376,7 @@ class FunkinLua {
 			var penisExam:Dynamic = LuaUtils.tweenPrepare(tag, vars);
 			if(penisExam != null) {
 				if(values != null) {
-					var myOptions:LuaTweenOptions = LuaUtils.getLuaTween(options);
+					var myOptions:LuaUtils.LuaTweenOptions = LuaUtils.getLuaTween(options);
 					game.modchartTweens.set(tag, FlxTween.tween(penisExam, values, duration, {
 						type: myOptions.type,
 						ease: myOptions.ease,
