@@ -185,6 +185,8 @@ class MainMenuState extends MusicBeatState
 		changeItem();
 		tipTextStartScrolling();
 
+		addVirtualPad(UP_DOWN, A_B_E);
+
 		super.create();
 	}
 
@@ -328,11 +330,9 @@ class MainMenuState extends MusicBeatState
 					});
 				}
 			}
-		#if (desktop)
-		else if (FlxG.keys.anyJustPressed(debugKeys)) {
+		else if (virtualPad.buttonE.justPressed || FlxG.keys.anyJustPressed(debugKeys)) {
 			FlxG.switchState(MasterEditorMenu.new);
 		}
-		#end
 		}
 
 		super.update(elapsed);

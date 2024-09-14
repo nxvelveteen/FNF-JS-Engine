@@ -110,6 +110,7 @@ class ControlsSubState extends MusicBeatSubstate {
 		}
 		cameras = [FlxG.cameras.list[FlxG.cameras.list.length-1]];
 		changeSelection();
+		addVirtualPad(LEFT_FULL, A_B);
 	}
 
 	var leaving:Bool = false;

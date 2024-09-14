@@ -2,20 +2,24 @@
   <br>
   <a href="https://github.com/JordanSantiagoYT/FNF-JS-Engine"><img src="assets/exclude/images/jslol.png" alt="JSengine" width="150"></a>
   <br>
-  <b>JS Engine</b>
+  <b>JS Engine Mobile</b>
   <br>
 </h1>
+
+# NOTE
+THIS NOT THE JS ENGINE BASE REPO. THIS BRANCH MADE BY [mcagabe19](https://github.com/mcagabe19) AND ALL CREDITS GOES TO HER.
+
 <h3 align="center">
-  <b>JS Engine is a heavily modified Psych Engine fork I made, with lower-end PCs and more customization in mind while also aiming to be a replacement for OS Engine.</b>
+  <b>JS Engine is a heavily modified Psych Engine fork Jordan made, with lower-end PCs and more customization in mind while also aiming to be a replacement for OS Engine.</b>
 </h3>
 
 README.md revamped by [Nael2xd](https://youtube.com/@nael2xd?si=axwJrY_8jdlXUwSm)
 
-If you're looking for the mobile version, [go here!](https://github.com/MobilePorting/FNF-JS-Engine-Mobile)
+If you're looking for the Desktop version, [go here!](https://github.com/JordanSantiagoYT/FNF-JS-Engine)
 
 ## Welcome
 
-Hello and welcome to JS Engine's github repo, where you can download the engine and make spammy charts or have fun with the engine.
+Hello and welcome to JS Engine Mobile's github repo, where you can download the port and play spammy charts or have fun with the engine.
 
 This contains lots and lots of customizable and features built in to JS Engine, if you wanna see most of them listed, you can see it below this text
 
@@ -32,9 +36,8 @@ The features/performances included are:
 - Basic Shader Support! (for a full list, it can be seen in [here](https://github.com/JordanSantiagoYT/FNF-JS-Engine/wiki#q-what-are-all-the-basic-shaders-that-come-with-this-engine))
 - Rendering mode! (Originally used for lua and gamerenderer-engine)
 - Built in Song Credits! (on chart editor)
-- Spam modules! (for the DnB fans)
 
-There is like lots and lots of stuff i've missed, but at least you would like those features built in **JS ENGINE**
+There is like lots and lots of stuff Jordan have missed, but at least you would like those features built in **JS ENGINE**
 
 # Screenshots
 
@@ -50,24 +53,17 @@ Here are some screenshots of what the engine looks like.
 
 Frequently Asked Questions (FAQs) are found in [here](https://github.com/JordanSantiagoYT/FNF-JS-Engine/wiki) or you can simply see it below.
 
-Q: Can I use this engine for my mod(s)?
+Q: Can I use this port for my mod(s)?
 
-A: Yes, you can! just be sure to credit me (@JordanSantiago on YouTube) and give a link to this page. or [the link to download the latest release.](https://github.com/JordanSantiagoYT/FNF-JS-Engine/releases/latest)
+A: Yes, you can! just be sure to credit me (@mcagabe19 on YouTube) and give a link to this page. or [the link to download the latest release.](https://github.com/JordanSantiagoYT/FNF-JS-Engine/releases/latest)
 
 Q: How do I (change the background, add characters, etc.)?
 
 A: You do it here the same way you'd do it in Psych Engine.
 
-Q: I found a bug!
-
-A: Report [here.](https://github.com/JordanSantiagoYT/FNF-JS-Engine/issues)
-
 # Compiling JS Engine
 
-Refer to [the Build Instructions](./BUILDING.md)
-
-If you get an error related to hxCodec, run `haxelib set hxCodec 2.5.1`
-If graphics are all white and don't have color, run `haxelib git hxcpp https://github.com/HaxeFoundation/hxcpp`
+Just look through [FunkinDroid COMPILING.md](https://github.com/FunkinDroidTeam/Funkin/blob/develop/docs/COMPILING.md) and for haxelibs install `hmm` and run `haxelib run hmm install` inside the repo.
 
 ## Customization:
 

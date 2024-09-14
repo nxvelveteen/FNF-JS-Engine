@@ -1209,6 +1209,13 @@ class PlayState extends MusicBeatState
 		playerStrums = new FlxTypedGroup<StrumNote>();
 		opponentStrums = new FlxTypedGroup<StrumNote>();
 
+		#if !android
+		addVirtualPad(NONE, P);
+		addVirtualPadCamera();
+		virtualPad.visible = true;
+		#end
+		addMobileControls();
+
 		trace ('Loading chart...');
 		generateSong(SONG.song, startOnTime);
 
@@ -2452,7 +2459,7 @@ class PlayState extends MusicBeatState
 				setOnLuas('defaultPlayerStrumY' + i, playerStrums.members[i].y);
 			}
 
-			startedCountdown = true;
+			startedCountdown = mobileControls.visible = true;
 			Conductor.songPosition = -Conductor.crochet * 5;
 			setOnLuas('startedCountdown', true);
 			callOnLuas('onCountdownStarted');
@@ -3783,7 +3790,7 @@ class PlayState extends MusicBeatState
 				FlxG.sound.music.pause();
 				pauseVocals();
 
-				lime.app.Application.current.window.alert(message, title);
+				CoolUtil.showPopUp(message, title);
 				FlxG.sound.music.resume();
 				unpauseVocals();
 					botplayUsed = true;
@@ -3799,7 +3806,7 @@ class PlayState extends MusicBeatState
 				FlxG.sound.music.pause();
 				pauseVocals();
 
-				lime.app.Application.current.window.alert(message, title);
+				CoolUtil.showPopUp(message, title);
 				unpauseVocals();
 					botplayUsed = true;
 					new FlxTimer().start(180, function(tmr:FlxTimer)
@@ -3809,7 +3816,7 @@ class PlayState extends MusicBeatState
 				}
 		}
 
-		if (controls.PAUSE && startedCountdown && canPause && !heyStopTrying)
+		if (#if android FlxG.android.justReleased.BACK #else virtualPad.buttonP.justPressed #end || controls.PAUSE && startedCountdown && canPause && !heyStopTrying)
 		{
 			final ret:Dynamic = callOnLuas('onPause', [], false);
 			if(ret != FunkinLua.Function_Stop)
@@ -4246,7 +4253,7 @@ class PlayState extends MusicBeatState
 		#end
 	}
 
-	function openChartEditor()
+	public function openChartEditor()
 	{
 		persistentUpdate = false;
 		paused = true;
@@ -4741,14 +4748,14 @@ class PlayState extends MusicBeatState
 				FlxG.sound.music.pause();
 				pauseVocals();
 
-				lime.app.Application.current.window.alert(message, title);
+				CoolUtil.showPopUp(message, title);
 				FlxG.sound.music.resume();
 				unpauseVocals();
 			case 'Popup (No Pause)':
 				var title:String = (value1);
 				var message:String = (value2);
 
-				lime.app.Application.current.window.alert(message, title);
+				CoolUtil.showPopUp(message, title);
 
 			case 'Change Scroll Speed':
 				if (songSpeedType == "constant")
@@ -4977,6 +4984,7 @@ class PlayState extends MusicBeatState
 	public var transitioning = false;
 	public function endSong():Void
 	{
+		mobileControls.visible = #if !android virtualPad.visible = #end false;
 		timeBarBG.visible = false;
 		timeBar.visible = false;
 		timeTxt.visible = false;
@@ -5629,6 +5637,7 @@ class PlayState extends MusicBeatState
 		// FlxG.watch.addQuick('asdfa', upP);
 		var char:Character = boyfriend;
 		if (opponentChart) char = dad;
+		final mobileC:mobile.flixel.FlxButton = @:privateAccess {(mobile.MobileControls.mode == "Hitbox") ? PlayState.instance.mobileControls.hitbox.hints[4] : PlayState.instance.mobileControls.virtualPad.buttonEx;}
 		if (startedCountdown && !char.stunned && generatedMusic)
 		{
 			// rewritten inputs???
@@ -5641,7 +5650,7 @@ class PlayState extends MusicBeatState
 				}
 			});
 
-			if(ClientPrefs.charsAndBG && FlxG.keys.anyJustPressed(tauntKey) && !char.animation.curAnim.name.endsWith('miss') && char.specialAnim == false && ClientPrefs.spaceVPose){
+			if(ClientPrefs.charsAndBG && (ClientPrefs.mobileCEx && ClientPrefs.mobileCExTaunt) && mobileC.justPressed || FlxG.keys.anyJustPressed(tauntKey) && !char.animation.curAnim.name.endsWith('miss') && char.specialAnim == false && ClientPrefs.spaceVPose){
 				char.playAnim('hey', true);
 				char.specialAnim = true;
 				char.heyTimer = 0.59;

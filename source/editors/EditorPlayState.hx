@@ -144,13 +144,15 @@ class EditorPlayState extends MusicBeatState
 		stepTxt.borderSize = 1.25;
 		add(stepTxt);
 
+		if (!mobile.MobileControls.enabled) {
 		botplayTxt = new FlxText(10, stepTxt.y + 30, FlxG.width - 20, "Botplay: OFF", 20);
 		botplayTxt.setFormat(Paths.font("vcr.ttf"), 20, FlxColor.WHITE, CENTER, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
 		botplayTxt.scrollFactor.set();
 		botplayTxt.borderSize = 1.25;
 		add(botplayTxt);
+		}
 
-		var tipText:FlxText = new FlxText(10, FlxG.height - 44, 0, 'Press ESC to Go Back to Chart Editor\nPress SIX to turn on Botplay', 16);
+		var tipText:FlxText = new FlxText(10, FlxG.height - 44, 0, 'Press ${mobile.MobileControls.enabled ? #if android 'BACK' #else 'P' #end : 'ESC'} to Go Back to Chart Editor${!mobile.MobileControls.enabled ? '\nPress SIX to turn on Botplay' : ''}', 16);
 		tipText.setFormat(Paths.font("vcr.ttf"), 16, FlxColor.WHITE, LEFT, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
 		tipText.borderSize = 2;
 		tipText.scrollFactor.set();
@@ -165,6 +167,14 @@ class EditorPlayState extends MusicBeatState
 
 		Paths.initNote(4, PlayState.SONG.arrowSkin);
 		Paths.initDefaultSkin(PlayState.SONG.arrowSkin);
+
+		#if !android
+		addVirtualPad(NONE, P);
+		addVirtualPadCamera();
+		#end
+
+		addMobileControls();
+		mobileControls.visible = true;
 
 		super.create();
 	}
@@ -355,11 +365,12 @@ class EditorPlayState extends MusicBeatState
 	public var spawnTime:Float = 2000;
 	public var notesAddedCount:Int = 0;
 	override function update(elapsed:Float) {
-		if (FlxG.keys.justPressed.ESCAPE)
+		if (#if android FlxG.android.justReleased.BACK #else virtualPad.buttonP.justPressed #end || FlxG.keys.justPressed.ESCAPE)
 		{
 			FlxG.sound.music.pause();
 			vocals.pause();
 			opponentVocals.pause();
+			mobileControls.visible = false;
 			LoadingState.loadAndSwitchState(editors.ChartingState.new);
 		}
 		if (FlxG.keys.justPressed.SIX)
@@ -413,7 +424,8 @@ class EditorPlayState extends MusicBeatState
 		sectionTxt.text = 'Section: ' + curSection;
 		beatTxt.text = 'Beat: ' + curBeat;
 		stepTxt.text = 'Step: ' + curStep;
-		botplayTxt.text = 'Botplay: ' + (cpuControlled ? 'ON' : 'OFF');
+		if (!mobile.MobileControls.enabled)
+			botplayTxt.text = 'Botplay: ' + (cpuControlled ? 'ON' : 'OFF');
 		super.update(elapsed);
 	}
 	

@@ -7,8 +7,20 @@ import flixel.graphics.FlxGraphic;
 import Controls;
 
 class ClientPrefs { //default settings if it can't find a save file containing your current settings
+	#if mobile
+	public static var screensaver:Bool = false;
+	#if android
+	public static var storageType:String = "EXTERNAL_DATA";
+	#end
+	#end
+	public static var mobileCAlpha:Float = FlxG.onMobile ? 0.6 : 0;
+	public static var mobileCEx:Bool = false;
+	public static var hitboxType:String = "No Gradient";
+	public static var hitboxPos:Bool = true;
+	public static var mobileCPlayStateVpad:Bool = false;
+	public static var mobileCExTaunt:Bool = true;
 	//Gameplay Settings
-	public static var controllerMode:Bool = false;
+	public static var controllerMode:Bool = mobile.MobileControls.enabled;
 	public static var downScroll:Bool = false;
 	public static var middleScroll:Bool = false;
 	public static var opponentStrums:Bool = true;

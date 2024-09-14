@@ -83,6 +83,9 @@ class CreditsState extends MusicBeatState
 		#end
 
 		var pisspoop:Array<Array<String>> = [ //Name - Icon name - Description - Link - BG Color
+			['Mobile Port'],
+			['mcagabe19',                'lily',            'Everything on JS Engine Mobile',               'https://www.youtube.com/@mcagabe19',          'FFE7C0'],
+			[''],
 			['JS Engine People'],
 			['Jordan Santiago',			'jor',				'Coded everything into JS Engine',								'https://twitter.com/JordansTweetsYT',			'FF9300'],
 			[''],
@@ -170,6 +173,8 @@ class CreditsState extends MusicBeatState
 		bg.color = getCurrentBGColor();
 		intendedColor = bg.color;
 		changeSelection();
+
+		addVirtualPad(UP_DOWN, A_B);
 
 		super.create();
 	}

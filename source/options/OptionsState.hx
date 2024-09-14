@@ -34,7 +34,7 @@ class OptionsState extends MusicBeatState
 	var konamiIndex:Int = 0; // Track the progress in the Konami code sequence
 	var konamiCode = [];
 	var isEnteringKonamiCode:Bool = false;
-	var options:Array<String> = ['Note Colors', 'Controls', 'Adjust Delay and Combo', 'Graphics', 'Optimization', 'Game Rendering', 'Visuals and UI', 'Gameplay', 'Misc'];
+	var options:Array<String> = ['Note Colors', 'Controls', 'Adjust Delay and Combo', 'Graphics', 'Optimization', #if !mobile 'Game Rendering', #end 'Visuals and UI', 'Gameplay', 'Misc', 'Mobile Options'];
 	private var grpOptions:FlxTypedGroup<Alphabet>;
 	private static var curSelected:Int = 0;
 	public static var menuBG:FlxSprite;
@@ -45,6 +45,10 @@ class OptionsState extends MusicBeatState
 	private var otherCamera:FlxCamera;
 
 	function openSelectedSubstate(label:String) {
+		if (label != "Adjust Delay and Combo"){
+			removeVirtualPad();
+			persistentUpdate = false;
+		}
 		switch(label) {
 			case 'Note Colors':
 				if (!ClientPrefs.enableColorShader) CoolUtil.coolError("It appears that you don't have the 'Enable Note Colors' option enabled!\nTo prevent a crash, you cannot access this menu unless you turn the option on.\nYou can find it in the Visuals & UI menu.", "JS Engine Anti-Crash Tool");
@@ -59,12 +63,16 @@ class OptionsState extends MusicBeatState
 				openSubState(new options.GameplaySettingsSubState());
 			case 'Optimization':
 				openSubState(new options.OptimizationSubState());
+			#if !mobile
 			case 'Game Rendering':
 				openSubState(new options.GameRendererSettingsSubState());
+			#end
 			case 'Adjust Delay and Combo':
 				LoadingState.loadAndSwitchState(() -> new options.NoteOffsetState());
 			case 'Misc':
 				openSubState(new options.MiscSettingsSubState());
+			case 'Mobile Options':
+				openSubState(new mobile.options.MobileOptionsSubState());
 		}
 	}
 
@@ -131,11 +139,20 @@ class OptionsState extends MusicBeatState
 		changeSelection();
 		ClientPrefs.saveSettings();
 
+		addVirtualPad(LEFT_FULL, ClientPrefs.mobileCPlayStateVpad ? A_B_C : A_B);
+		virtualPad.camera = otherCamera;
+
 		super.create();
 	}
 
 	override function closeSubState() {
 		super.closeSubState();
+		removeVirtualPad();
+		persistentUpdate = true;
+		addVirtualPad(LEFT_FULL, ClientPrefs.mobileCPlayStateVpad ? A_B_C : A_B);
+		virtualPad.camera = otherCamera;
+		if (FlxG.sound.music != null && FlxG.sound.music.volume == 0)
+			FlxTween.tween(FlxG.sound.music, {pitch: 1, volume: 1}, 2.5, {ease: FlxEase.cubeOut});
 		ClientPrefs.saveSettings();
 	}
 
@@ -168,22 +185,21 @@ class OptionsState extends MusicBeatState
 			openSelectedSubstate(options[curSelected]);
 		}
 
+		#if android
+		if (FlxG.android.justReleased.BACK) enterSuperSecretDebugMenu();
+		#end
+
+		if (ClientPrefs.mobileCPlayStateVpad && virtualPad.buttonC.justPressed) {
+			persistentUpdate = false;
+			openSubState(new mobile.MobileControlsSelectSubState());
+		}
+
         if (FlxG.keys.justPressed.ANY) {
             var k = keys[kId];
 
             if (FlxG.keys.anyJustPressed([k])) {
-                #if desktop kId++; #end
-                if (kId >= keys.length) {
-					enteringDebugMenu = true;
-					kId = 0;
-                    FlxTween.tween(FlxG.camera, {alpha: 0}, 1.5, {startDelay: 1, ease: FlxEase.cubeOut});
-                    if (FlxG.sound.music != null)
-                        FlxTween.tween(FlxG.sound.music, {pitch: 0, volume: 0}, 2.5, {ease: FlxEase.cubeOut});
-                    FlxTween.tween(FlxG.camera, {zoom: 0.1, angle: -15}, 2.5, {ease: FlxEase.cubeIn, onComplete: function(t) {
-					FlxG.camera.angle = 0;
-                        openSubState(new options.SuperSecretDebugMenu());
-                    }});
-                }
+                kId++;
+                if (kId >= keys.length) enterSuperSecretDebugMenu();
             }
         }
 	}
@@ -231,4 +247,20 @@ function checkKonamiCode():Bool {
     }
     return false;
 }
+	function enterSuperSecretDebugMenu():Void // so secret I can tell
+	{
+		enteringDebugMenu = true;
+			kId = 0;
+                    FlxTween.tween(FlxG.camera, {alpha: 0}, 1.5, {startDelay: 1, ease: FlxEase.cubeOut});
+					FlxTween.tween(virtualPad.camera, {alpha: 0}, 1.5, {startDelay: 1, ease: FlxEase.cubeOut});
+					FlxTween.tween(virtualPad.camera, {zoom: 0.1, angle: -15}, 2.5, {ease: FlxEase.cubeIn});
+					if (FlxG.sound.music != null)
+                        FlxTween.tween(FlxG.sound.music, {pitch: 0, volume: 0}, 2.5, {ease: FlxEase.cubeOut});
+                    FlxTween.tween(FlxG.camera, {zoom: 0.1, angle: -15}, 2.5, {ease: FlxEase.cubeIn, onComplete: function(t) {
+			FlxG.camera.angle = virtualPad.camera.angle = 0;
+                        openSubState(new options.SuperSecretDebugMenu());
+						removeVirtualPad();
+						persistentUpdate = false;
+                    }});
+	}
 }

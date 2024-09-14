@@ -40,6 +40,13 @@ class SuperSecretDebugMenu extends BaseOptionsMenu
 		title = 'Secret Debug Menu';
 		rpcTitle = 'Super Secret Debug Menu!!'; //for Discord Rich Presence
 
+		var option:Option = new Option('VirtualPad on PlayState',
+			"If checked, adds virtualpad to mobile controls select menu. (who uses that anyways)",
+			'mobileCPlayStateVpad',
+			'bool',
+			false);
+		addOption(option);
+
 		var option:Option = new Option('No Ascend RNG',
 			"If checked, makes the RNG Guns ascend part play every time.",
 			'noGunsRNG',
@@ -131,7 +138,7 @@ class SuperSecretDebugMenu extends BaseOptionsMenu
 	function doDaUpdate():Void {
 		if(ClientPrefs.checkForUpdates) {
 			trace('checking for update');
-			var http = new haxe.Http("https://raw.githubusercontent.com/JordanSantiagoYT/FNF-JS-Engine/main/THECHANGELOG.md");
+			var http = new haxe.Http("https://raw.githubusercontent.com/JordanSantiagoYT/FNF-JS-Engine/mobile/THECHANGELOG.md");
 			var returnedData:Array<String> = [];
 
 			http.onData = function (data:String)

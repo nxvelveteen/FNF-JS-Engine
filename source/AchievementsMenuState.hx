@@ -147,10 +147,19 @@ class AchievementsMenuState extends MusicBeatState
 			add(i);
 		
 		_changeSelection();
+
+		addVirtualPad(LEFT_FULL, B_C);
+
 		super.create();
 
 		FlxG.camera.follow(camFollow, null, 9);
 		FlxG.camera.scroll.y = -FlxG.height;
+	}
+
+	override function closeSubState() {
+		super.closeSubState();
+		removeVirtualPad();
+		addVirtualPad(LEFT_FULL, B_C);
 	}
 
 	function makeAchievement(achievement:String, data:Achievement, unlocked:Bool, mod:String = null)
@@ -224,7 +233,7 @@ class AchievementsMenuState extends MusicBeatState
 				}
 			}
 			
-			if(controls.RESET && (options[curSelected].unlocked || options[curSelected].curProgress > 0))
+			if(virtualPad.buttonC.justPressed || controls.RESET && (options[curSelected].unlocked || options[curSelected].curProgress > 0))
 			{
 				openSubState(new ResetAchievementSubstate());
 			}
@@ -320,6 +329,8 @@ class ResetAchievementSubstate extends MusicBeatSubstate
 		noText.scrollFactor.set();
 		add(noText);
 		updateOptions();
+
+		addVirtualPad(LEFT_RIGHT, A);
 	}
 
 	override function update(elapsed:Float)

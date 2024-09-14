@@ -59,7 +59,6 @@ class CoolUtil
 		return (m / snap);
 	}
 
-	#if desktop
 	public static var resW:Float = 1;
 	public static var resH:Float = 1;
 	public static var baseW:Float = 1;
@@ -68,7 +67,6 @@ class CoolUtil
 		resW = wid/baseW;
 		resH = height/baseH;
 	}
-	#end
 
 	public static function getUsername():String
 	{
@@ -528,7 +526,7 @@ class CoolUtil
 	**/
 	public static function coolError(message:Null<String> = null, title:Null<String> = null):Void {
 		#if !linux
-		lime.app.Application.current.window.alert(message, title);
+		showPopUp(message, title);
 		#else
 		trace(title + " - " + message, ERROR);
 
@@ -612,13 +610,10 @@ class CoolUtil
 
 	public static function showPopUp(message:String, title:String):Void
 	{
-		#if (!ios || !iphonesim)
-		try
-		{
-			lime.app.Application.current.window.alert(message, title);
-		}
-		catch (e:Dynamic)
-			trace('$title - $message');
+		#if android
+		android.Tools.showAlertDialog(title, message, {name: "OK", func: null}, null);
+		#elseif (!ios || !iphonesim)
+		lime.app.Application.current.window.alert(message, title);
 		#else
 		trace('$title - $message');
 		#end

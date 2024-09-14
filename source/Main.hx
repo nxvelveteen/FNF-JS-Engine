@@ -6,6 +6,9 @@ import openfl.display.Sprite;
 import debug.FPSCounter;
 import lime.app.Application;
 import backend.SSPlugin as ScreenShotPlugin;
+#if mobile
+import mobile.CopyState;
+#end
 
 #if linux
 import lime.graphics.Image;
@@ -47,10 +50,11 @@ class Main extends Sprite {
         "It's no longer in its early stages... is it?",
         "It took me half a day to code that in",
         "You should make an issue... NOW!!",
-        "> Crash Handler written by: yoshicrafter29",
+        "> Crash Handler written by: ur mom",
         "broken ch-... wait what are we talking about",
         "could not access variable you.dad",
         "What have you done...",
+		"Sounds like skill issue to me-",
         "THERE ARENT COUGARS IN SCRIPTING!!! I HEARD IT!!",
         "no, thats not from system.windows.forms",
         "you better link a screenshot if you make an issue, or at least the crash.txt",
@@ -65,23 +69,25 @@ class Main extends Sprite {
         "oopsie",
         "woops",
         "silly me",
+		"meow",
         "my bad",
         "first time, huh?",
         "did somebody say yoga",
         "we forget a thousand things everyday... make sure this is one of them.",
         "SAY GOODBYE TO YOUR KNEECAPS, CHUCKLEHEAD",
         "motherfucking ordinal 344 (TaskDialog) forcing me to create a even fancier window",
-        "Died due to missing a sawblade. (Press Space to dodge!)",
+        //'Died due to missing a sawblade. (Press ${mobile.MobileControls.enabled ? 'Extra ${mobile.MobileControls.mode == "Hitbox" ? 'Hint' : 'Button'}' : 'Space'} to dodge!)',
         "yes rico, kaboom.",
         "hey, while in freeplay, press shift while pressing space",
         "goofy ahh engine",
-        "pssst, try typing debug7 in the options menu",
+        //'pssst, try ${mobile.MobileControls.enabled ? 'pressing back' : 'typing debug7'} in the options menu',
         "this crash handler is sponsored by rai-",
         "",
         "did you know a jiffy is an actual measurement of time",
         "how many hurt notes did you put",
         "FPS: 0",
         "\r\ni am a secret message",
+		"what is a crash handler?",
         "this is garnet",
         "Error: Sorry i already have a girlfriend",
         "did you know theres a total of 51 silly messages",
@@ -97,19 +103,29 @@ class Main extends Sprite {
 
 	public function new() {
 		super();
+		#if mobile
+		#if android
+		SUtil.doPermissionsShit();
+		#end
+		Sys.setCwd(SUtil.getStorageDirectory());
+		#end
+
+		CrashHandler.init();
+
 		#if windows //DPI AWARENESS BABY
 		@:functionCode('
 		#include <Windows.h>
 		SetProcessDPIAware()
+		DisableProcessWindowsGhosting()
 		')
 		#end
-		CrashHandler.init();
 		setupGame();
 	}
 
 	public static var askedToUpdate:Bool = false;
 
 	private function setupGame():Void {
+		#if (openfl <= "9.2.0")
 		var stageWidth:Int = Lib.current.stage.stageWidth;
 		var stageHeight:Int = Lib.current.stage.stageHeight;
 
@@ -120,12 +136,13 @@ class Main extends Sprite {
 			game.width = Math.ceil(stageWidth / game.zoom);
 			game.height = Math.ceil(stageHeight / game.zoom);
 		};
+		#end
 
 		// #if LUA_ALLOWED Lua.set_callbacks_function(cpp.Callable.fromStaticFunction(psychlua.CallbackHandler.call)); #end
 		ClientPrefs.loadDefaultStuff();
 		#if ACHIEVEMENTS_ALLOWED Achievements.load(); #end
 
-		addChild(new FlxGame(game.width, game.height, game.initialState, #if (flixel < "5.0.0") game.zoom, #end game.framerate, game.framerate, game.skipSplash, game.startFullscreen));
+		addChild(new FlxGame(game.width, game.height, #if (mobile && MODS_ALLOWED) !CopyState.checkExistingFiles() ? CopyState : #end game.initialState, #if (flixel < "5.0.0") game.zoom, #end game.framerate, game.framerate, game.skipSplash, game.startFullscreen));
 
 		fpsVar = new FPSCounter(3, 3, 0x00FFFFFF);
 		addChild(fpsVar);
@@ -146,6 +163,18 @@ class Main extends Sprite {
 		var icon = Image.fromFile("icon.png");
 		Lib.current.stage.window.setIcon(icon);
 		#end
+
+		#if mobile
+		lime.system.System.allowScreenTimeout = ClientPrefs.screensaver;
+		#if android
+		FlxG.android.preventDefaultKeys = [BACK]; 
+		#end
+		#end
+
+		FlxG.signals.gameResized.add(function (w, h) {
+			if(fpsVar != null)
+				fpsVar.positionFPS(10, 3, Math.min(w / FlxG.width, h / FlxG.height));
+		});
 
 		#if DISCORD_ALLOWED DiscordClient.prepare(); #end
 

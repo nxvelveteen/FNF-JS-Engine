@@ -62,12 +62,14 @@ class OutdatedState extends MusicBeatState
 		add(changelog);
 
 		updateText = new FlxText(0, 10, FlxG.width,
-			"Press SPACE to view the full changelog, ENTER to update or ESCAPE to ignore this!"
+			mobile.MobileControls.enabled ? "Press A to view the full changelog and update or B to ignore this!" : "Press SPACE to view the full changelog, ENTER to update or ESCAPE to ignore this!"
 			,24);
 		updateText.setFormat("VCR OSD Mono", 24, FlxColor.WHITE, CENTER, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
 			updateText.y = 710 - updateText.height;
 			updateText.x = 10;
 		add(updateText);
+
+		addVirtualPad(NONE, A_B);
 	}
 
 	override function update(elapsed:Float)
@@ -82,7 +84,7 @@ class OutdatedState extends MusicBeatState
 				CoolUtil.browserLoad("https://github.com/JordanSantiagoYT/FNF-JS-Engine/releases/latest");
 				#end
 			}
-			if (FlxG.keys.justPressed.SPACE) {
+			if (virtualPad.buttonA.justPressed || FlxG.keys.justPressed.SPACE) {
 				CoolUtil.browserLoad("https://github.com/JordanSantiagoYT/FNF-JS-Engine/releases/latest");
 			}
 			else if(controls.BACK) {

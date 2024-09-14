@@ -1,23 +1,19 @@
 package;
 
-// an fully working crash handler on ALL platforms
-
 import openfl.events.UncaughtErrorEvent;
 import openfl.events.ErrorEvent;
 import openfl.errors.Error;
-import haxe.CallStack;
-import haxe.io.Path;
 #if sys
 import sys.FileSystem;
 import sys.io.File;
 #end
 
 using StringTools;
-using CoolUtil;
+using flixel.util.FlxArrayUtil;
 
 /**
  * Crash Handler.
- * @author YoshiCrafter29, Ne_Eo. MAJigsaw77 and mcagabe19
+ * @author YoshiCrafter29, Ne_Eo, MAJigsaw77 and mcagabe19
  */
 
 class CrashHandler
@@ -46,21 +42,11 @@ class CrashHandler
 			var err = cast(e.error, ErrorEvent);
 			m = '${err.text}';
 		}
-		final stack = CallStack.exceptionStack();
-		final stackLabelArr:Array<String> = [];
+		var stack = haxe.CallStack.exceptionStack();
+		var stackLabelArr:Array<String> = [];
 		var stackLabel:String = "";
-		// legacy code below for the messages
-		var errorMessage:String = "";
-		var path:String;
-		var dateNow:String = Date.now().toString();
-
-		dateNow = dateNow.replace(" ", "_");
-		dateNow = dateNow.replace(":", "'");
-
-		path = "crash/" + "JSEngine_" + dateNow + ".log";
-
-		for(stackItem in stack) {
-			switch(stackItem) {
+		for(e in stack) {
+			switch(e) {
 				case CFunction: stackLabelArr.push("Non-Haxe (C) Function");
 				case Module(c): stackLabelArr.push('Module ${c}');
 				case FilePos(parent, file, line, col):
@@ -77,28 +63,19 @@ class CrashHandler
 			}
 		}
 		stackLabel = stackLabelArr.join('\r\n');
-
-		errorMessage += "Uncaught Error: " 
-			+ '$m\n$stackLabel'
-			+ "\nPlease report this error to the GitHub page: https://github.com/JordanSantiagoYT/FNF-JS-Engine"
-			+ "\nThe engine has saved a crash log inside the crash folder, If you're making a GitHub issue you might want to send that!";
-
 		#if sys
 		try
 		{
-			if (!FileSystem.exists("crash/"))
-				FileSystem.createDirectory("crash/");
-	
-			File.saveContent(path, errorMessage + "\n");
+			if (!FileSystem.exists('logs'))
+				FileSystem.createDirectory('logs');
+
+			File.saveContent('logs/' + 'Crash ' + Date.now().toString().replace(' ', '-').replace(':', "'") + '.txt', '$m\n$stackLabel');
 		}
-		catch(e)
+		catch (e:haxe.Exception)
 			trace('Couldn\'t save error message. (${e.message})');
-
-		Sys.println(errorMessage);
-		Sys.println("Crash dump saved in " + Path.normalize(path));
 		#end
-
-		CoolUtil.showPopUp(errorMessage, "Error! JS Engine v" + MainMenuState.psychEngineJSVersion + " (" + Main.__superCoolErrorMessagesArray[FlxG.random.int(0, Main.__superCoolErrorMessagesArray.length)] + ")");
+			
+		CoolUtil.showPopUp('$m\n$stackLabel\n\n${Main.__superCoolErrorMessagesArray[FlxG.random.int(0, Main.__superCoolErrorMessagesArray.length)]}', "Error!");
 
 		#if html5
 		if (flixel.FlxG.sound.music != null)
@@ -106,6 +83,9 @@ class CrashHandler
 
 		js.Browser.window.location.reload(true);
 		#else
+		#if DISCORD_ALLOWED
+		DiscordClient.shutdown();
+		#end
 		lime.system.System.exit(1);
 		#end
 	}

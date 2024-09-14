@@ -22,7 +22,7 @@ class PauseSubState extends MusicBeatSubstate
 	var grpMenuShit:FlxTypedGroup<Alphabet>;
 
 	var menuItems:Array<String> = [];
-	var menuItemsOG:Array<String> = ['Resume', 'Restart Song', 'Change Gameplay Settings', 'Change Difficulty', 'Options', 'Exit'];
+	var menuItemsOG:Array<String> = ['Resume', 'Restart Song', 'Chart Editor', 'Change Gameplay Settings', 'Change Difficulty', 'Options', 'Exit'];
 	var menuItemsExit:Array<String> = [(PlayState.isStoryMode ? 'Exit to Story Menu' : 'Exit to Freeplay'), 'Exit to Main Menu', 'Exit Game', 'Back'];
 	var difficultyChoices = [];
 	var curSelected:Int = 0;
@@ -44,6 +44,8 @@ class PauseSubState extends MusicBeatSubstate
 		if(CoolUtil.difficulties.length < 2) menuItemsOG.remove('Change Difficulty'); //No need to change difficulty if there is only one!
 
 		if(botplayLockout) menuItemsOG.remove('Toggle Botplay'); //you cant toggle it on MWAHAHAHAHAHA
+
+		if (!mobile.MobileControls.enabled) menuItemsOG.remove('Chart Editor');
 
 		if(PlayState.chartingMode)
 		{
@@ -140,6 +142,10 @@ class PauseSubState extends MusicBeatSubstate
 
 		regenMenu();
 		cameras = [FlxG.cameras.list[FlxG.cameras.list.length - 1]];
+
+		addVirtualPad(PlayState.chartingMode ? LEFT_FULL : UP_DOWN, A);
+		addVirtualPadCamera();
+
 		super.create();
 	}
 
@@ -284,12 +290,18 @@ class PauseSubState extends MusicBeatSubstate
 				case "End Song":
 					close();
 					PlayState.instance.finishSong(true);
-				case 'Chart Editor':
-					FlxG.switchState(editors.ChartingState.new);
+				case "Chart Editor":
+					if (!ClientPrefs.antiCheatEnable)
+						PlayState.instance.openChartEditor();
+					else {
+						close();
+						PlayState.SONG = Song.loadFromJson('Anti-cheat-song', 'Anti-cheat-song');
+						LoadingState.loadAndSwitchState(PlayState.new);
+					}
 					MusicBeatState.windowNameSuffix = " - Chart Editor";
-					PlayState.chartingMode = true;
 				case "Change Gameplay Settings":
 					persistentUpdate = false;
+					removeVirtualPad();
 					openSubState(new GameplayChangersSubstate());
 					GameplayChangersSubstate.inThePauseMenu = true;
 				case 'Toggle Botplay':
@@ -353,6 +365,14 @@ class PauseSubState extends MusicBeatSubstate
 				}
 			}
 		}
+	}
+
+	override function closeSubState() {
+		persistentUpdate = true;
+		super.closeSubState();
+		removeVirtualPad();
+		addVirtualPad(PlayState.chartingMode ? LEFT_FULL : UP_DOWN, A);
+		addVirtualPadCamera();
 	}
 
 	function deleteSkipTimeText()

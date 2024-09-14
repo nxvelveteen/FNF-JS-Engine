@@ -53,8 +53,8 @@ class StoryMenuState extends MusicBeatState
 		PlayState.isStoryMode = true;
 		WeekData.reloadWeekFiles(true);
 
-		final accept:String = "ACCEPT";
-		final reject:String = "BACK";
+		final accept:String = mobile.MobileControls.enabled ? "A" : "ACCEPT";
+		final reject:String = mobile.MobileControls.enabled ? "B" : "BACK";
 		if(WeekData.weeksList.length < 1)
 		{
 			FlxTransitionableState.skipNextTransIn = true;
@@ -187,12 +187,16 @@ class StoryMenuState extends MusicBeatState
 		changeWeek();
 		changeDifficulty();
 
+		addVirtualPad(LEFT_FULL, A_B_X_Y);
+
 		super.create();
 	}
 
 	override function closeSubState() {
 		persistentUpdate = true;
 		changeWeek();
+		removeVirtualPad();
+		addVirtualPad(LEFT_FULL, A_B_X_Y);
 		super.closeSubState();
 	}
 
@@ -258,10 +262,13 @@ class StoryMenuState extends MusicBeatState
 			else if (upP || downP)
 				changeDifficulty();
 
-			if (FlxG.keys.justPressed.CONTROL) {
+			if (virtualPad.buttonX.justPressed || FlxG.keys.justPressed.CONTROL) {
 				persistentUpdate = false;
+				removeVirtualPad();
 				openSubState(new GameplayChangersSubstate());
-			} else if (controls.RESET) {
+			} else if (virtualPad.buttonY.justPressed || controls.RESET) {
+				persistentUpdate = false;
+				removeVirtualPad();
 				openSubState(new ResetScoreSubState('', curDifficulty, '', curWeek));
 				//FlxG.sound.play(Paths.sound('scrollMenu'));
 			}
