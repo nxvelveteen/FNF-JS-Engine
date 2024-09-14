@@ -10,7 +10,7 @@
 THIS NOT THE JS ENGINE BASE REPO. THIS BRANCH MADE BY [mcagabe19](https://github.com/mcagabe19) AND ALL CREDITS GOES TO HER.
 
 <h3 align="center">
-  <b>JS Engine is a heavily modified Psych Engine fork Jordan made, with lower-end PCs and more customization in mind while also aiming to be a replacement for OS Engine.</b>
+  <b>JS Engine is a heavily modified Psych Engine fork Jordan made, with lower-end PCs and more customization in mind while also aiming to be a replacement for OS "Engine".</b>
 </h3>
 
 README.md revamped by [Nael2xd](https://youtube.com/@nael2xd?si=axwJrY_8jdlXUwSm)
@@ -64,7 +64,11 @@ A: You do it here the same way you'd do it in Psych Engine.
 
 Q: I found a bug!
 
-A: Report [here.](https://github.com/JordanSantiagoYT/FNF-JS-Engine/issues)
+A: Report [here.](https://github.com/JordanSantiagoYT/FNF-JS-Engine/issues) Also, **please check if there are already posts about the same issue.**
+
+Q: I found a WAY to fix a bug!
+
+A: Send [here.](https://github.com/JordanSantiagoYT/FNF-JS-Engine/pulls).
 
 # Compiling JS Engine
 
