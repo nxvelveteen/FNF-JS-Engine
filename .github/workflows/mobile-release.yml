@@ -1,93 +1,49 @@
-name: Mobile + Release
-on: workflow_dispatch
+name: Mobile Release
+
+on:
+  workflow_dispatch:
+
 jobs:
-  Mobile:
-    runs-on: ${{matrix.os}}
-    strategy:
-      fail-fast: false
-      matrix:
-        os: [ubuntu-latest, macos-14]
-    steps:
-      - name: Checkout
-        uses: actions/checkout@main
+  build:
+    name: Build
+    uses: ./.github/workflows/mobile.yml
+    with:
+      buildFlags: officialBuild
 
-      - name: Setup Haxe
-        uses: krdlab/setup-haxe@master
-        with:
-          haxe-version: 4.3.6
-
-      - name: Install Libraries
-        run: |
-          haxelib install hmm --quiet
-          haxelib run hmm install --quiet
-
-      - name: Configure Android
-        if: startsWith(matrix.os, 'ubuntu')
-        run: |
-          haxelib run lime config ANDROID_SDK $ANDROID_HOME
-          haxelib run lime config ANDROID_NDK_ROOT $ANDROID_NDK_LATEST_HOME
-          haxelib run lime config JAVA_HOME $JAVA_HOME_17_X64
-          haxelib run lime config ANDROID_SETUP true
-
-      - name: Compile (Android)
-        if: startsWith(matrix.os, 'ubuntu')
-        run: haxelib run lime build android -final -D officialBuild
-
-      - name: Compile (iOS)
-        if: startsWith(matrix.os, 'macos')
-        run: haxelib run lime build ios -final -nosign -D officialBuild
-
-      - name: Make Ipa And Zip For Release
-        if: startsWith(matrix.os, 'macos')
-        run: |
-          cd export/release/ios/build/*-iphoneos
-          mkdir Payload
-          mv *.app Payload
-          zip -r JSEngine.ipa Payload
-          zip JSEngine-iOS.zip JSEngine.ipa
-
-      - name: Upload Artifact (Android)
-        if: startsWith(matrix.os, 'ubuntu')
-        uses: actions/upload-artifact@main
-        with:
-          name: androidBuild
-          path: export/release/android/bin/app/build/outputs/apk/release/*.apk
-          if-no-files-found: error
-
-      - name: Upload Artifact (iOS)
-        if: startsWith(matrix.os, 'macos')
-        uses: actions/upload-artifact@main
-        with:
-          name: iOSBuild
-          path: export/release/ios/build/Release-iphoneos/*.zip
-          if-no-files-found: error
-  Releaser:
-    needs: [Mobile]
+  release-android:
+    name: Release androidBuild
+    needs: build
     runs-on: ubuntu-latest
-    permissions: write-all
     steps:
-      - name: Download Android Build
-        uses: actions/download-artifact@main
-        with:
-           name: androidBuild
-           path: /home/runner
+    - name: Download Android artifact
+      uses: actions/download-artifact@main
+      with:
+        name: androidBuild
+    - name: Upload androidBuild to release
+      uses: svenstaro/upload-release-action@2.5.0
+      with:
+        repo_token: ${{ secrets.GITHUB_TOKEN }}
+        tag: ${{ github.ref_name }}
+        file: JSEngine-release.apk
+        asset_name: FNF-JS-Engine-android.apk
+        overwrite: false
 
-      - name: Move Android File
-        run: mv /home/runner/JSEngine-release.apk /home/runner/JSEngine-Android.apk
-
-      - name: Download iOS Build
-        uses: actions/download-artifact@main
-        with:
-           name: iOSBuild
-           path: /home/runner
-
-      - name: Publish The Release
-        uses: marvinpinto/action-automatic-releases@latest
-        with:
-          repo_token: "${{ secrets.GITHUB_TOKEN }}"
-          prerelease: false
-          automatic_release_tag: "1.33.3"
-          title: "1.33.3"
-          files: |
-            /home/runner/*.apk
-            /home/runner/*.zip
+  release-ios:
+    name: Release iOSBuild
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+    - name: Download iOS artifact
+      uses: actions/download-artifact@main
+      with:
+        name: iOSBuild
+    - name: Zip For Release
+      run: zip -r JSEngine-iOS.zip JSEngine.ipa
+    - name: Upload androidBuild to release
+      uses: svenstaro/upload-release-action@2.5.0
+      with:
+        repo_token: ${{ secrets.GITHUB_TOKEN }}
+        tag: ${{ github.ref_name }}
+        file: JSEngine-iOS.zip
+        asset_name: FNF-JS-Engine-ios.zip
+        overwrite: false

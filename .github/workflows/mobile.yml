@@ -4,6 +4,12 @@ on:
     branches: mobile
  workflow_dispatch:
 
+ workflow_call:
+    inputs:
+      buildFlags:
+        required: false
+        type: string
+
 jobs:
   Mobile:
     runs-on: ${{matrix.os}}
@@ -35,11 +41,11 @@ jobs:
 
       - name: Compile (Android)
         if: startsWith(matrix.os, 'ubuntu')
-        run: haxelib run lime build android -ONLY_ARMV7
+        run: haxelib run lime build android -D ${{ inputs.buildFlags }}
 
       - name: Compile (iOS)
         if: startsWith(matrix.os, 'macos')
-        run: haxelib run lime build ios -nosign
+        run: haxelib run lime build ios -nosign -D ${{ inputs.buildFlags }}
 
       - name: Make Ipa
         if: startsWith(matrix.os, 'macos')
