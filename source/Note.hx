@@ -562,6 +562,13 @@ class Note extends FlxSprite
 				noteSplashData.g = 0xFF101010;
 				noteSplashData.texture = 'noteSplashes/noteSplashes-electric';
 		}
+		else if (rgbShader != null)
+		{
+			noteSplashData.r = -1;
+			noteSplashData.g = -1;
+			noteSplashData.b = -1;
+			noteSplashData.texture = null;
+		}
 	}
 
 	// this is used for note recycling
