@@ -1,3 +1,6 @@
+# NOTE
+THIS NOT THE JS ENGINE BASE REPO. THIS BRANCH MADE BY [mcagabe19](https://github.com/mcagabe19) AND ALL CREDITS GOES TO HER.
+
 <h1 align="center">
   <br>
   <a href="https://github.com/JordanSantiagoYT/FNF-JS-Engine"><img src="assets/exclude/images/jslol.png" alt="JSengine" width="150"></a>
@@ -5,9 +8,6 @@
   <b>JS Engine Mobile</b>
   <br>
 </h1>
-
-# NOTE
-THIS NOT THE JS ENGINE BASE REPO. THIS BRANCH MADE BY [mcagabe19](https://github.com/mcagabe19) AND ALL CREDITS GOES TO HER.
 
 <h3 align="center">
   <b>JS Engine is a heavily modified Psych Engine fork Jordan made, with lower-end PCs and more customization in mind while also aiming to be a replacement for OS "Engine".</b>
