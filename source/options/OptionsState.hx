@@ -147,13 +147,13 @@ class OptionsState extends MusicBeatState
 
 	override function closeSubState() {
 		super.closeSubState();
-		removeVirtualPad();
-		persistentUpdate = true;
-		addVirtualPad(LEFT_FULL, ClientPrefs.mobileCPlayStateVpad ? A_B_C : A_B);
-		virtualPad.camera = otherCamera;
 		if (FlxG.sound.music != null && FlxG.sound.music.volume == 0)
 			FlxTween.tween(FlxG.sound.music, {pitch: 1, volume: 1}, 2.5, {ease: FlxEase.cubeOut});
 		ClientPrefs.saveSettings();
+		removeVirtualPad();
+		addVirtualPad(LEFT_FULL, ClientPrefs.mobileCPlayStateVpad ? A_B_C : A_B);
+		virtualPad.camera = otherCamera;
+		persistentUpdate = true;
 	}
 
 	override function update(elapsed:Float) {
