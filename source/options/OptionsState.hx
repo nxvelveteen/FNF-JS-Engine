@@ -32,7 +32,7 @@ class OptionsState extends MusicBeatState
     var kId = 0;
     var keys:Array<FlxKey> = [D, E, B, U, G, SEVEN]; // lol
 	var konamiIndex:Int = 0; // Track the progress in the Konami code sequence
-	var konamiCode = [];
+	var konamiCode = [virtualPad.buttonUp, virtualPad.buttonUp, virtualPad.buttonDown, virtualPad.buttonDown, virtualPad.buttonLeft, virtualPad.buttonRight, virtualPad.buttonLeft, virtualPad.buttonRight, virtualPad.buttonB, virtualPad.buttonA];
 	var isEnteringKonamiCode:Bool = false;
 	var options:Array<String> = ['Note Colors', 'Controls', 'Adjust Delay and Combo', 'Graphics', 'Optimization', #if !mobile 'Game Rendering', #end 'Visuals and UI', 'Gameplay', 'Misc', 'Mobile Options'];
 	private var grpOptions:FlxTypedGroup<Alphabet>;
@@ -185,9 +185,12 @@ class OptionsState extends MusicBeatState
 			openSelectedSubstate(options[curSelected]);
 		}
 
-		#if android
-		if (FlxG.android.justReleased.BACK) enterSuperSecretDebugMenu();
-		#end
+        if (virtualPad.buttonUp.justPressed || virtualPad.buttonDown.justPressed || virtualPad.buttonLeft.justPressed || virtualPad.buttonRight.justPressed || virtualPad.buttonB.justPressed || virtualPad.buttonA.justPressed) {
+            var k = keys[kId];
+            if (!enteringDebugMenu && checkKonamiCode()) {
+                if (konamiIndex >= konamiCode.length) enterSuperSecretDebugMenu();
+            }
+        }
 
 		if (ClientPrefs.mobileCPlayStateVpad && virtualPad.buttonC.justPressed) {
 			persistentUpdate = false;
@@ -233,20 +236,20 @@ class OptionsState extends MusicBeatState
 		}
 		FlxG.sound.play(Paths.sound('scrollMenu'));
 	}
-function checkKonamiCode():Bool {
-    if (konamiCode[konamiIndex].justPressed) {
-        konamiIndex++;
-	if (konamiIndex > 6) isEnteringKonamiCode = true;
-        if (konamiIndex >= konamiCode.length) {
-            return true;
-	    konamiIndex = 0;
-        }
-    } else { //you messed up the code
-        konamiIndex = 0;
-	isEnteringKonamiCode = false;
-    }
-    return false;
-}
+	function checkKonamiCode():Bool {
+		if (konamiCode[konamiIndex].justPressed) {
+			konamiIndex++;
+		if (konamiIndex > 6) isEnteringKonamiCode = true;
+			if (konamiIndex >= konamiCode.length) {
+				return true;
+			konamiIndex = 0;
+			}
+		} else { //you messed up the code
+			konamiIndex = 0;
+		isEnteringKonamiCode = false;
+		}
+		return false;
+	}
 	function enterSuperSecretDebugMenu():Void // so secret I can tell
 	{
 		enteringDebugMenu = true;
