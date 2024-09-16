@@ -28,11 +28,8 @@ using StringTools;
 
 class OptionsState extends MusicBeatState
 {
-
-    var kId = 0;
-    var keys:Array<FlxKey> = [D, E, B, U, G, SEVEN]; // lol
 	var konamiIndex:Int = 0; // Track the progress in the Konami code sequence
-	var konamiCode = [virtualPad.buttonUp, virtualPad.buttonUp, virtualPad.buttonDown, virtualPad.buttonDown, virtualPad.buttonLeft, virtualPad.buttonRight, virtualPad.buttonLeft, virtualPad.buttonRight, virtualPad.buttonB, virtualPad.buttonA];
+	var konamiCode = [];
 	var isEnteringKonamiCode:Bool = false;
 	var options:Array<String> = ['Note Colors', 'Controls', 'Adjust Delay and Combo', 'Graphics', 'Optimization', #if !mobile 'Game Rendering', #end 'Visuals and UI', 'Gameplay', 'Misc', 'Mobile Options'];
 	private var grpOptions:FlxTypedGroup<Alphabet>;
@@ -186,7 +183,7 @@ class OptionsState extends MusicBeatState
 		}
 
         if (virtualPad.buttonUp.justPressed || virtualPad.buttonDown.justPressed || virtualPad.buttonLeft.justPressed || virtualPad.buttonRight.justPressed || virtualPad.buttonB.justPressed || virtualPad.buttonA.justPressed) {
-            var k = keys[kId];
+			konamiCode = [virtualPad.buttonUp, virtualPad.buttonUp, virtualPad.buttonDown, virtualPad.buttonDown, virtualPad.buttonLeft, virtualPad.buttonRight, virtualPad.buttonLeft, virtualPad.buttonRight, virtualPad.buttonB, virtualPad.buttonA];
             if (!enteringDebugMenu && checkKonamiCode()) {
                 if (konamiIndex >= konamiCode.length) enterSuperSecretDebugMenu();
             }
@@ -196,15 +193,6 @@ class OptionsState extends MusicBeatState
 			persistentUpdate = false;
 			openSubState(new mobile.MobileControlsSelectSubState());
 		}
-
-        if (FlxG.keys.justPressed.ANY) {
-            var k = keys[kId];
-
-            if (FlxG.keys.anyJustPressed([k])) {
-                kId++;
-                if (kId >= keys.length) enterSuperSecretDebugMenu();
-            }
-        }
 	}
 	
 	function changeSelection(change:Int = 0) {
@@ -253,17 +241,17 @@ class OptionsState extends MusicBeatState
 	function enterSuperSecretDebugMenu():Void // so secret I can tell
 	{
 		enteringDebugMenu = true;
-			kId = 0;
-                    FlxTween.tween(FlxG.camera, {alpha: 0}, 1.5, {startDelay: 1, ease: FlxEase.cubeOut});
-					FlxTween.tween(virtualPad.camera, {alpha: 0}, 1.5, {startDelay: 1, ease: FlxEase.cubeOut});
-					FlxTween.tween(virtualPad.camera, {zoom: 0.1, angle: -15}, 2.5, {ease: FlxEase.cubeIn});
-					if (FlxG.sound.music != null)
-                        FlxTween.tween(FlxG.sound.music, {pitch: 0, volume: 0}, 2.5, {ease: FlxEase.cubeOut});
-                    FlxTween.tween(FlxG.camera, {zoom: 0.1, angle: -15}, 2.5, {ease: FlxEase.cubeIn, onComplete: function(t) {
-			FlxG.camera.angle = virtualPad.camera.angle = 0;
-                        openSubState(new options.SuperSecretDebugMenu());
-						removeVirtualPad();
-						persistentUpdate = false;
-                    }});
+		konamiIndex = 0; //prevent double menu accesses
+		FlxTween.tween(FlxG.camera, {alpha: 0}, 1.5, {startDelay: 1, ease: FlxEase.cubeOut});
+		FlxTween.tween(virtualPad.camera, {alpha: 0}, 1.5, {startDelay: 1, ease: FlxEase.cubeOut});
+		FlxTween.tween(virtualPad.camera, {zoom: 0.1, angle: -15}, 2.5, {ease: FlxEase.cubeIn});
+		if (FlxG.sound.music != null)
+			FlxTween.tween(FlxG.sound.music, {pitch: 0, volume: 0}, 2.5, {ease: FlxEase.cubeOut});
+		FlxTween.tween(FlxG.camera, {zoom: 0.1, angle: -15}, 2.5, {ease: FlxEase.cubeIn, onComplete: function(t) {
+		FlxG.camera.angle = virtualPad.camera.angle = 0;
+			openSubState(new options.SuperSecretDebugMenu());
+			removeVirtualPad();
+			persistentUpdate = false;
+		}});
 	}
 }
