@@ -567,7 +567,6 @@ class Note extends FlxSprite
 			noteSplashData.r = -1;
 			noteSplashData.g = -1;
 			noteSplashData.b = -1;
-			noteSplashData.texture = null;
 		}
 	}
 

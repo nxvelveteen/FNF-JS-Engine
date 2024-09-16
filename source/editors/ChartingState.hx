@@ -2824,8 +2824,7 @@ class ChartingState extends MusicBeatState
 				{
 					FlxG.sound.music.pause();
 					pauseVocals();
-					lilBf.animation.play("idle");
-					lilOpp.animation.play("idle");
+					resetBuddies();
 					lilBf.color = lilOpp.color = FlxColor.WHITE;
 					if (idleMusic != null && idleMusic.music != null && idleMusicAllow) idleMusic.unpauseMusic(2);
 				}
@@ -2839,8 +2838,7 @@ class ChartingState extends MusicBeatState
 						if(opponentVocals != null) opponentVocals.play();
 					}
 					if (idleMusic != null && idleMusic.music != null && idleMusicAllow) idleMusic.pauseMusic();
-					lilBf.animation.play("idle");
-					lilOpp.animation.play("idle");
+					resetBuddies();
 					lilBf.color = lilOpp.color = FlxColor.WHITE;
 				}
 			}
@@ -2878,8 +2876,7 @@ class ChartingState extends MusicBeatState
 			{
 				if (idleMusic != null && idleMusic.music != null && idleMusicAllow) idleMusic.unpauseMusic(2);
 				FlxG.sound.music.pause();
-				lilBf.animation.play("idle");
-				lilOpp.animation.play("idle");
+				resetBuddies();
 				lilBf.color = lilOpp.color = FlxColor.WHITE;
 				if (!mouseQuant)
 					FlxG.sound.music.time -= (FlxG.mouse.wheel * Conductor.stepCrochet*0.8);
@@ -2904,8 +2901,7 @@ class ChartingState extends MusicBeatState
 			if ((FlxG.keys.pressed.W || FlxG.keys.pressed.S) || (virtualPad.buttonUp.pressed || virtualPad.buttonDown.pressed))
 			{
 				if (idleMusic != null && idleMusic.music != null && idleMusicAllow) idleMusic.unpauseMusic(2);
-				lilBf.animation.play("idle");
-				lilOpp.animation.play("idle");
+				resetBuddies();
 				lilBf.color = lilOpp.color = FlxColor.WHITE;
 				FlxG.sound.music.pause();
 
@@ -3199,6 +3195,11 @@ class ChartingState extends MusicBeatState
 		lastConductorPos = Conductor.songPosition;
 		super.update(elapsed);
 		idleMusic.update(elapsed);
+	}
+
+	function resetBuddies() {
+		lilBf.animation.play("idle");
+		lilOpp.animation.play("idle");
 	}
 
 	function updateZoom() {
@@ -3510,6 +3511,8 @@ class ChartingState extends MusicBeatState
 
 	function resetSection(songBeginning:Bool = false):Void
 	{
+		resetBuddies();
+
 		updateGrid((songBeginning ? true : false));
 
 			if (FlxG.sound.music.playing && idleMusic != null && idleMusic.music != null && idleMusicAllow) idleMusic.pauseMusic();
@@ -3535,8 +3538,7 @@ class ChartingState extends MusicBeatState
 		if (_song.notes[sec] != null)
 		{
 			if (FlxG.sound.music.playing && idleMusic != null && idleMusic.music != null && idleMusicAllow) idleMusic.pauseMusic();
-			lilBf.animation.play("idle");
-			lilOpp.animation.play("idle");
+			resetBuddies();
 			lilBf.color = lilOpp.color = FlxColor.WHITE;
 			curSec = sec;
 			if (updateMusic)

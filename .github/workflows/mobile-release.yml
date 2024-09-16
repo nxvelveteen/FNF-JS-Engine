@@ -60,5 +60,5 @@ jobs:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
           tag: ${{ needs.get-latest-tag.outputs.latest_tag }}
           file: JSEngine-iOS.zip
-          asset_name: FNF-JS-Engine-ios.zip
+          asset_name: FNF-JS-Engine-iOS.zip
           overwrite: false

@@ -140,13 +140,6 @@ class VisualsUISubState extends BaseOptionsMenu
 			false);
 		addOption(option);
 
-		var option:Option = new Option('Hide ScoreTxt',
-			'If checked, hides the score text. Dunno why you would enable this but eh, alright.',
-			'hideScore',
-			'bool',
-			false);
-		addOption(option);
-
 		var option:Option = new Option("Taunt on 'GO'",
 			"If checked, the characters will taunt on GO when you play.",
 			'tauntOnGo',

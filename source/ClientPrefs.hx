@@ -53,7 +53,6 @@ class ClientPrefs { //default settings if it can't find a save file containing y
 	public static var maxSplashLimit:Int = 16;
 	public static var oppNoteAlpha:Float = 0.65;
 	public static var hideHud:Bool = false;
-	public static var hideScore:Bool = false;
 	public static var tauntOnGo:Bool = true;
 	public static var oldSusStyle:Bool = false;
 	public static var showRendered:Bool = false;
