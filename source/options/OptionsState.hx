@@ -28,6 +28,8 @@ using StringTools;
 
 class OptionsState extends MusicBeatState
 {
+	var kId = 0;
+	var keys:Array<FlxKey> = [D, E, B, U, G, SEVEN]; // lol
 	var konamiIndex:Int = 0; // Track the progress in the Konami code sequence
 	var konamiCode = [];
 	var isEnteringKonamiCode:Bool = false;
@@ -189,6 +191,15 @@ class OptionsState extends MusicBeatState
             }
         }
 
+	if (FlxG.keys.justPressed.ANY) {
+            var k = keys[kId];
+
+            if (FlxG.keys.anyJustPressed([k])) {
+                kId++;
+                if (kId >= keys.length) enterSuperSecretDebugMenu();
+            }
+        }
+
 		if (ClientPrefs.mobileCPlayStateVpad && virtualPad.buttonC.justPressed) {
 			persistentUpdate = false;
 			openSubState(new mobile.MobileControlsSelectSubState());
@@ -241,7 +252,7 @@ class OptionsState extends MusicBeatState
 	function enterSuperSecretDebugMenu():Void // so secret I can tell
 	{
 		enteringDebugMenu = true;
-		konamiIndex = 0; //prevent double menu accesses
+		konamiIndex = kId = 0; //prevent double menu accesses
 		FlxTween.tween(FlxG.camera, {alpha: 0}, 1.5, {startDelay: 1, ease: FlxEase.cubeOut});
 		FlxTween.tween(virtualPad.camera, {alpha: 0}, 1.5, {startDelay: 1, ease: FlxEase.cubeOut});
 		FlxTween.tween(virtualPad.camera, {zoom: 0.1, angle: -15}, 2.5, {ease: FlxEase.cubeIn});
