@@ -530,7 +530,7 @@ class EditorPlayState extends MusicBeatState
 					{
 						for (doubleNote in pressNotes) {
 							if (Math.abs(doubleNote.strumTime - epicNote.strumTime) < 1) {
-								doubleNote.exists = false;
+								invalidateNote(doubleNote);
 							} else
 								notesStopped = true;
 						}
@@ -691,7 +691,6 @@ class EditorPlayState extends MusicBeatState
 				if (PlayState.SONG.needsVoices)
 					vocals.volume = 1;
 				goodNoteHit(daNote);
-				if (!daNote.isSustainNote) invalidateNote(daNote);
 			}
 			if (!daNote.exists) return;
 
@@ -769,6 +768,8 @@ class EditorPlayState extends MusicBeatState
 					}
 				}
 			}
+
+			if (!note.isSustainNote) invalidateNote(note);
 
 			note.wasGoodHit = true;
 			vocals.volume = 1;

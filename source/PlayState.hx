@@ -1487,6 +1487,12 @@ class PlayState extends MusicBeatState
 			scoreTxt.scrollFactor.set();
 			add(scoreTxt);
 		}
+		if (ClientPrefs.showcaseMode) {
+			scoreTxt.visible = false;
+			healthBarBG.visible = false;
+			healthBar.visible = false;
+			iconP2.visible = iconP1.visible = false;
+		}
 		if (ClientPrefs.hideHud) {
 			scoreTxt.visible = false;
 			final daArray:Array<Dynamic> = [botplayTxt, healthBarBG, healthBar, iconP2, iconP1, timeBarBG, timeBar, timeTxt];
@@ -4618,7 +4624,6 @@ class PlayState extends MusicBeatState
 							if(!boyfriendMap.exists(value2)) {
 								addCharacterToList(value2, charType);
 							}
-							var bfAnim:String = (boyfriend.animation.curAnim != null && boyfriend.animation.curAnim.name.startsWith('sing') ? boyfriend.animation.curAnim.name : '');
 
 							var lastAlpha:Float = boyfriend.alpha;
 							boyfriend.alpha = 0.00001;
@@ -4635,7 +4640,6 @@ class PlayState extends MusicBeatState
 								if (ClientPrefs.bfIconStyle == "OS 'Engine'") iconP1.changeIcon('bfos');
 							}
 							bfNoteskin = boyfriend.noteskin;
-							if (bfAnim != '') boyfriend.playAnim(bfAnim, true);
 						}
 						setOnLuas('boyfriendName', boyfriend.curCharacter);
 

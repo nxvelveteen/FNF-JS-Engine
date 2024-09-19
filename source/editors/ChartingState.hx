@@ -245,6 +245,7 @@ class ChartingState extends MusicBeatState
 	];
 
 	public static var idleMusicAllow:Bool = false;
+	public static var unsavedChanges:Bool = false;
 
 	var text:String = "";
 	public static var vortex:Bool = false;
@@ -2742,21 +2743,24 @@ class ChartingState extends MusicBeatState
 			}
 
 
-			if (virtualPad.buttonB.justPressed || FlxG.keys.justPressed.BACKSPACE && undos.length < 0) {
-				// Protect against lost data when quickly leaving the chart editor.
-				autosaveSong();
+			if (virtualPad.buttonB.justPressed || FlxG.keys.justPressed.BACKSPACE) {
+				if (!unsavedChanges)
+				{
+					// Protect against lost data when quickly leaving the chart editor.
+					autosaveSong();
 
-				CoolUtil.currentDifficulty = difficulty;
-				PlayState.chartingMode = false;
-				FlxG.switchState(editors.MasterEditorMenu.new);
-				FlxG.sound.playMusic(Paths.music('freakyMenu-' + ClientPrefs.daMenuMusic));
-				FlxG.mouse.visible = false;
-				if (idleMusic != null && idleMusic.music != null) idleMusic.destroy();
-				return;
-			}
-			else if (undos.length > 0) // a shitty way, but the only way I know rn
+					CoolUtil.currentDifficulty = difficulty;
+					PlayState.chartingMode = false;
+					FlxG.switchState(editors.MasterEditorMenu.new);
+					FlxG.sound.playMusic(Paths.music('freakyMenu-' + ClientPrefs.daMenuMusic));
+					FlxG.mouse.visible = false;
+					if (idleMusic != null && idleMusic.music != null) idleMusic.destroy();
+					return;
+				}
+				else
 				openSubState(new Prompt('WARNING! This action will clear unsaved progress.\n\nProceed?', 0, 
 					function() FlxG.switchState(editors.MasterEditorMenu.new), null,ignoreWarnings));
+			}
 
 			if (virtualPad.buttonZ.justPressed || (FlxG.keys.justPressed.Z && FlxG.keys.pressed.CONTROL)) {
 				undo();
@@ -3983,7 +3987,6 @@ class ChartingState extends MusicBeatState
 		var noteDataToCheck:Int = note.noteData;
 		if(noteDataToCheck > -1 && note.mustPress != _song.notes[curSec].mustHitSection) noteDataToCheck += 4;
 
-
 		if(note.noteData > -1) //Normal Notes
 		{
 			for (i in _song.notes[curSec].sectionNotes)
@@ -4034,6 +4037,8 @@ class ChartingState extends MusicBeatState
 		}
 				curRenderedNotes.remove(note, true);
 				note.destroy();
+
+		if (!unsavedChanges) unsavedChanges = true;
 	}
 
 	public function doANoteThing(cs, d, style){
@@ -4064,6 +4069,7 @@ class ChartingState extends MusicBeatState
 			_song.notes[daSection].sectionNotes = [];
 		}
 
+		if (!unsavedChanges) unsavedChanges = true;
 		updateGrid();
 	}
 
@@ -4101,7 +4107,6 @@ class ChartingState extends MusicBeatState
 			updateGrid();
 		}
 
-		//trace(noteData + ', ' + noteStrum + ', ' + curSec);
 		strumTimeInputText.text = '' + curSelectedNote[0];
 		//wow its not laggy who wouldve guessed
 		if (gridUpdate) {
@@ -4149,6 +4154,7 @@ class ChartingState extends MusicBeatState
 				}
 			updateNoteUI();
 		}
+		if (!unsavedChanges) unsavedChanges = true;
 	}
 
 	// will figure this out l8r
@@ -4179,18 +4185,17 @@ class ChartingState extends MusicBeatState
 
     public function saveUndo(_song:SwagSong)
     {
+		if (CoolUtil.getNoteAmount(_song) <= 50000 && FlxG.save.data.allowUndo) {
+			var shit = Json.stringify({ //doin this so it doesnt act as a reference
+				"song": _song
+			});
+			var song:SwagSong = Song.parseJSONshit(shit);
 
-	if (CoolUtil.getNoteAmount(_song) <= 50000 && FlxG.save.data.allowUndo) {
-        var shit = Json.stringify({ //doin this so it doesnt act as a reference
-			"song": _song
-		});
-        var song:SwagSong = Song.parseJSONshit(shit);
-
-        undos.unshift(song.notes);
-		redos = []; //Reset redos
-        if (undos.length >= 100) //if you save more than 100 times, remove the oldest undo
-            undos.remove(undos[100]);
-	}
+			undos.unshift(song.notes);
+			redos = []; //Reset redos
+			if (undos.length >= 100) //if you save more than 100 times, remove the oldest undo
+				undos.remove(undos[100]);
+		}
     }
 
     public function undo()
@@ -4199,8 +4204,9 @@ class ChartingState extends MusicBeatState
 			_song.notes = undos[0];
 			redos.unshift(undos[0]);
 			undos.splice(0, 1);
-		trace("Performed an Undo! Undos remaining: " + undos.length);
-		updateGrid();
+			trace("Performed an Undo! Undos remaining: " + undos.length);
+			if (!unsavedChanges) unsavedChanges = true;
+			updateGrid();
 		}
     }
 
@@ -4250,10 +4256,12 @@ class ChartingState extends MusicBeatState
 			FlxTween.tween(autosaveIndicator, {alpha: 0}, 1, {ease: FlxEase.backInOut, type: ONESHOT});
 		});
 		FlxG.save.flush();
+		if (unsavedChanges) unsavedChanges = false;
 	}
 
 	function clearEvents() {
 		_song.events = [];
+		if (!unsavedChanges) unsavedChanges = true;
 		updateGrid();
 	}
 
@@ -4295,6 +4303,7 @@ class ChartingState extends MusicBeatState
 			#end
 		}
 			cpp.vm.Gc.enable(true);
+		if (unsavedChanges) unsavedChanges = false;
 	}
 
 	function sortByTime(Obj1:Array<Dynamic>, Obj2:Array<Dynamic>):Int
