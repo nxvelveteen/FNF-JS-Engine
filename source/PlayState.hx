@@ -3071,7 +3071,7 @@ class PlayState extends MusicBeatState
 								strumTime: daStrumTime + (Conductor.stepCrochet * susNote),
 								noteData: daNoteData,
 								mustPress: bothSides || gottaHitNote,
-								oppNote: !gottaHitNote,
+								oppNote: (opponentChart ? gottaHitNote : !gottaHitNote),
 								noteType: songNotes[3],
 								animSuffix: (songNotes[3] == 'Alt Animation' || section.altAnim ? '-alt' : ''),
 								noteskin: (gottaHitNote ? bfNoteskin : dadNoteskin),
@@ -4482,12 +4482,12 @@ class PlayState extends MusicBeatState
 				camTwistIntensity2 = _intensity2;
 				if (_intensity2 == 0)
 				{
-					FlxTween.cancelTweensOf(camHUD);
-					FlxTween.cancelTweensOf(camGame);
 					camTwist = false;
-					FlxTween.tween(camHUD, {angle: 0, x: 0, y: 0}, 1, {ease: FlxEase.sineInOut});
-					FlxTween.tween(camGame, {angle: 0, x: 0, y: 0}, 1, {ease: FlxEase.sineInOut});
-					FlxTween.tween(camGame.scroll, {y: 0}, 1, {ease: FlxEase.sineInOut});
+					for (i in [camHUD, camGame])
+					{
+						FlxTween.cancelTweensOf(i);
+						FlxTween.tween(i, {angle: 0, x: 0, y: 0}, 1, {ease: FlxEase.sineOut});
+					}
 				}
 			case 'Change Note Multiplier':
 				var noteMultiplier:Float = Std.parseFloat(value1);
@@ -6479,21 +6479,6 @@ class PlayState extends MusicBeatState
 				resyncVocals();
 			}
 		}
-
-		if (camTwist)
-		{
-			if (curStep % (gfSpeed * 4) == 0)
-			{
-				FlxTween.tween(camHUD, {y: -6 * camTwistIntensity2}, Conductor.stepCrochet * (0.002 * gfSpeed), {ease: FlxEase.circOut});
-				FlxTween.tween(camGame.scroll, {y: 12}, Conductor.stepCrochet * (0.002 * gfSpeed), {ease: FlxEase.sineIn});
-			}
-
-			if (curStep % (gfSpeed * 4) == gfSpeed)
-			{
-				FlxTween.tween(camHUD, {y: 0}, Conductor.stepCrochet * (0.002 * gfSpeed), {ease: FlxEase.sineIn});
-				FlxTween.tween(camGame.scroll, {y: 0}, Conductor.stepCrochet * (0.002 * gfSpeed), {ease: FlxEase.sineIn});
-			}
-		}
 		
 		setOnLuas('curStep', curStep);
 		callOnLuas('onStepHit');
@@ -6532,22 +6517,20 @@ class PlayState extends MusicBeatState
 			camHUD.zoom += 0.03 * camBopIntensity;
 		} /// WOOO YOU CAN NOW MAKE IT AWESOME
 
-		if (camTwist)
+		if (camTwist && curBeat % gfSpeed == 0)
 		{
 			if (curBeat % (gfSpeed * 2) == 0)
-			{
-				twistShit = twistAmount;
-			}
+				twistShit = twistAmount * camTwistIntensity;
+
 			if (curBeat % (gfSpeed * 2) == gfSpeed)
+				twistShit = -twistAmount * camTwistIntensity2;
+				
+			for (i in [camHUD, camGame])
 			{
-				twistShit = -twistAmount;
+				FlxTween.cancelTweensOf(i);
+				i.angle = twistShit;
+				FlxTween.tween(i, {angle: 0}, 45 / Conductor.bpm * gfSpeed / playbackRate, {ease: FlxEase.circOut});
 			}
-			camHUD.angle = twistShit * camTwistIntensity2;
-			camGame.angle = twistShit * camTwistIntensity2;
-			FlxTween.tween(camHUD, {angle: twistShit * camTwistIntensity}, Conductor.stepCrochet * (0.0015 * gfSpeed), {ease: FlxEase.circOut});
-			FlxTween.tween(camHUD, {x: -twistShit * camTwistIntensity}, Conductor.crochet * (0.001 * gfSpeed), {ease: FlxEase.linear});
-			FlxTween.tween(camGame, {angle: twistShit * camTwistIntensity}, Conductor.stepCrochet * 0.0015, {ease: FlxEase.circOut});
-			FlxTween.tween(camGame, {x: -twistShit * camTwistIntensity}, Conductor.crochet * (0.001 * gfSpeed), {ease: FlxEase.linear});
 		}
 
 		if (ClientPrefs.iconBopWhen == 'Every Beat' && (iconP1.visible || iconP2.visible)) 

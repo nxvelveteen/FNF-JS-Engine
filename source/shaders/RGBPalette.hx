@@ -12,25 +12,29 @@ class RGBPalette {
 
 	private function set_r(color:FlxColor) {
 		r = color;
-		shader.r.value = [color.redFloat, color.greenFloat, color.blueFloat];
+		if (shader != null)
+			shader.r.value = [color.redFloat, color.greenFloat, color.blueFloat];
 		return color;
 	}
 
 	private function set_g(color:FlxColor) {
 		g = color;
-		shader.g.value = [color.redFloat, color.greenFloat, color.blueFloat];
+		if (shader != null)
+			shader.g.value = [color.redFloat, color.greenFloat, color.blueFloat];
 		return color;
 	}
 
 	private function set_b(color:FlxColor) {
 		b = color;
-		shader.b.value = [color.redFloat, color.greenFloat, color.blueFloat];
+		if (shader != null)
+			shader.b.value = [color.redFloat, color.greenFloat, color.blueFloat];
 		return color;
 	}
 	
 	private function set_mult(value:Float) {
 		mult = FlxMath.bound(value, 0, 1);
-		shader.mult.value = [mult];
+		if (shader != null)
+			shader.mult.value = [mult];
 		return mult;
 	}
 
