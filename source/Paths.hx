@@ -125,8 +125,10 @@ class Paths
 		var config = splashConfigs.get(splashSkin);
 		if (config == null) config = initSplashConfig(splashSkin);
 		var maxAnims:Int = 0;
-		var animName = config.anim;
-		if(animName == null)
+		var animName:String = 'note splash';
+		if (config != null)
+			animName = config.anim;
+		else if(animName == null)
 			animName = config != null ? config.anim : 'note splash';
 
 		var shouldBreakLoop = false;
@@ -358,6 +360,32 @@ class Paths
 
 		return getPreloadPath(file);
 	}
+
+    public static inline function readDirectory(path:String):Array<String> {
+        #if sys
+        return FileSystem.readDirectory(path);
+        #else
+        // original by Karim Akra
+        var files:Array<String> = [];
+
+        for (possibleFile in Assets.list().filter((f) -> f.contains(path))) {
+            var file:String = possibleFile.replace('${path}/', "");
+            if (file.contains("/"))
+                file = file.replace(file.substring(file.indexOf("/"), file.length), "");
+
+            if (!files.contains(file))
+                files.push(file);
+        }
+
+        files.sort((a, b) -> {
+            a = a.toUpperCase();
+            b = b.toUpperCase();
+            return (a < b) ? -1 : (a > b) ? 1 : 0;
+        });
+
+        return files;
+        #end
+    }
 
 	static public function getLibraryPath(file:String, library = "preload")
 	{
