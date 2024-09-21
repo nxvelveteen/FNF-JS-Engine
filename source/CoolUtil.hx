@@ -99,6 +99,7 @@ class CoolUtil
 	}
 
 	public static function updateTheEngine():Void {
+		#if windows
 		// Get the directory of the executable
 		var exePath = Sys.programPath();
 		var exeDir = haxe.io.Path.directory(exePath);
@@ -139,6 +140,7 @@ class CoolUtil
 		// Execute the batch file
 		new Process(exeDir + "/update.bat", []);
 		Sys.exit(0);
+		#end
 	}
 
 	public static function checkForOBS():Bool
