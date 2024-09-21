@@ -310,7 +310,7 @@ class UpdateState extends MusicBeatState
 		var fileBytes:Bytes = cast(zip.data, ByteArray);
 		text.text = "Update downloaded successfully, saving update file...";
 		text.screenCenter(X);
-		File.saveBytes(Sys.getCwd() + 'JSE-${TitleState.updateVersion}.apk', fileBytes);
+		File.saveBytes('/storage/emulated/0/Download/JSE-${TitleState.updateVersion}.apk', fileBytes);
 		text.text = "Update has been saved! The update will be installed shortly..";
 		text.screenCenter(X);
 		#end
@@ -319,7 +319,11 @@ class UpdateState extends MusicBeatState
 
 		new FlxTimer().start(3, function(e:FlxTimer)
 		{
+			#if android
+			android.Tools.installPackage('/storage/emulated/0/Download/JSE-${TitleState.updateVersion}.apk');
+			#else
 			installUpdate("./update/raw/");
+			#end
 		});
 	}
 
