@@ -168,8 +168,8 @@ class UpdateState extends MusicBeatState
 			return 'linux';
 			#elseif android
 			return 'android';
-			#elseif ios
-			return 'iOS';
+			/*#elseif ios
+			return 'iOS';*/
 			#else
 			return '';
 			#end
@@ -182,11 +182,14 @@ class UpdateState extends MusicBeatState
 	function prepareUpdate()
 	{
 		trace("preparing update...");
+
+		#if !mobile
 		trace("checking if update folder exists...");
 
 		if (!FileSystem.exists("./update/"))
 		{
 			trace("update folder not found, creating the directory...");
+			
 			FileSystem.createDirectory("./update");
 			FileSystem.createDirectory("./update/temp/");
 			FileSystem.createDirectory("./update/raw/");
@@ -195,6 +198,7 @@ class UpdateState extends MusicBeatState
 		{
 			trace("update folder found");
 		}
+		#end
 	}
 
 	var httpHandler:Http;
@@ -279,6 +283,7 @@ class UpdateState extends MusicBeatState
 
 	function onDownloadComplete(result:openfl.events.Event)
 	{
+		#if !android
 		var path:String = './update/temp/'; // JS Engine ' + TitleState.onlineVer + ".zip";
 
 		if (!FileSystem.exists(path))
@@ -301,6 +306,14 @@ class UpdateState extends MusicBeatState
 		JSEZip.unzip(path + "JS Engine v" + TitleState.updateVersion + ".zip", "./update/raw/");
 		text.text = "Update has finished! The update will be installed shortly..";
 		text.screenCenter(X);
+		#else
+		var fileBytes:Bytes = cast(zip.data, ByteArray);
+		text.text = "Update downloaded successfully, saving update file...";
+		text.screenCenter(X);
+		File.saveBytes(Sys.getCwd() + 'JSE-${TitleState.updateVersion}.apk', fileBytes);
+		text.text = "Update has been saved! The update will be installed shortly..";
+		text.screenCenter(X);
+		#end
 
 		FlxG.sound.play(Paths.sound('confirmMenu'));
 
