@@ -3371,7 +3371,8 @@ class PlayState extends MusicBeatState
 
 	override public function onFocus():Void
 	{
-		if (health > 0 && !paused) resetRPC(Conductor.songPosition > 0.0);
+		try {if (health > 0 && !paused) resetRPC(Conductor.songPosition > 0.0);}
+		catch(e) {};
 		super.onFocus();
 	}
 
@@ -4712,7 +4713,7 @@ class PlayState extends MusicBeatState
 					for (note in notes){
 						if (note == null)
 							continue;
-						note.updateRGBColors();
+						if (ClientPrefs.enableColorShader) note.updateRGBColors();
 					}
 				}
 			}

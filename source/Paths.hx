@@ -339,8 +339,20 @@ class Paths
 		currentLevel = name.toLowerCase();
 	}
 
-	public static function getPath(file:String, type:AssetType, ?library:Null<String> = null)
+	public static function getPath(file:String, ?type:AssetType = TEXT, ?library:Null<String> = null, ?modsAllowed:Bool = false):String
 	{
+		#if MODS_ALLOWED
+		if(modsAllowed)
+		{
+			var customFile:String = file;
+			if (library != null)
+				customFile = '$library/$file';
+
+			var modded:String = modFolders(customFile);
+			if(FileSystem.exists(modded)) return modded;
+		}
+		#end
+
 		if (library != null)
 			return getLibraryPath(file, library);
 

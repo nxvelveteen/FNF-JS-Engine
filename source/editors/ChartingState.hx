@@ -2369,6 +2369,18 @@ class ChartingState extends MusicBeatState
 			if(sender == noteSplashesInputText) {
 				_song.splashSkin = noteSplashesInputText.text;
 			}
+			else if(sender == gameOverCharacterInputText) {
+				_song.gameOverChar = gameOverCharacterInputText.text;
+			}
+			else if(sender == gameOverSoundInputText) {
+				_song.gameOverSound = gameOverSoundInputText.text;
+			}
+			else if(sender == gameOverLoopInputText) {
+				_song.gameOverLoop = gameOverLoopInputText.text;
+			}
+			else if(sender == gameOverEndInputText) {
+				_song.gameOverEnd = gameOverEndInputText.text;
+			}
 			else if(curSelectedNote != null)
 			{
 				if(sender == value1InputText) {
