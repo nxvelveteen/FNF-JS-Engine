@@ -316,7 +316,6 @@ class PlayState extends MusicBeatState
 	//ok moxie this doesn't cause memory leaks
 	public var scoreTxtUpdateFrame:Int = 0;
 	public var judgeCountUpdateFrame:Int = 0;
-	public var compactUpdateFrame:Int = 0;
 	public var popUpsFrame:Int = 0;
 	public var missRecalcsPerFrame:Int = 0;
 	public var charAnimsFrame:Int = 0;
@@ -332,13 +331,6 @@ class PlayState extends MusicBeatState
 	var dialogueJson:DialogueFile = null;
 
 	var EngineWatermark:FlxText;
-
-		public var compactCombo:String;
-	public var compactScore:String;
-	public var compactMisses:String;
-	public var compactNPS:String;
-		public var compactMaxCombo:String;
-	public var compactTotalPlays:String;
 
 	public static var screenshader:Shaders.PulseEffectAlt = new PulseEffectAlt();
 
@@ -443,7 +435,6 @@ class PlayState extends MusicBeatState
 
 	var theListBotplay:Array<String> = [];
 
-		var formattedSongScore:String;
 		var formattedScore:String;
 		var formattedSongMisses:String;
 		var formattedCombo:String;
@@ -508,12 +499,6 @@ class PlayState extends MusicBeatState
 			FlxG.animationTimeScale = ClientPrefs.framerate / targetFPS;
 			if (!ClientPrefs.oldFFmpegMode) initRender();
 		}
-		var compactCombo:String = formatCompactNumber(combo);
-		var compactMaxCombo:String = formatCompactNumber(maxCombo);
-		var compactScore:String = formatCompactNumber(songScore);
-		var compactMisses:String = formatCompactNumber(songMisses);
-		var compactNPS:String = formatCompactNumber(nps);
-		var compactTotalPlays:String = formatCompactNumber(totalNotesPlayed);
 		theListBotplay = CoolUtil.coolTextFile(Paths.txt('botplayText'));
 
 		if (FileSystem.exists(Paths.getSharedPath('sounds/hitsounds/' + ClientPrefs.hitsoundType.toLowerCase() + '.txt'))) 
@@ -1644,7 +1629,7 @@ class PlayState extends MusicBeatState
 			}
 		}
 		if (ClientPrefs.showRendered)
-			renderedTxt.text = 'Rendered Notes: ' + FlxStringUtil.formatMoney(notes.length, false);
+			renderedTxt.text = 'Rendered Notes: ' + formatNumber(notes.length);
 
 		laneunderlayOpponent.cameras = [camHUD];
 		laneunderlay.cameras = [camHUD];
@@ -2333,17 +2318,6 @@ class PlayState extends MusicBeatState
 		introGo = new FlxSound().loadEmbedded(Paths.sound('introGo' + introSoundsSuffix));
 	}
 
-	private function updateCompactNumbers():Void
-	{
-		compactUpdateFrame++;
-			compactCombo = formatCompactNumber(combo);
-			compactMaxCombo = formatCompactNumber(maxCombo);
-		compactScore = formatCompactNumber(songScore);
-		compactMisses = formatCompactNumber(songMisses);
-		compactNPS = formatCompactNumber(nps);
-		compactTotalPlays = formatCompactNumber(totalNotesPlayed);
-	}
-
 	public static function formatCompactNumber(number:Float):String
 	{
 		var suffixes1:Array<String> = ['ni', 'mi', 'bi', 'tri', 'quadri', 'quinti', 'sexti', 'septi', 'octi', 'noni'];
@@ -2396,24 +2370,9 @@ class PlayState extends MusicBeatState
 		}
 	}
 
-	public static function formatCompactNumberInt(number:Int):String //this entire function is ai generated LMAO
+	public static function formatNumber(number:Float, ?decimals:Bool = false):String //simplified number formatting
 	{
-		var suffixes:Array<String> = ['', 'thousand', 'million', 'billion']; //Illions up to billion, nothing higher because integers can't go past 2,147,483,647
-		var magnitude:Int = 0;
-		var num:Float = number;
-
-		while (num >= 1000.0 && magnitude < suffixes.length - 1)
-		{
-			num /= 1000.0;
-			magnitude++;
-		}
-
-		var compactValue:Float = Math.floor(num * 100) / 100;
-	if (compactValue <= 0.001) {
-		return "0"; //Return 0 if compactValue = null
-	} else {
-			return compactValue + (magnitude == 0 ? "" : " ") + suffixes[magnitude];
-	}
+		return (number < 10e12 ? FlxStringUtil.formatMoney(number, false) : formatCompactNumber(number));
 	}
 
 	public function startCountdown():Void
@@ -2649,13 +2608,12 @@ class PlayState extends MusicBeatState
 			case 'Forever Engine': '•';
 			default: '|';
 		}
-		formattedSongScore = !ClientPrefs.compactNumbers ? FlxStringUtil.formatMoney(songScore, false) : compactScore;
-		formattedScore = (!ClientPrefs.compactNumbers ? FlxStringUtil.formatMoney(songScore, false) : compactScore);
-		if (ClientPrefs.scoreStyle == 'JS Engine') formattedScore = (!ClientPrefs.compactNumbers ? FlxStringUtil.formatMoney(shownScore, false) : compactScore);
-		formattedSongMisses = !ClientPrefs.compactNumbers ? FlxStringUtil.formatMoney(songMisses, false) : compactMisses;
-		formattedCombo = !ClientPrefs.compactNumbers ? FlxStringUtil.formatMoney(combo, false) : compactCombo;
-		formattedNPS = !ClientPrefs.compactNumbers ? FlxStringUtil.formatMoney(nps, false) : compactNPS;
-		formattedMaxNPS = !ClientPrefs.compactNumbers ? FlxStringUtil.formatMoney(maxNPS, false) : formatCompactNumber(maxNPS);
+		formattedScore = formatNumber(songScore);
+		if (ClientPrefs.scoreStyle == 'JS Engine') formattedScore = formatNumber(shownScore);
+		formattedSongMisses = formatNumber(songMisses);
+		formattedCombo = formatNumber(combo);
+		formattedNPS = formatNumber(nps);
+		formattedMaxNPS = formatNumber(maxNPS);
 		npsString = ClientPrefs.showNPS ? ' $divider ' + (cpuControlled && ClientPrefs.botWatermark ? 'Bot ' : '') + 'NPS/Max: ' + formattedNPS + '/' + formattedMaxNPS : '';
 		accuracy = Highscore.floorDecimal(ratingPercent * 100, 2) + '%';
 		fcString = ratingFC;
@@ -2795,7 +2753,6 @@ class PlayState extends MusicBeatState
 
 		if (ClientPrefs.ratingCounter && judgeCountUpdateFrame <= 4 && judgementCounter != null) updateRatingCounter();
 		if (scoreTxtUpdateFrame <= 4 && scoreTxt != null) updateScore();
-		if (ClientPrefs.compactNumbers && compactUpdateFrame <= 4) updateCompactNumbers();
 
 		// TODO: Lock other note inputs
 		if (oneK)
@@ -3558,9 +3515,9 @@ class PlayState extends MusicBeatState
 
 		if (ClientPrefs.showcaseMode && botplayTxt != null)
 		{
-			botplayTxt.text = '${FlxStringUtil.formatMoney(Math.abs(totalNotesPlayed), false)}/${FlxStringUtil.formatMoney(Math.abs(enemyHits), false)}\nNPS: ${FlxStringUtil.formatMoney(nps, false)}/${FlxStringUtil.formatMoney(maxNPS, false)}\nOpp NPS: ${FlxStringUtil.formatMoney(oppNPS, false)}/${FlxStringUtil.formatMoney(maxOppNPS, false)}';
+			botplayTxt.text = '${formatNumber(Math.abs(totalNotesPlayed))}/${formatNumber(Math.abs(enemyHits))}\nNPS: ${formatNumber(nps)}/${formatNumber(maxNPS)}\nOpp NPS: ${formatNumber(oppNPS)}/${formatNumber(maxOppNPS)}';
 			if (polyphony != 1)
-				botplayTxt.text += '\nNote Multiplier: ' + polyphony;
+				botplayTxt.text += '\nNote Multiplier: ' + formatNumber(polyphony);
 		}
 
 		callOnLuas('onUpdate', [elapsed]);
@@ -3617,7 +3574,6 @@ class PlayState extends MusicBeatState
 				notesHitArray.splice(0, notesToRemoveCount);
 				if (ClientPrefs.ratingCounter && judgeCountUpdateFrame <= 4 && judgementCounter != null) updateRatingCounter();
 				if (scoreTxtUpdateFrame <= 4 && scoreTxt != null) updateScore();
-					if (ClientPrefs.compactNumbers && compactUpdateFrame <= 4) updateCompactNumbers();
 			}
 
 			nps = 0;
@@ -3637,7 +3593,6 @@ class PlayState extends MusicBeatState
 				oppNotesHitDateArray.splice(0, oppNotesToRemoveCount);
 				oppNotesHitArray.splice(0, oppNotesToRemoveCount);
 				if (ClientPrefs.ratingCounter && judgeCountUpdateFrame <= 4 && judgementCounter != null) updateRatingCounter();
-					if (ClientPrefs.compactNumbers && compactUpdateFrame <= 4) updateCompactNumbers();
 			}
 
 			oppNPS = 0;
@@ -3666,7 +3621,6 @@ class PlayState extends MusicBeatState
 			if (npsIncreased || npsDecreased || oppNpsIncreased || oppNpsDecreased) {
 				if (ClientPrefs.ratingCounter && judgeCountUpdateFrame <= 8 && judgementCounter != null) updateRatingCounter();
 				if (scoreTxtUpdateFrame <= 8 && scoreTxt != null) updateScore();
-					if (ClientPrefs.compactNumbers && compactUpdateFrame <= 8) updateCompactNumbers();
 				if (npsIncreased) npsIncreased = false;
 				if (npsDecreased) npsDecreased = false;
 				if (oppNpsIncreased) oppNpsIncreased = false;
@@ -3677,16 +3631,15 @@ class PlayState extends MusicBeatState
 		}
 
 		if (ClientPrefs.showcaseMode && !ClientPrefs.charsAndBG) {
-		hitTxt.text = 'Notes Hit: ' + FlxStringUtil.formatMoney(totalNotesPlayed, false) + ' / ' + FlxStringUtil.formatMoney(totalNotes, false)
-		+ '\nNPS: ' + FlxStringUtil.formatMoney(nps, false) + '/' + FlxStringUtil.formatMoney(maxNPS, false)
-		+ '\nOpponent Notes Hit: ' + FlxStringUtil.formatMoney(enemyHits, false)
-		+ '\nOpponent NPS: ' + FlxStringUtil.formatMoney(oppNPS, false) + '/' + FlxStringUtil.formatMoney(maxOppNPS, false)
-		+ '\nTotal Note Hits: ' + FlxStringUtil.formatMoney(Math.abs(totalNotesPlayed + enemyHits), false)
+		hitTxt.text = 'Notes Hit: ' + formatNumber(totalNotesPlayed) + ' / ' + formatNumber(totalNotes)
+		+ '\nNPS: ' + formatNumber(nps) + '/' + formatNumber(maxNPS)
+		+ '\nOpponent Notes Hit: ' + formatNumber(enemyHits) + ' / ' + formatNumber(opponentNoteTotal)
+		+ '\nOpponent NPS: ' + formatNumber(oppNPS) + '/' + formatNumber(maxOppNPS)
+		+ '\nTotal Note Hits: ' + formatNumber(Math.abs(totalNotesPlayed + enemyHits))
 		+ '\nVideo Speedup: ' + Math.abs(playbackRate / playbackRate / playbackRate) + 'x';
 		}
 
 		if (judgeCountUpdateFrame > 0) judgeCountUpdateFrame = 0;
-		if (compactUpdateFrame > 0) compactUpdateFrame = 0;
 		if (scoreTxtUpdateFrame > 0) scoreTxtUpdateFrame = 0;
 		if (iconBopsThisFrame > 0) iconBopsThisFrame = 0;
 		if (popUpsFrame > 0) popUpsFrame = 0;
@@ -4181,8 +4134,8 @@ class PlayState extends MusicBeatState
 
 		if (ClientPrefs.showRendered) 
 		{
-			if (!ffmpegMode) renderedTxt.text = 'Rendered/Skipped: ${FlxStringUtil.formatMoney(amountOfRenderedNotes, false)}/${FlxStringUtil.formatMoney(skippedCount, false)}/${FlxStringUtil.formatMoney(notes.members.length + sustainNotes.members.length, false)}/${FlxStringUtil.formatMoney(maxSkipped, false)}';
-			else renderedTxt.text = 'Rendered Notes: ${FlxStringUtil.formatMoney(amountOfRenderedNotes, false)}/${FlxStringUtil.formatMoney(maxRenderedNotes, false)}/${FlxStringUtil.formatMoney(notes.members.length + sustainNotes.members.length, false)}';
+			if (!ffmpegMode) renderedTxt.text = 'Rendered/Skipped: ${formatNumber(amountOfRenderedNotes)}/${formatNumber(skippedCount)}/${formatNumber(notes.members.length + sustainNotes.members.length)}/${formatNumber(maxSkipped)}';
+			else renderedTxt.text = 'Rendered Notes: ${formatNumber(amountOfRenderedNotes)}/${formatNumber(maxRenderedNotes)}/${formatNumber(notes.members.length + sustainNotes.members.length)}';
 		}
 
 		setOnLuas('cameraX', camFollowPos.x);
@@ -5444,25 +5397,25 @@ class PlayState extends MusicBeatState
 				{
 				case 'perfect':
 					judgeTxt.color = FlxColor.YELLOW;
-					judgeTxt.text = hitStrings[0] + '\n' + FlxStringUtil.formatMoney(combo, false);
+					judgeTxt.text = hitStrings[0] + '\n' + formatNumber(combo);
 				case 'sick':
 					judgeTxt.color = FlxColor.CYAN;
-					judgeTxt.text = hitStrings[1] + '\n' + FlxStringUtil.formatMoney(combo, false);
+					judgeTxt.text = hitStrings[1] + '\n' + formatNumber(combo);
 				case 'good':
 					judgeTxt.color = FlxColor.LIME;
-					judgeTxt.text = hitStrings[2] + '\n' + FlxStringUtil.formatMoney(combo, false);
+					judgeTxt.text = hitStrings[2] + '\n' + formatNumber(combo);
 				case 'bad':
 					judgeTxt.color = FlxColor.ORANGE;
-					judgeTxt.text = hitStrings[3] + '\n' + FlxStringUtil.formatMoney(combo, false);
+					judgeTxt.text = hitStrings[3] + '\n' + formatNumber(combo);
 				case 'shit':
 					judgeTxt.color = FlxColor.RED;
-					judgeTxt.text = hitStrings[4] + '\n' + FlxStringUtil.formatMoney(combo, false);
+					judgeTxt.text = hitStrings[4] + '\n' + formatNumber(combo);
 				default: judgeTxt.color = FlxColor.WHITE;
 				}
 				else
 				{
 					judgeTxt.color = FlxColor.fromRGB(204, 66, 66);
-					judgeTxt.text = hitStrings[5] + '\n' + FlxStringUtil.formatMoney(combo, false);
+					judgeTxt.text = hitStrings[5] + '\n' + formatNumber(combo);
 				}
 				judgeTxt.scale.x = 1.075;
 				judgeTxt.scale.y = 1.075;
@@ -5727,7 +5680,6 @@ class PlayState extends MusicBeatState
 			}
 			if (scoreTxtUpdateFrame <= 4 && scoreTxt != null) updateScore();
 			if (ClientPrefs.ratingCounter && judgeCountUpdateFrame <= 4) updateRatingCounter();
-		   		if (ClientPrefs.compactNumbers && compactUpdateFrame <= 4) updateCompactNumbers();
 
 			daNote.tooLate = true;
 
@@ -5775,7 +5727,6 @@ class PlayState extends MusicBeatState
 			}
 			if (scoreTxtUpdateFrame <= 4 && scoreTxt != null) updateScore();
 			if (ClientPrefs.ratingCounter && judgeCountUpdateFrame <= 4) updateRatingCounter();
-		   		if (ClientPrefs.compactNumbers && compactUpdateFrame <= 4) updateCompactNumbers();
 
 			callOnLuas('noteMiss', [null, daNoteAlt.noteData, daNoteAlt.noteType, daNoteAlt.isSustainNote]);
 		}
@@ -5818,7 +5769,6 @@ class PlayState extends MusicBeatState
 		}
 		if (scoreTxtUpdateFrame <= 4 && scoreTxt != null) updateScore();
 		if (ClientPrefs.ratingCounter && judgeCountUpdateFrame <= 4) updateRatingCounter();
-		   	if (ClientPrefs.compactNumbers && compactUpdateFrame <= 4) updateCompactNumbers();
 		callOnLuas('noteMissPress', [direction]);
 	}
 
@@ -6079,7 +6029,6 @@ class PlayState extends MusicBeatState
 
 				if (ClientPrefs.ratingCounter && judgeCountUpdateFrame <= 4) updateRatingCounter();
 				if (scoreTxtUpdateFrame <= 4) updateScore();
-		   			if (ClientPrefs.compactNumbers && compactUpdateFrame <= 4) updateCompactNumbers();
 				if (ClientPrefs.iconBopWhen == 'Every Note Hit' && (iconBopsThisFrame <= 2 || ClientPrefs.noBopLimit) && !note.isSustainNote && iconP1.visible) bopIcons(!oppTrigger);
 			}
 			return;
@@ -6226,7 +6175,6 @@ class PlayState extends MusicBeatState
 			}
 			if (ClientPrefs.ratingCounter && judgeCountUpdateFrame <= 4) updateRatingCounter();
 			if (scoreTxtUpdateFrame <= 4) updateScore();
-		   	if (ClientPrefs.compactNumbers && compactUpdateFrame <= 4) updateCompactNumbers();
 
 			if (shouldDrainHealth && health > (healthDrainFloor * polyphony) && !practiceMode || opponentDrain && practiceMode)
 				health -= (opponentDrain ? daNote.hitHealth : healthDrainAmount) * hpDrainLevel * polyphony;
@@ -6237,7 +6185,6 @@ class PlayState extends MusicBeatState
 				camHUD.shake(oppChar.shakeIntensity / 2, oppChar.shakeDuration / playbackRate);
 			}
 			if (ClientPrefs.ratingCounter && judgeCountUpdateFrame <= 4) updateRatingCounter();
-		   		if (ClientPrefs.compactNumbers && compactUpdateFrame <= 4) updateCompactNumbers();
 			if (ClientPrefs.iconBopWhen == 'Every Note Hit' && (iconBopsThisFrame <= 2 || ClientPrefs.noBopLimit) && !daNote.isSustainNote && iconP2.visible) bopIcons(opponentChart);
 		}
 		if (noteAlt != null)
@@ -6286,7 +6233,6 @@ class PlayState extends MusicBeatState
 
 				if (ClientPrefs.ratingCounter && judgeCountUpdateFrame <= 4) updateRatingCounter();
 				if (scoreTxtUpdateFrame <= 4) updateScore();
-		   		if (ClientPrefs.compactNumbers && compactUpdateFrame <= 4) updateCompactNumbers();
 
 				if (shouldDrainHealth && health > healthDrainFloor && !practiceMode || opponentDrain && practiceMode)
 					health -= (opponentDrain ? noteAlt.hitHealth : healthDrainAmount) * hpDrainLevel * polyphony;
@@ -6916,20 +6862,20 @@ class PlayState extends MusicBeatState
 		judgeCountUpdateFrame++;
 		if (!judgementCounter.visible) return;
 
-		formattedSongMisses = !ClientPrefs.compactNumbers ? FlxStringUtil.formatMoney(songMisses, false) : compactMisses;
-		formattedCombo = !ClientPrefs.compactNumbers ? FlxStringUtil.formatMoney(combo, false) : compactCombo;
-		formattedMaxCombo = !ClientPrefs.compactNumbers ? FlxStringUtil.formatMoney(maxCombo, false) : compactMaxCombo;
-		formattedNPS = !ClientPrefs.compactNumbers ? FlxStringUtil.formatMoney(nps, false) : compactNPS;
-		formattedMaxNPS = !ClientPrefs.compactNumbers ? FlxStringUtil.formatMoney(maxNPS, false) : formatCompactNumber(maxNPS);
-		formattedOppNPS = !ClientPrefs.compactNumbers ? FlxStringUtil.formatMoney(oppNPS, false) : formatCompactNumber(oppNPS);
-		formattedMaxOppNPS = !ClientPrefs.compactNumbers ? FlxStringUtil.formatMoney(maxOppNPS, false) : formatCompactNumber(maxOppNPS);
-		formattedEnemyHits = !ClientPrefs.compactNumbers ? FlxStringUtil.formatMoney(enemyHits, false) : formatCompactNumber(enemyHits);
+		formattedSongMisses = formatNumber(songMisses);
+		formattedCombo = formatNumber(combo);
+		formattedMaxCombo = formatNumber(maxCombo);
+		formattedNPS = formatNumber(nps);
+		formattedMaxNPS = formatNumber(maxNPS);
+		formattedOppNPS = formatNumber(oppNPS);
+		formattedMaxOppNPS = formatNumber(maxOppNPS);
+		formattedEnemyHits = formatNumber(enemyHits);
 
-		final hittingStuff = (!ClientPrefs.lessBotLag && ClientPrefs.showComboInfo && !cpuControlled ? 'Combo (Max): $formattedCombo ($formattedMaxCombo)\n' : '') + 'Hits: ' + (!ClientPrefs.compactNumbers ? FlxStringUtil.formatMoney(totalNotesPlayed, false) : compactTotalPlays) + ' / ' + FlxStringUtil.formatMoney(totalNotes, false) + ' (' + FlxMath.roundDecimal((totalNotesPlayed/totalNotes) * 100, 2) + '%)';
+		final hittingStuff = (!ClientPrefs.lessBotLag && ClientPrefs.showComboInfo && !cpuControlled ? 'Combo: $formattedCombo/${formattedMaxCombo}\n' : '') + 'Hits: ' + formatNumber(totalNotesPlayed) + ' / ' + formatNumber(totalNotes) + ' (' + FlxMath.roundDecimal((totalNotesPlayed/totalNotes) * 100, 2) + '%)';
 		final ratingCountString = (!cpuControlled || cpuControlled && !ClientPrefs.lessBotLag ? '\n' + (!ClientPrefs.noMarvJudge ? judgeCountStrings[0] + '!!!: $perfects \n' : '') + judgeCountStrings[1] + '!!: $sicks \n' + judgeCountStrings[2] + '!: $goods \n' + judgeCountStrings[3] + ': $bads \n' + judgeCountStrings[4] + ': $shits \n' + judgeCountStrings[5] + ': $formattedSongMisses ' : '');
 		judgementCounter.text = hittingStuff + ratingCountString;
 		judgementCounter.text += (ClientPrefs.showNPS ? '\nNPS: ' + formattedNPS + '/' + formattedMaxNPS : '');
-		if (ClientPrefs.opponentRateCount) judgementCounter.text += '\n\nOpponent Hits: ' + formattedEnemyHits + ' / ' + FlxStringUtil.formatMoney(opponentNoteTotal, false) + ' (' + FlxMath.roundDecimal((enemyHits / opponentNoteTotal) * 100, 2) + '%)'
+		if (ClientPrefs.opponentRateCount) judgementCounter.text += '\n\nOpponent Hits: ' + formattedEnemyHits + ' / ' + formatNumber(opponentNoteTotal) + ' (' + FlxMath.roundDecimal((enemyHits / opponentNoteTotal) * 100, 2) + '%)'
 		+ (ClientPrefs.showNPS ? '\nOpponent NPS: ' + formattedOppNPS + '/' + formattedMaxOppNPS : '');
 	}
 
@@ -7018,8 +6964,6 @@ class PlayState extends MusicBeatState
 				updateRatingCounter();
 			if (scoreTxt != null)
 				updateScore(badHit);
-			if (ClientPrefs.compactNumbers)
-				updateCompactNumbers();
 		}
 
 		setOnLuas('rating', ratingPercent);

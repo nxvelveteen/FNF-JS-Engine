@@ -203,13 +203,6 @@ class VisualsUISubState extends BaseOptionsMenu
 			false);
 		addOption(option);
 
-		var option:Option = new Option('Compact UI Numbers',
-			'If checked, Score, combo, misses and NPS will be compact.',
-			'compactNumbers',
-			'bool',
-			false);
-		addOption(option);
-
 		var option:Option = new Option('ScoreTxt Size: ',
 			"Sets the size of scoreTxt. Logically, higher values mean\nthe scoreTxt is bigger. If set to 0, then it will\nuse the default size for each HUD type.",
 			'scoreTxtSize',
