@@ -79,29 +79,22 @@ class FPSCounter extends TextField
         updateText();
         deltaTimeout += deltaTime;
 
-		if (!ClientPrefs.ffmpegMode)
+		if (ClientPrefs.rainbowFPS)
 		{
-    		if (ClientPrefs.rainbowFPS)
-    		{
-                timeColor = (timeColor % 360.0) + 1.0;
-                textColor = FlxColor.fromHSB(timeColor, 1, 1);
-    		}
-			else
-			{
-				textColor = 0xFFFFFFFF;
-				if (currentFPS <= ClientPrefs.framerate / 2 && currentFPS >= ClientPrefs.framerate / 3)
-				{
-					textColor = 0xFFFFFF00;
-				}
-				if (currentFPS <= ClientPrefs.framerate / 3 && currentFPS >= ClientPrefs.framerate / 4)
-				{
-					textColor = 0xFFFF8000;
-				}
-				if (currentFPS <= ClientPrefs.framerate / 4)
-				{
-					textColor = 0xFFFF0000;
-				}
-			}
+			timeColor = (timeColor % 360.0) + (1.0 / (ClientPrefs.framerate / 120));
+			textColor = FlxColor.fromHSB(timeColor, 1, 1);
+		}
+		else if (!ClientPrefs.ffmpegMode)
+		{
+			textColor = 0xFFFFFFFF;
+			if (currentFPS <= ClientPrefs.framerate / 2 && currentFPS >= ClientPrefs.framerate / 3)
+				textColor = 0xFFFFFF00;
+
+			if (currentFPS <= ClientPrefs.framerate / 3 && currentFPS >= ClientPrefs.framerate / 4)
+				textColor = 0xFFFF8000;
+				
+			if (currentFPS <= ClientPrefs.framerate / 4)
+				textColor = 0xFFFF0000;
 		}
 	}
 
