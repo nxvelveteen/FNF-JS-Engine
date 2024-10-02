@@ -1031,7 +1031,7 @@ class PlayState extends MusicBeatState
 				timeBarBG.y = timeTxt.y + (timeTxt.height / 8);
 				timeBarBG.scrollFactor.set();
 				timeBarBG.alpha = 0;
-				timeBarBG.visible = showTime;
+				timeBarBG.visible = showTime && !ClientPrefs.timeBarType.contains('(No Bar)');
 				timeBarBG.color = FlxColor.BLACK;
 				timeBarBG.xAdd = -4;
 				timeBarBG.yAdd = -4;
@@ -1044,7 +1044,7 @@ class PlayState extends MusicBeatState
 				timeBar.createFilledBar(FlxColor.BLACK, FlxColor.WHITE);
 				timeBar.numDivisions = 400; //How much lag this causes?? Should i tone it down to idk, 400 or 200?
 				timeBar.alpha = 0;
-				timeBar.visible = showTime;
+				timeBar.visible = showTime && !ClientPrefs.timeBarType.contains('(No Bar)');
 				add(timeBar);
 				timeBarBG.sprTracker = timeBar;
 
@@ -1058,7 +1058,7 @@ class PlayState extends MusicBeatState
 				timeBarBG.y = timeTxt.y + (timeTxt.height / 8);
 				timeBarBG.scrollFactor.set();
 				timeBarBG.alpha = 0;
-				timeBarBG.visible = showTime;
+				timeBarBG.visible = showTime && !ClientPrefs.timeBarType.contains('(No Bar)');
 				timeBarBG.color = FlxColor.BLACK;
 				timeBarBG.xAdd = -4;
 				timeBarBG.yAdd = -4;
@@ -1071,7 +1071,7 @@ class PlayState extends MusicBeatState
 				timeBar.createFilledBar(FlxColor.GRAY, FlxColor.LIME);
 				timeBar.numDivisions = 800; //How much lag this causes?? Should i tone it down to idk, 400 or 200?
 				timeBar.alpha = 0;
-				timeBar.visible = showTime;
+				timeBar.visible = showTime && !ClientPrefs.timeBarType.contains('(No Bar)');
 				add(timeBar);
 				timeBarBG.sprTracker = timeBar;
 
@@ -1085,7 +1085,7 @@ class PlayState extends MusicBeatState
 				timeBarBG.y = timeTxt.y + (timeTxt.height / 4);
 				timeBarBG.antialiasing = true;
 				timeBarBG.scrollFactor.set();
-				timeBarBG.visible = showTime;
+				timeBarBG.visible = showTime && !ClientPrefs.timeBarType.contains('(No Bar)');
 				timeBarBG.xAdd = -4;
 				timeBarBG.yAdd = -4;
 				add(timeBarBG);
@@ -1095,7 +1095,7 @@ class PlayState extends MusicBeatState
 				timeBar.scrollFactor.set();
 				timeBar.numDivisions = 800; //How much lag this causes?? Should i tone it down to idk, 400 or 200?
 				timeBar.alpha = 0;
-				timeBar.visible = showTime;
+				timeBar.visible = showTime && !ClientPrefs.timeBarType.contains('(No Bar)');
 				timeBarBG.sprTracker = timeBar;
 				timeBar.createFilledBar(FlxColor.GRAY, FlxColor.fromRGB(57, 255, 20));
 				insert(members.indexOf(timeBarBG), timeBar);
@@ -1116,7 +1116,7 @@ class PlayState extends MusicBeatState
 				timeBarBG.y = timeTxt.y + (timeTxt.height / 8);
 				timeBarBG.scrollFactor.set();
 				timeBarBG.alpha = 0;
-				timeBarBG.visible = showTime;
+				timeBarBG.visible = showTime && !ClientPrefs.timeBarType.contains('(No Bar)');
 				timeBarBG.color = FlxColor.BLACK;
 				timeBarBG.xAdd = -4;
 				timeBarBG.yAdd = -4;
@@ -1128,7 +1128,7 @@ class PlayState extends MusicBeatState
 				timeBar.scrollFactor.set();
 				timeBar.numDivisions = 1000; //How much lag this causes?? Should i tone it down to idk, 400 or 200?
 				timeBar.alpha = 0;
-				timeBar.visible = showTime;
+				timeBar.visible = showTime && !ClientPrefs.timeBarType.contains('(No Bar)');
 				timeBarBG.sprTracker = timeBar;
 				timeBar.createGradientBar([FlxColor.TRANSPARENT], [FlxColor.fromRGB(boyfriend.healthColorArray[0], boyfriend.healthColorArray[1], boyfriend.healthColorArray[2]), FlxColor.fromRGB(dad.healthColorArray[0], dad.healthColorArray[1], dad.healthColorArray[2])]);
 			add(timeBar);
@@ -5391,8 +5391,7 @@ class PlayState extends MusicBeatState
 				judgeTxt.cameras = [camHUD];
 				judgeTxt.visible = true;
 				judgeTxt.screenCenter(X);
-				if (botplayTxt != null)
-					judgeTxt.y = !ClientPrefs.downScroll ? botplayTxt.y + 60 : botplayTxt.y - 60;
+				if (botplayTxt != null) judgeTxt.y = !ClientPrefs.downScroll ? botplayTxt.y + 60 : botplayTxt.y - 60;
 				judgeTxt.alpha = 1;
 				if (!miss) switch (daRating.name)
 				{
