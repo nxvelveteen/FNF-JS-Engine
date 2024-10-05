@@ -407,7 +407,7 @@ class PauseSubState extends MusicBeatSubstate
 
 	override function destroy()
 	{
-		pauseMusic.destroy();
+		if (pauseMusic != null) pauseMusic.destroy();
 		if (PlayState != null) MusicBeatState.windowNameSuffix = " - " + PlayState.SONG.song + " " + (PlayState.isStoryMode ? "(Story Mode)" : "(Freeplay)");
 
 		super.destroy();
