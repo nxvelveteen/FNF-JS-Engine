@@ -15,7 +15,7 @@ THIS NOT THE JS ENGINE BASE REPO. THIS BRANCH MADE BY [mcagabe19](https://github
 
 README.md revamped by [Nael2xd](https://youtube.com/@nael2xd?si=axwJrY_8jdlXUwSm)
 
-_If you're looking for the deskto version, [go here!](https://github.com/JordanSantiagoYT/FNF-JS-Engine)_
+_If you're looking for the desktop version, [go here!](https://github.com/JordanSantiagoYT/FNF-JS-Engine)_
 
 ## Welcome
 
