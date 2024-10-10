@@ -19,10 +19,12 @@ class StartupState extends MusicBeatState
 	var logo:FlxSprite;
 	var skipTxt:FlxText;
 
-	var theIntro:Int = FlxG.random.int(0, #if VIDEOS_ALLOWED 2 #else 1 #end);
+	var maxIntros:Int = 2;
 
 	override public function create():Void
 	{
+		#if VIDEOS_ALLOWED maxIntros += 1; #end
+		var theIntro:Int = FlxG.random.int(0, maxIntros);
 		FlxTransitionableState.skipNextTransIn = true;
 		FlxTransitionableState.skipNextTransOut = true;
 		logo = new FlxSprite().loadGraphic(Paths.image('sillyLogo', 'splash'));
@@ -60,6 +62,13 @@ class StartupState extends MusicBeatState
 					logo.screenCenter();
 					FlxTween.tween(logo, {alpha: 1, "scale.x": 1, "scale.y": 1}, 1.35, {ease: FlxEase.expoOut, onComplete: _ -> onIntroDone()});
 				case 2:
+					FlxG.sound.play(Paths.sound('screwedEngine', 'splash'));
+					logo.loadGraphic(Paths.image('ScrewedLogo', 'splash'));
+					logo.scale.set(0.1,0.1);
+					logo.updateHitbox();
+					logo.screenCenter();
+					FlxTween.tween(logo, {alpha: 1, "scale.x": 1, "scale.y": 1}, 1.35, {ease: FlxEase.expoOut, onComplete: _ -> onIntroDone(0.6)});
+				case 3:
 					#if VIDEOS_ALLOWED
 						var vidSprite = new MP4Handler(); // it plays but it doesn't show???
 						#if (hxCodec < "3.0.0")
@@ -82,8 +91,9 @@ class StartupState extends MusicBeatState
 		super.create();
 	}
 
-	function onIntroDone() {
+	function onIntroDone(?fadeDelay:Float = 0) {
 		FlxTween.tween(logo, {alpha: 0}, 1, {
+			startDelay: fadeDelay,
 			ease: FlxEase.linear,
 			onComplete: function(_) {
 				FlxG.switchState(TitleState.new);

@@ -34,8 +34,6 @@ import flixel.util.FlxSave;
 import flixel.addons.transition.FlxTransitionableState;
 import flixel.system.FlxAssets.FlxShader;
 import Shaders;
-import WiggleEffect;
-import WiggleEffect.WiggleEffectType;
 
 #if (!flash && sys)
 import flixel.addons.display.FlxRuntimeShader;
@@ -1685,10 +1683,10 @@ class FunkinLua {
 			if(!color.startsWith('0x')) colorNum = Std.parseInt('0xff' + color);
 			cameraFromString(camera).flash(colorNum, duration / PlayState.instance.playbackRate,null,forced);
 		});
-		Lua_helper.add_callback(lua, "cameraFade", function(camera:String, color:String, duration:Float,forced:Bool) {
+		Lua_helper.add_callback(lua, "cameraFade", function(camera:String, color:String, duration:Float, forced:Bool, ?fadeOut:Bool = false) {
 			var colorNum:Int = Std.parseInt(color);
 			if(!color.startsWith('0x')) colorNum = Std.parseInt('0xff' + color);
-			cameraFromString(camera).fade(colorNum, duration / PlayState.instance.playbackRate,false,null,forced);
+			cameraFromString(camera).fade(colorNum, duration / PlayState.instance.playbackRate, fadeOut, null, forced);
 		});
 		Lua_helper.add_callback(lua, "setRatingPercent", function(value:Float) {
 			PlayState.instance.ratingPercent = value;
@@ -2815,15 +2813,9 @@ class FunkinLua {
 			cameraFromString(cameraName).filters = [];
 		});	
 				
-		Lua_helper.add_callback(lua, "addWiggleEffect", function(camera:String, effectType:WiggleEffectType, waveSpeed:Float = 0.1,waveFrq:Float = 0.1,waveAmp:Float = 0.1, ?verticalStrength:Float = 1, ?horizontalStrength:Float = 1) {
-			
-			if (effectType != HEAT_WAVE_BOTH) PlayState.instance.addShaderToCamera(camera, new WiggleEffect(effectType, waveSpeed, waveFrq, waveAmp));
-			else
-			{
-				PlayState.instance.addShaderToCamera(camera, new WiggleEffect(HEAT_WAVE_VERTICAL, waveSpeed * verticalStrength,waveFrq * verticalStrength,waveAmp * verticalStrength));
-				PlayState.instance.addShaderToCamera(camera, new WiggleEffect(HEAT_WAVE_HORIZONTAL, waveSpeed * horizontalStrength,waveFrq * horizontalStrength,waveAmp * horizontalStrength));
-			}
-			
+		Lua_helper.add_callback(lua, "addWiggleEffect", function(camera:String, effectType:String, waveSpeed:Float = 0.1,waveFrq:Float = 0.1,waveAmp:Float = 0.1, ?verticalStrength:Float = 1, ?horizontalStrength:Float = 1) {
+			PlayState.instance.addShaderToCamera(camera, new WiggleEffectLua(effectType, waveSpeed, waveFrq, waveAmp,
+				verticalStrength, horizontalStrength));
 		});	
 		Lua_helper.add_callback(lua, "addGlitchEffect", function(camera:String,waveSpeed:Float = 0.1,waveFrq:Float = 0.1,waveAmp:Float = 0.1) {	
 			PlayState.instance.addShaderToCamera(camera, new GlitchEffect(waveSpeed,waveFrq,waveAmp));

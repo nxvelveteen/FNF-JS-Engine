@@ -25,7 +25,7 @@ This contains lots and lots of customizable and features built in to JS Engine, 
 
 # Features/Performances in JS ENGINE
 
-**This fork has tons of features and performances features, most will be listed:
+**This fork has tons of features and performances features, most will be listed:**
 
 - No BotPlay lag!
 - Faster Song Loading!
