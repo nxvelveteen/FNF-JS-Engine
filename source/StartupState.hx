@@ -23,7 +23,7 @@ class StartupState extends MusicBeatState
 
 	override public function create():Void
 	{
-		#if VIDEOS_ALLOWED maxIntros += 1; #end
+		#if VIDEOS_ALLOWED maxIntros += 2; #end
 		var theIntro:Int = FlxG.random.int(0, maxIntros);
 		FlxTransitionableState.skipNextTransIn = true;
 		FlxTransitionableState.skipNextTransOut = true;
@@ -79,6 +79,23 @@ class StartupState extends MusicBeatState
 						};
 						#else
 						vidSprite.play(Paths.video('bambiStartup'));
+						vidSprite.onEndReached.add(function(){
+							vidSprite.dispose();
+							FlxG.switchState(TitleState.new);
+						});
+						#end
+					#end
+				case 4:
+					#if VIDEOS_ALLOWED
+						var vidSprite = new MP4Handler(); // it plays but it doesn't show???
+						#if (hxCodec < "3.0.0")
+						vidSprite.playVideo(Paths.video('broCopiedDenpa'), false, false);
+						vidSprite.finishCallback = function()
+						{
+							FlxG.switchState(TitleState.new);
+						};
+						#else
+						vidSprite.play(Paths.video('broCopiedDenpa'));
 						vidSprite.onEndReached.add(function(){
 							vidSprite.dispose();
 							FlxG.switchState(TitleState.new);
