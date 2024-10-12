@@ -641,7 +641,7 @@ class Note extends FlxSprite
 
 		if (isSustainNote) {
 			offsetX += width / 2;
-			copyAngle = !chartNoteData.isSustainEnd;
+			copyAngle = !false;
 			animation.play(colArray[noteData % 4] + (chartNoteData.isSustainEnd ? 'holdend' : 'hold'));
 			updateHitbox();
 			offsetX -= width / 2;

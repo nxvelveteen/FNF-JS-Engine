@@ -5460,7 +5460,8 @@ class PlayState extends MusicBeatState
 					if (plrInputNotes.length > 1) {
 						var doubleNote:Note = plrInputNotes[1];
 
-						if (doubleNote.noteData == funnyNote.noteData) {
+						//if the note has the same notedata and doOppStuff indicator as funnynote, then do the check
+						if (doubleNote.noteData == funnyNote.noteData && doubleNote.doOppStuff == funnyNote.doOppStuff) {
 							// if the note has a 0ms distance (is on top of the current note), kill it
 							if (Math.abs(doubleNote.strumTime - funnyNote.strumTime) < 1.0)
 								invalidateNote(doubleNote);
@@ -5470,6 +5471,7 @@ class PlayState extends MusicBeatState
 								funnyNote = doubleNote;
 							}
 						}
+						else goodNoteHit(doubleNote); //otherwise, hit doubleNote instead of killing it
 					}
 					goodNoteHit(funnyNote);
 					if (plrInputNotes.length > 2 && ClientPrefs.ezSpam) //literally all you need to allow you to spam though impossibly hard jacks
