@@ -268,50 +268,7 @@ class VisualsUISubState extends BaseOptionsMenu
 				ratingQuoteList);
 			addOption(option);
 		}
-
-		var option:Option = new Option('Rating Accuracy Color',
-			'If checked, the ratings & combo will be colored based on the actual rating.',
-			'colorRatingHit',
-			'bool',
-			true);
-		addOption(option);
-
-		var option:Option = new Option('Perfect Rating Color:',
-			"What should the Perfect Rating Color be?",
-			'marvRateColor',
-			'string',
-			'Golden',
-			['Golden', 'Rainbow']);
-		addOption(option);
-
-		var option:Option = new Option('Health Tweening',
-			"If checked, the health will adjust smoothly.",
-			'smoothHealth',
-			'bool',
-			true);
-		addOption(option);
-
-		var option:Option = new Option('Smooth Health Bug',
-			'This was too cool to be removed, apparently.\nIf checked the icons will be able to go past the normal boundaries of the health bar.',
-			'smoothHPBug',
-			'bool',
-			false);
-		addOption(option);
-
-		var option:Option = new Option('No Icon Bop Limiter',
-			'Another comedic option that is hilarious when turned on.\nWhen enabled, disables the Icon Bop limiter which..\nleads to some interesting visuals when spam happens.',
-			'noBopLimit',
-			'bool',
-			false);
-		addOption(option);
-
-		var option:Option = new Option('OG HP Colors',
-			'If checked, the health bar will globally use Red/Green as the colors.',
-			'ogHPColor',
-			'bool',
-			false);
-		addOption(option);
-		
+				
 		var option:Option = new Option('Time Bar:',
 			"What should the Time Bar display?",
 			'timeBarType',
@@ -384,12 +341,26 @@ class VisualsUISubState extends BaseOptionsMenu
 			['Default', 'VS Nonsense V2', 'Leather Engine', 'Doki Doki+', "Mic'd Up", 'FPS Plus', 'SB Engine', "OS 'Engine'"]);
 		addOption(option);
 
-		var option:Option = new Option('Rating Style:',
-			"Which style for the rating popups would you like?",
-			'ratingType',
-			'string',
-			'Base FNF',
-			['Base FNF', 'Kade Engine', 'Tails Gets Trolled V4', 'Doki Doki+', 'NMCW', 'VS Impostor', 'FIRE IN THE HOLE', 'Yeahs', 'Simple']);
+		var ratingSpriteList:Array<String> = Paths.mergeAllTextsNamed('images/ratings/list.txt', null, true);
+		if (ratingSpriteList.length > 0)
+		{
+			ratingSpriteList.insert(0, 'Default'); //Default skin always comes first
+			if (!ratingSpriteList.contains(ClientPrefs.ratingType))
+				ClientPrefs.ratingType = ratingSpriteList[0];
+			var option:Option = new Option('Rating Style:',
+				"Which style for the rating popups would you like?",
+				'ratingType',
+				'string',
+				'Default',
+				ratingSpriteList);
+			addOption(option);
+		}
+
+		var option:Option = new Option('Simple Rating Popups',
+			"If checked, the rating popup will be a much simpler popup.\nEasy on the eyes, and less clutter for the HUD!",
+			'simplePopups',
+			'bool',
+			false);
 		addOption(option);
 
 		var option:Option = new Option('Icon Bounce:',
@@ -398,6 +369,41 @@ class VisualsUISubState extends BaseOptionsMenu
 			'string',
 			'Golden Apple',
 			['Golden Apple', 'Dave and Bambi', 'Old Psych', 'New Psych', 'VS Steve', 'Plank Engine', 'Strident Crisis', 'SB Engine', 'None']);
+		addOption(option);
+
+		var option:Option = new Option('Rating Accuracy Color',
+			'If checked, the ratings & combo will be colored based on the actual rating.',
+			'colorRatingHit',
+			'bool',
+			true);
+		addOption(option);
+
+		var option:Option = new Option('Health Tweening',
+			"If checked, the health will adjust smoothly.",
+			'smoothHealth',
+			'bool',
+			true);
+		addOption(option);
+
+		var option:Option = new Option('Smooth Health Bug',
+			'This was too cool to be removed, apparently.\nIf checked the icons will be able to go past the normal boundaries of the health bar.',
+			'smoothHPBug',
+			'bool',
+			false);
+		addOption(option);
+
+		var option:Option = new Option('No Icon Bop Limiter',
+			'Another comedic option that is hilarious when turned on.\nWhen enabled, disables the Icon Bop limiter which..\nleads to some interesting visuals when spam happens.',
+			'noBopLimit',
+			'bool',
+			false);
+		addOption(option);
+
+		var option:Option = new Option('OG HP Colors',
+			'If checked, the health bar will globally use Red/Green as the colors.',
+			'ogHPColor',
+			'bool',
+			false);
 		addOption(option);
 
 		var option:Option = new Option('Opponent Note Hit Count',

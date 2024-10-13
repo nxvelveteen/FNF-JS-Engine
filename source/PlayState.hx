@@ -233,8 +233,8 @@ class PlayState extends MusicBeatState
 	public var opponentNoteTotal:Float = 0;
 	public var polyphony(default, set):Float = 1;
 
-		var pixelShitPart1:String = "";
-		var pixelShitPart2:String = '';
+	var pixelShitPart1:String = "";
+	var pixelShitPart2:String = '';
 
 	public var oldNPS:Float = 0;
 	public var oldOppNPS:Float = 0;
@@ -620,14 +620,6 @@ class PlayState extends MusicBeatState
 		// String for when the game is paused
 		detailsPausedText = "BRB! - " + detailsText;
 		#end
-
-		final map = backend.RatingStuff.ratingsMap;
-		if (map != null && map.exists(ClientPrefs.ratingType))
-			fcStrings = (map.get(ClientPrefs.ratingType).fc != null) ? map.get(ClientPrefs.ratingType).fc : [
-				'No Play', 'PFC', 'SFC', 'GFC', 'BFC', 'FC', 'SDCB', 'Clear', 'TDCB', 'QDCB'
-			];
-		if (map != null && map.exists(ClientPrefs.ratingType)) hitStrings = map.get(ClientPrefs.ratingType).hit;
-		if (map != null && map.exists(ClientPrefs.ratingType)) judgeCountStrings = map.get(ClientPrefs.ratingType).judgeCount;
 
 		GameOverSubstate.resetVariables();
 		songName = Paths.formatToSongPath(SONG.song);
@@ -1736,7 +1728,7 @@ class PlayState extends MusicBeatState
 		callOnLuas('onCreatePost');
 
 		cacheCountdown();
-		if (ClientPrefs.ratingType != 'Simple') cachePopUpScore();
+		cachePopUpScore();
 
 		super.create();
 		Paths.clearUnusedMemory();
@@ -5093,21 +5085,10 @@ class PlayState extends MusicBeatState
 			pixelShitPart2 = '-pixel';
 		}
 
-		switch (ClientPrefs.ratingType)
-		{
-			case 'NMCW': pixelShitPart1 = 'NMCW/';
-			case 'Doki Doki+': pixelShitPart1 = 'dokistuff/';
-			case 'Tails Gets Trolled V4': pixelShitPart1 = 'tgtstuff/';
-			case 'Kade Engine': pixelShitPart1 = 'kadethings/';
-			case 'VS Impostor': pixelShitPart1 = 'impostorratings/';
-			case 'Base FNF': pixelShitPart1 = '';
-			default: pixelShitPart1 = ClientPrefs.ratingType.toLowerCase().replace(' ', '').trim() + '/';
-		}
-		//cache gold ratings..
-		Paths.image('goldstuff/' + "perfect" + pixelShitPart2);
-		for (i in 0...10) Paths.image('goldstuff/' + 'num' + i + pixelShitPart2);
+		var normalRating:String = 'ratings/' + ClientPrefs.ratingType.toLowerCase().replace(' ', '-').trim() + '/';
 
-		//then normal/pixel ratings
+		pixelShitPart1 += normalRating;
+
 		Paths.image(pixelShitPart1 + "perfect" + pixelShitPart2);
 		Paths.image(pixelShitPart1 + "sick" + pixelShitPart2);
 		Paths.image(pixelShitPart1 + "good" + pixelShitPart2);
@@ -5116,6 +5097,14 @@ class PlayState extends MusicBeatState
 		Paths.image(pixelShitPart1 + "miss" + pixelShitPart2);
 
 		for (i in 0...10) Paths.image(pixelShitPart1 + 'num' + i + pixelShitPart2);
+		if (Paths.fileExists('images/${normalRating}' + 'hitStrings.txt', TEXT))
+			hitStrings = Paths.mergeAllTextsNamed('images/${normalRating}' + 'hitStrings.txt', null, false);
+
+		if (Paths.fileExists('images/${normalRating}' + 'fcStrings.txt', TEXT))
+			fcStrings = Paths.mergeAllTextsNamed('images/${normalRating}' + 'fcStrings.txt', null, false);
+
+		if (Paths.fileExists('images/${normalRating}' + 'judgeCountStrings.txt', TEXT))
+			judgeCountStrings = Paths.mergeAllTextsNamed('images/${normalRating}' + 'judgeCountStrings.txt', null, false);
 	}
 
 	private function popUpScore(note:Note = null, ?miss:Bool = false):Void
@@ -5185,26 +5174,7 @@ class PlayState extends MusicBeatState
 			}
 		}
 
-			if (ClientPrefs.ratingPopups && ClientPrefs.ratingType != 'Simple' && popUpsFrame <= 3) {
-				if (PlayState.isPixelStage)
-				{
-					pixelShitPart1 = 'pixelUI/';
-					pixelShitPart2 = '-pixel';
-				}
-				switch (ClientPrefs.ratingType)
-				{
-					case 'NMCW': pixelShitPart1 = 'NMCW/';
-					case 'Doki Doki+': pixelShitPart1 = 'dokistuff/';
-					case 'Tails Gets Trolled V4': pixelShitPart1 = 'tgtstuff/';
-					case 'Kade Engine': pixelShitPart1 = 'kadethings/';
-					case 'VS Impostor': pixelShitPart1 = 'impostorratings/';
-					case 'Base FNF': pixelShitPart1 = '';
-					default: pixelShitPart1 = ClientPrefs.ratingType.toLowerCase().replace(' ', '').trim() + '/';
-				}
-				if (ClientPrefs.marvRateColor == 'Golden' && noteDiff < ClientPrefs.sickWindow && ClientPrefs.ratingType != 'Tails Gets Trolled V4' && ClientPrefs.ratingType != 'Doki Doki+' && !ClientPrefs.noMarvJudge)
-				{
-					pixelShitPart1 = 'goldstuff/';
-				}
+			if (ClientPrefs.ratingPopups && !ClientPrefs.simplePopups && popUpsFrame <= 3) {
 				final rating = new FlxSprite().loadGraphic(Paths.image(pixelShitPart1 + daRating.image + pixelShitPart2));
 				rating.cameras = [camHUD];
 				rating.screenCenter();
@@ -5216,18 +5186,15 @@ class PlayState extends MusicBeatState
 				rating.visible = (!ClientPrefs.hideHud && showRating);
 				rating.x += ClientPrefs.comboOffset[0];
 				rating.y -= ClientPrefs.comboOffset[1];
-				if (!miss)
+				if (!miss && ClientPrefs.colorRatingHit)
 				{
-					if (ClientPrefs.colorRatingHit && ClientPrefs.ratingType != 'Tails Gets Trolled V4' && ClientPrefs.ratingType != 'Doki Doki+' && !miss)
+					switch (daRating.name) //This is so stupid, but it works
 					{
-						switch (daRating.name) //This is so stupid, but it works
-						{
 						case 'sick':  rating.color = FlxColor.CYAN;
 						case 'good': rating.color = FlxColor.LIME;
 						case 'bad': rating.color = FlxColor.ORANGE;
 						case 'shit': rating.color = FlxColor.RED;
 						default: rating.color = FlxColor.WHITE;
-						}
 					}
 				}
 				insert(members.indexOf(strumLineNotes), rating);
@@ -5263,7 +5230,7 @@ class PlayState extends MusicBeatState
 				}
 			}
 
-			if (ClientPrefs.comboPopups && ClientPrefs.ratingType != 'Simple' && popUpsFrame <= 3)
+			if (ClientPrefs.comboPopups && !ClientPrefs.simplePopups && popUpsFrame <= 3)
 			{
 				final separatedScore:Array<Dynamic> = [];
 				if (combo < 0) {
@@ -5301,7 +5268,7 @@ class PlayState extends MusicBeatState
 					numScore.x += ClientPrefs.comboOffset[2];
 					numScore.y -= ClientPrefs.comboOffset[3];
 
-					if (ClientPrefs.colorRatingHit && ClientPrefs.ratingType != 'Tails Gets Trolled V4' && ClientPrefs.ratingType != 'Doki Doki+' && !miss)
+					if (ClientPrefs.colorRatingHit && !miss)
 					{
 						switch (daRating.name) //This is so stupid, but it works
 						{
@@ -5383,7 +5350,7 @@ class PlayState extends MusicBeatState
 				if (miss) msTxt.color = FlxColor.fromRGB(204, 66, 66);
 			}
 
-			if (ClientPrefs.ratingPopups && ClientPrefs.ratingType == 'Simple' && popUpsFrame <= 3 && !ClientPrefs.hideHud) {
+			if (ClientPrefs.ratingPopups && ClientPrefs.simplePopups && popUpsFrame <= 3 && !ClientPrefs.hideHud) {
 				FlxTween.cancelTweensOf(judgeTxt);
 				FlxTween.cancelTweensOf(judgeTxt.scale);
 				judgeTxt.cameras = [camHUD];
@@ -5958,22 +5925,25 @@ class PlayState extends MusicBeatState
 					final animToPlay:String = singAnimations[Std.int(Math.abs(note.noteData))];
 
 					playerChar = (doGf ? gf : (!oppTrigger ? boyfriend : dad));
-					playerChar.holdTimer = 0;
 					if (ClientPrefs.cameraPanning) inline camPanRoutine(animToPlay, (!oppTrigger ? 'bf' : 'oppt'));
-					inline playerChar.playAnim(animToPlay + note.animSuffix, true);
+					if (playerChar != null)
+					{
+						playerChar.holdTimer = 0;
+						inline playerChar.playAnim(animToPlay + note.animSuffix, true);
 
-					if(note.noteType == 'Hey!') {
-						playerChar = !doGf ? !oppTrigger ? boyfriend : dad : gf;
-						if(playerChar.animOffsets.exists('hey')) {
-							playerChar.playAnim('hey', true);
-							playerChar.specialAnim = true;
-							playerChar.heyTimer = 0.6;
-						}
+						if(note.noteType == 'Hey!') {
+							playerChar = !doGf ? !oppTrigger ? boyfriend : dad : gf;
+							if(playerChar.animOffsets.exists('hey')) {
+								playerChar.playAnim('hey', true);
+								playerChar.specialAnim = true;
+								playerChar.heyTimer = 0.6;
+							}
 
-						if(gf != null && gf.animOffsets.exists('cheer')) {
-							gf.playAnim('cheer', true);
-							gf.specialAnim = true;
-							gf.heyTimer = 0.6;
+							if(gf != null && gf.animOffsets.exists('cheer')) {
+								gf.playAnim('cheer', true);
+								gf.specialAnim = true;
+								gf.heyTimer = 0.6;
+							}
 						}
 					}
 				}
@@ -6872,7 +6842,7 @@ class PlayState extends MusicBeatState
 		formattedEnemyHits = formatNumber(enemyHits);
 
 		final hittingStuff = (!ClientPrefs.lessBotLag && ClientPrefs.showComboInfo && !cpuControlled ? 'Combo: $formattedCombo/${formattedMaxCombo}\n' : '') + 'Hits: ' + formatNumber(totalNotesPlayed) + ' / ' + formatNumber(totalNotes) + ' (' + FlxMath.roundDecimal((totalNotesPlayed/totalNotes) * 100, 2) + '%)';
-		final ratingCountString = (!cpuControlled || cpuControlled && !ClientPrefs.lessBotLag ? '\n' + (!ClientPrefs.noMarvJudge ? judgeCountStrings[0] + '!!!: $perfects \n' : '') + judgeCountStrings[1] + '!!: $sicks \n' + judgeCountStrings[2] + '!: $goods \n' + judgeCountStrings[3] + ': $bads \n' + judgeCountStrings[4] + ': $shits \n' + judgeCountStrings[5] + ': $formattedSongMisses ' : '');
+		final ratingCountString = (!cpuControlled || cpuControlled && !ClientPrefs.lessBotLag ? '\n' + (!ClientPrefs.noMarvJudge ? judgeCountStrings[0] + ': $perfects \n' : '') + judgeCountStrings[1] + ': $sicks \n' + judgeCountStrings[2] + ': $goods \n' + judgeCountStrings[3] + ': $bads \n' + judgeCountStrings[4] + ': $shits \n' + judgeCountStrings[5] + ': $formattedSongMisses ' : '');
 		judgementCounter.text = hittingStuff + ratingCountString;
 		judgementCounter.text += (ClientPrefs.showNPS ? '\nNPS: ' + formattedNPS + '/' + formattedMaxNPS : '');
 		if (ClientPrefs.opponentRateCount) judgementCounter.text += '\n\nOpponent Hits: ' + formattedEnemyHits + ' / ' + formatNumber(opponentNoteTotal) + ' (' + FlxMath.roundDecimal((enemyHits / opponentNoteTotal) * 100, 2) + '%)'

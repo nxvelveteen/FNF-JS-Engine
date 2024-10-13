@@ -69,12 +69,6 @@ class ClientPrefs { //default settings if it can't find a save file containing y
 	public static var cameraPanning:Bool = true;
 	public static var panIntensity:Float = 1;
 	public static var rateNameStuff:String = 'Quotes';
-	public static var colorRatingHit:Bool = true;
-	public static var marvRateColor:String = 'Golden';
-	public static var smoothHealth:Bool = true;
-	public static var smoothHPBug:Bool = false;
-	public static var noBopLimit:Bool = false;
-	public static var ogHPColor:Bool = false;
 	public static var timeBarType:String = 'Time Left';
 	public static var scoreStyle:String = 'Psych Engine';
 	public static var timeBarStyle:String = 'Vanilla';
@@ -85,7 +79,13 @@ class ClientPrefs { //default settings if it can't find a save file containing y
 	public static var strumLitStyle:String = 'Full Anim';
 	public static var bfIconStyle:String = 'Default';
 	public static var ratingType:String = 'Base FNF';
+	public static var simplePopups:Bool = false;
 	public static var iconBounceType:String = 'Golden Apple';
+	public static var colorRatingHit:Bool = true;
+	public static var smoothHealth:Bool = true;
+	public static var smoothHPBug:Bool = false;
+	public static var noBopLimit:Bool = false;
+	public static var ogHPColor:Bool = false;
 	public static var opponentRateCount:Bool = true;
 	public static var flashing:Bool = true;
 	public static var camZooms:Bool = true;
