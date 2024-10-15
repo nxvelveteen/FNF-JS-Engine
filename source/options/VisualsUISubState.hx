@@ -77,7 +77,7 @@ class VisualsUISubState extends BaseOptionsMenu
 				"Which note splash would you like?",
 				'splashType',
 				'string',
-				'Psych Engine',
+				'Default',
 				noteSplashList);
 			addOption(option);
 		}

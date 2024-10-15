@@ -2901,6 +2901,8 @@ class PlayState extends MusicBeatState
 		}
 		var currentBPMLol:Float = Conductor.bpm;
 		var currentMultiplier:Float = 1;
+		var gottaHitNote:Bool = false;
+		var swagNote:PreloadedChartNote;
 		for (section in noteData) {
 			if (section.changeBPM) currentBPMLol = section.bpm;
 
@@ -2913,22 +2915,19 @@ class PlayState extends MusicBeatState
 						firstNoteData = Std.int(songNotes[1] % 4);
 						assignedFirstData = true;
 					}
-					if (!randomMode && !flip && !stairs && !waves) {
-						daNoteData = Std.int(songNotes[1] % 4);
-					}
-					if (oneK) {
-						daNoteData = firstNoteData;
-					}
-					if (randomMode) {
-						daNoteData = FlxG.random.int(0, 3);
-					}
-					if (flip) {
-						daNoteData = Std.int(Math.abs((songNotes[1] % 4) - 3));
-					}
+					if (!randomMode && !flip && !stairs && !waves) daNoteData = Std.int(songNotes[1] % 4);
+
+					if (oneK) daNoteData = firstNoteData;
+
+					if (randomMode) daNoteData = FlxG.random.int(0, 3);
+
+					if (flip) daNoteData = Std.int(Math.abs((songNotes[1] % 4) - 3));
+
 					if (stairs && !waves) {
 						daNoteData = stair % 4;
 						stair++;
 					}
+
 					if (waves) {
 						switch (stair % 6) {
 							case 0 | 1 | 2 | 3:
@@ -2940,7 +2939,8 @@ class PlayState extends MusicBeatState
 						}
 						stair++;
 					}
-					final gottaHitNote:Bool = ((songNotes[1] < 4 && !opponentChart)
+					
+					gottaHitNote = ((songNotes[1] < 4 && !opponentChart)
 						|| (songNotes[1] > 3 && opponentChart) ? section.mustHitSection : !section.mustHitSection);
 
 					if ((bothSides || gottaHitNote) && songNotes[3] != 'Hurt Note') {
@@ -2973,7 +2973,7 @@ class PlayState extends MusicBeatState
 						multiChangeEvents[1].shift();
 					}
 		
-					final swagNote:PreloadedChartNote = cast {
+					swagNote = cast {
 						strumTime: daStrumTime,
 						noteData: daNoteData,
 						mustPress: bothSides || gottaHitNote,
@@ -2983,19 +2983,14 @@ class PlayState extends MusicBeatState
 						noteskin: (gottaHitNote ? bfNoteskin : dadNoteskin),
 						gfNote: songNotes[3] == 'GF Sing' || (section.gfSection && songNotes[1] < 4),
 						noAnimation: songNotes[3] == 'No Animation',
-						isSustainNote: false,
-						isSustainEnd: false,
+						noMissAnimation: songNotes[3] == 'No Animation',
 						sustainLength: songNotes[2],
-						sustainScale: 0,
-						parent: null,
 						hitHealth: 0.023,
 						missHealth: songNotes[3] != 'Hurt Note' ? 0.0475 : 0.3,
 						wasHit: false,
 						hitCausesMiss: songNotes[3] == 'Hurt Note',
 						multSpeed: 1,
 						noteDensity: currentMultiplier,
-						wasSpawned: false,
-						wasMissed: false,
 						ignoreNote: songNotes[3] == 'Hurt Note' && gottaHitNote
 					};
 					if (swagNote.noteskin.length > 0 && !Paths.noteSkinFramesMap.exists(swagNote.noteskin)) inline Paths.initNote(4, swagNote.noteskin);
@@ -3009,6 +3004,35 @@ class PlayState extends MusicBeatState
 					}
 		
 					inline unspawnNotes.push(swagNote);
+
+					if (jackingtime > 0) {
+						for (i in 0...Std.int(jackingtime)) {
+							final jackNote:PreloadedChartNote = cast {
+								strumTime: swagNote.strumTime + (15000 / SONG.bpm) * (i + 1),
+								noteData: swagNote.noteData,
+								mustPress: swagNote.mustPress,
+								oppNote: swagNote.oppNote,
+								noteType: swagNote.noteType,
+								animSuffix: (songNotes[3] == 'Alt Animation' || section.altAnim ? '-alt' : ''),
+								noteskin: (gottaHitNote ? bfNoteskin : dadNoteskin),
+								gfNote: swagNote.gfNote,
+								isSustainNote: false,
+								isSustainEnd: false,
+								sustainScale: 0,
+								parentST: 0,
+								hitHealth: swagNote.hitHealth,
+								missHealth: swagNote.missHealth,
+								wasHit: false,
+								multSpeed: 1,
+								noteDensity: currentMultiplier,
+								hitCausesMiss: swagNote.hitCausesMiss,
+								ignoreNote: swagNote.ignoreNote
+							};
+							inline unspawnNotes.push(jackNote);
+						}
+					}
+
+					if (swagNote.sustainLength < 1) continue;
 				
 					var ratio:Float = Conductor.bpm / currentBPMLol;
 		
@@ -3027,54 +3051,18 @@ class PlayState extends MusicBeatState
 								gfNote: songNotes[3] == 'GF Sing' || (section.gfSection && songNotes[1] < 4),
 								noAnimation: songNotes[3] == 'No Animation',
 								isSustainNote: true,
-								isSustainEnd: susNote == floorSus, 
-								sustainLength: 0,
+								isSustainEnd: susNote == floorSus,
 								sustainScale: 1 / ratio,
-								parent: swagNote,
+								parentST: swagNote.strumTime,
 								hitHealth: 0.023,
 								missHealth: songNotes[3] != 'Hurt Note' ? 0.0475 : 0.1,
 								wasHit: false,
 								multSpeed: 1,
 								noteDensity: currentMultiplier,
 								hitCausesMiss: songNotes[3] == 'Hurt Note',
-								wasSpawned: false,
-								canBeHit:false,
-								wasMissed: false,
 								ignoreNote: songNotes[3] == 'Hurt Note' && swagNote.mustPress
 							};
 							inline unspawnNotes.push(sustainNote);
-							//Sys.sleep(0.0001);
-						}
-					}
-		
-					if (jackingtime > 0) {
-						for (i in 0...Std.int(jackingtime)) {
-							final jackNote:PreloadedChartNote = cast {
-								strumTime: swagNote.strumTime + (15000 / SONG.bpm) * (i + 1),
-								noteData: swagNote.noteData,
-								mustPress: swagNote.mustPress,
-								oppNote: swagNote.oppNote,
-								noteType: swagNote.noteType,
-								animSuffix: (songNotes[3] == 'Alt Animation' || section.altAnim ? '-alt' : ''),
-								noteskin: (gottaHitNote ? bfNoteskin : dadNoteskin),
-								gfNote: swagNote.gfNote,
-								isSustainNote: false,
-								isSustainEnd: false,
-								sustainLength: swagNote.sustainLength,
-								sustainScale: 0,
-								parent: null,
-								hitHealth: swagNote.hitHealth,
-								missHealth: swagNote.missHealth,
-								wasHit: false,
-								multSpeed: 1,
-								noteDensity: currentMultiplier,
-								hitCausesMiss: swagNote.hitCausesMiss,
-								wasSpawned: false,
-								canBeHit:false,
-								wasMissed: false,
-								ignoreNote: swagNote.ignoreNote
-							};
-							inline unspawnNotes.push(jackNote);
 						}
 					}
 				} else {
@@ -4110,8 +4098,7 @@ class PlayState extends MusicBeatState
 						var noteIndex:Int = 0;
 						while (unspawnNotes.length > 0 && unspawnNotes[noteIndex] != null)
 						{
-							if (ClientPrefs.showNotes) unspawnNotes[noteIndex].wasSpawned = false;
-								else unspawnNotes[noteIndex].wasHit = false;
+							unspawnNotes[noteIndex].wasHit = false;
 							noteIndex++;
 						}
 				}
@@ -4386,10 +4373,10 @@ class PlayState extends MusicBeatState
 			case 'Credits Popup':
 			{
 				var string1:String = value1;
-				if (value1 == '') string1 = SONG.song;
+				if (value1.length < 1) string1 = SONG.song;
 				var string2:String = value2;
-				if (value2 == '') string2 = SONG.songCredit;
-			var creditsPopup:CreditsPopUp = new CreditsPopUp(FlxG.width, 200, value1, value2);
+				if (value2.length < 1) string2 = SONG.songCredit;
+				var creditsPopup:CreditsPopUp = new CreditsPopUp(FlxG.width, 200, string1, string2);
 				creditsPopup.camera = camHUD;
 				creditsPopup.scrollFactor.set();
 				creditsPopup.x = creditsPopup.width * -1;

@@ -31,17 +31,15 @@ typedef PreloadedChartNote = {
 	isSustainEnd:Bool,
 	sustainLength:Float,
 	sustainScale:Float,
-	parent:PreloadedChartNote,
+	parentST:Float,
 	hitHealth:Float,
 	missHealth:Float,
 	hitCausesMiss:Null<Bool>,
 	wasHit:Bool,
 	multSpeed:Float,
 	noteDensity:Float,
-	wasSpawned:Bool,
 	ignoreNote:Bool,
 	lowPriority:Bool,
-	wasMissed:Bool
 }
 
 typedef NoteSplashData = {
@@ -598,10 +596,9 @@ class Note extends FlxSprite
 		doOppStuff = chartNoteData.oppNote;
 		gfNote = chartNoteData.gfNote;
 		isSustainNote = chartNoteData.isSustainNote;
-		sustainLength = chartNoteData.sustainLength;
 		sustainScale = chartNoteData.sustainScale;
 		lowPriority = chartNoteData.lowPriority;
-		if (isSustainNote) parentST = chartNoteData.parent.strumTime;
+		if (isSustainNote) parentST = chartNoteData.parentST;
 		
 		hitHealth = chartNoteData.hitHealth;
 		missHealth = chartNoteData.missHealth;
