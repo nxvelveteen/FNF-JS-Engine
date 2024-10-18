@@ -5772,7 +5772,7 @@ class PlayState extends MusicBeatState
 
 			if (Conductor.songPosition > noteKillOffset + daNote.strumTime)
 			{
-				if (daNote.mustPress && (!(cpuControlled || usingBotEnergy && strumsHeld[daNote.noteData]) || cpuControlled) && !daNote.ignoreNote && !endingSong && !daNote.wasGoodHit) {
+				if (daNote.mustPress && (!(cpuControlled || usingBotEnergy && strumsHeld[daNote.noteData]) || cpuControlled) && !daNote.ignoreNote && !daNote.blockHit && !endingSong && !daNote.wasGoodHit) {
 					noteMiss(daNote);
 					if (ClientPrefs.missSoundShit)
 					{

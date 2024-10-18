@@ -39,7 +39,8 @@ typedef PreloadedChartNote = {
 	multSpeed:Float,
 	noteDensity:Float,
 	ignoreNote:Bool,
-	lowPriority:Bool,
+	blockHit:Bool,
+	lowPriority:Bool
 }
 
 typedef NoteSplashData = {
@@ -604,6 +605,7 @@ class Note extends FlxSprite
 		missHealth = chartNoteData.missHealth;
 		hitCausesMiss = chartNoteData.hitCausesMiss;
 		ignoreNote = chartNoteData.ignoreNote;
+		blockHit = chartNoteData.blockHit;
 		multSpeed = chartNoteData.multSpeed;
 		noteDensity = chartNoteData.noteDensity;
 

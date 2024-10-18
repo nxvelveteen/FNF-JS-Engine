@@ -1347,6 +1347,7 @@ class ChartingState extends MusicBeatState
 			saveUndo(_song); //I don't even know why.
 
 			for(i in 0...value) {
+				if (_song.notes[curSec + 1] == null) addSection(getSectionBeats());
 				changeSection(curSec+1);
 				for (note in _song.notes[curSec-1].sectionNotes)
 				{
