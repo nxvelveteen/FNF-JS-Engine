@@ -13,6 +13,12 @@ THIS NOT THE JS ENGINE BASE REPO. THIS BRANCH MADE BY [mcagabe19](https://github
   <b>JS Engine is a heavily modified Psych Engine fork, with lower-end PCs and more customization in mind.</b>
 </h3>
 
+<p align="center">
+<img alt="GitHub repo size" src="https://img.shields.io/github/repo-size/JordanSantiagoYT/FNF-JS-Engine">
+<img alt="GitHub commit activity" src="https://img.shields.io/github/commit-activity/w/JordanSantiagoYT/FNF-JS-Engine">
+<img alt="GitHub contributors" src="https://img.shields.io/github/contributors/JordanSantiagoYT/FNF-JS-Engine">
+</p>
+
 README.md revamped by [Nael2xd](https://youtube.com/@nael2xd?si=axwJrY_8jdlXUwSm)
 
 _If you're looking for the desktop version, [go here!](https://github.com/JordanSantiagoYT/FNF-JS-Engine)_
@@ -51,19 +57,19 @@ There is like lots and lots of stuff Jordan have missed, but at least you would 
 
 Frequently Asked Questions (FAQs) are found in [here](https://github.com/JordanSantiagoYT/FNF-JS-Engine/wiki) or you can simply see it below.
 
-Q: Can I use this port for my mod(s)?
+**Q: Can I use this port for my mod(s)?**
 
-A: Yes, you can! just be sure to credit me (@mcagabe19 on YouTube) and give a link to this page. or [the link to download the latest release.](https://github.com/JordanSantiagoYT/FNF-JS-Engine/releases/latest)
+A: Yes, you can! just be sure to credit me ([@mcagabe19 on YouTube](https://www.youtube.com/@mcagabe19)) and give a link to this page. or [the link to download the latest release.](https://github.com/JordanSantiagoYT/FNF-JS-Engine/releases/latest)
 
-Q: How do I (change the background, add characters, etc.)?
+**Q: How do I (change the background, add characters, etc.)?**
 
-A: You do it here the same way you'd do it in Psych Engine.
+A: You do it here the [same way you'd do it in Psych Engine.](https://github.com/ShadowMario/FNF-PsychEngine/wiki)
 
-Q: I found a bug!
+**Q: I found a bug!**
 
 A: Report [here.](https://github.com/JordanSantiagoYT/FNF-JS-Engine/issues) Also, **please check if there are already posts about the same issue.**
 
-Q: I found a WAY to fix a bug!
+**Q: I found a *WAY* to fix a bug!**
 
 A: Send [here.](https://github.com/JordanSantiagoYT/FNF-JS-Engine/pulls).
 

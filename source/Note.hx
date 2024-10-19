@@ -571,6 +571,7 @@ class Note extends FlxSprite
 
 	// this is used for note recycling
 	var firstOffX = false;
+	var shouldCenterOffsets:Bool = true;
 	public function setupNoteData(chartNoteData:PreloadedChartNote):Void 
 	{
 		wasGoodHit = hitByOpponent = tooLate = canBeHit = false; // Don't make an update call of this for the note group
@@ -580,11 +581,16 @@ class Note extends FlxSprite
 			texture = 'noteskins/' + chartNoteData.noteskin;
 			useRGBShader = false;
 		}
-		if (chartNoteData.texture.length > 0 && chartNoteData.texture != texture) texture = chartNoteData.texture;
+		if (chartNoteData.texture.length > 0 && chartNoteData.texture != texture) 
+		{
+			texture = chartNoteData.texture;
+			shouldCenterOffsets = false;
+		}
 		if ((chartNoteData.noteskin.length < 1 && chartNoteData.texture.length < 1) && chartNoteData.texture != Paths.defaultSkin)
 		{
 			texture = Paths.defaultSkin;
 			useRGBShader = ClientPrefs.enableColorShader;
+			shouldCenterOffsets = ClientPrefs.enableColorShader;
 		}
 
 		strumTime = chartNoteData.strumTime;
@@ -640,7 +646,7 @@ class Note extends FlxSprite
 
 		if (isSustainNote) {
 			offsetX += width / 2;
-			copyAngle = !false;
+			copyAngle = false;
 			animation.play(colArray[noteData % 4] + (chartNoteData.isSustainEnd ? 'holdend' : 'hold'));
 			updateHitbox();
 			offsetX -= width / 2;
@@ -649,7 +655,7 @@ class Note extends FlxSprite
 			animation.play(colArray[noteData % 4] + 'Scroll');
 			if (!copyAngle) copyAngle = true;
 			offsetX = 0; //Juuuust in case we recycle a sustain note to a regular note
-			if (useRGBShader)
+			if (useRGBShader && shouldCenterOffsets)
 			{
 				centerOffsets();
 				centerOrigin();
