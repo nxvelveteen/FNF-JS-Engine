@@ -3129,15 +3129,19 @@ class ChartingState extends MusicBeatState
 		opponentVocals.pitch = playbackSpeed;
 		#end
 
-		if (bpmTxt != null) bpmTxt.text =
-		CoolUtil.formatTime(Conductor.songPosition, 2) + ' / ' + CoolUtil.formatTime(FlxG.sound.music.length, 2) +
-		"\nSection: " + curSec +
-		"\n\nBeat: " + Std.string(curDecBeat).substring(0,4) +
-		"\nStep: " + curStep +
-		"\nBeat Snap: " + quantization + "th" + 
-		"\n\n" + FlxStringUtil.formatMoney(CoolUtil.getNoteAmount(_song), false) + ' Notes' + 
-		"\n\nRendered Notes: " + FlxStringUtil.formatMoney(Math.abs(curRenderedNotes.length + nextRenderedNotes.length), false) +
-		"\n\nSection Notes: " + FlxStringUtil.formatMoney(_song.notes[curSec].sectionNotes.length, false);
+		if (bpmTxt != null) 
+		{
+			bpmTxt.text =
+			CoolUtil.formatTime(Conductor.songPosition, 2) + ' / ' + CoolUtil.formatTime(FlxG.sound.music.length, 2) +
+			"\nSection: " + curSec +
+			"\n\nBeat: " + Std.string(curDecBeat).substring(0,4) +
+			"\nStep: " + curStep +
+			"\nBeat Snap: " + quantization + "th" +
+			"\n\n" + FlxStringUtil.formatMoney(CoolUtil.getNoteAmount(_song), false) + ' Notes' +
+			"\n\nRendered Notes: " + FlxStringUtil.formatMoney(Math.abs(curRenderedNotes.length + nextRenderedNotes.length), false);
+			
+			if (_song.notes[curSec] != null) bpmTxt.text += "\n\nSection Notes: " + FlxStringUtil.formatMoney(_song.notes[curSec].sectionNotes.length, false);
+		}
 
 		var playedSound:Array<Bool> = [false, false, false, false]; //Prevents ouchy GF sex sounds
 		curRenderedNotes.forEachAlive(function(note:Note) {
