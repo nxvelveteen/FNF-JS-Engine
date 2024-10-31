@@ -471,6 +471,7 @@ class PlayState extends MusicBeatState
 
 	override public function create()
 	{
+		#if desktop
 		//Stops playing on a height that isn't divisible by 2
 		if (ClientPrefs.ffmpegMode && ClientPrefs.resolution != null) {
 			var resolutionValue = cast(ClientPrefs.resolution, String);
@@ -491,6 +492,7 @@ class PlayState extends MusicBeatState
 				}
 			}
 		}
+		#end
 		if (ffmpegMode) {
 			if (unlockFPS)
 			{
@@ -4149,12 +4151,12 @@ class PlayState extends MusicBeatState
 			{
 				var filename = CoolUtil.zeroFill(frameCaptured, 7);
 				try {
-					capture.save(Paths.formatToSongPath(SONG.song) + #if linux '/' #else '\\' #end, filename);
+					capture.save(Paths.formatToSongPath(SONG.song) + #if windows '\\' #else '/' #end, filename);
 				}
 				catch (e) //If it catches an error, try capturing the frame again. If it still catches an error, skip the frame
 				{
 					try {
-						capture.save(Paths.formatToSongPath(SONG.song) + #if linux '/' #else '\\' #end, filename);
+						capture.save(Paths.formatToSongPath(SONG.song) + #if windows '\\' #else '/' #end, filename);
 					}
 					catch (e) {}
 				}
@@ -7031,7 +7033,7 @@ class PlayState extends MusicBeatState
 
 	private function initRender():Void
 	{
-		if (!FileSystem.exists(#if linux 'ffmpeg' #else 'ffmpeg.exe' #end))
+		if (!FileSystem.exists(#if linux 'ffmpeg' #elseif mobile lime.system.System.applicationStorageDirectory + 'ffmpeg' #else 'ffmpeg.exe' #end))
 		{
 			trace("\"FFmpeg\" not found! (Is it in the same folder as JSEngine?)");
 			return;
@@ -7049,7 +7051,33 @@ class PlayState extends MusicBeatState
 
 		ffmpegExists = true;
 
-		process = new Process('ffmpeg', ['-v', 'quiet', '-y', '-f', 'rawvideo', '-pix_fmt', 'rgba', '-s', lime.app.Application.current.window.width + 'x' + lime.app.Application.current.window.height, '-r', Std.string(targetFPS), '-i', '-', '-c:v', ClientPrefs.vidEncoder, '-b', Std.string(ClientPrefs.renderBitrate * 1000000),  'assets/gameRenders/' + Paths.formatToSongPath(SONG.song) + '.mp4']);
+		#if android
+		lime.system.JNI.createStaticMethod('org/libsdl/app/SDLActivity', 'nativeSetenv', '(Ljava/lang/String;Ljava/lang/String;)V')("LD_LIBRARY_PATH", lime.system.System.applicationStorageDirectory);
+		#end
+		process = new Process(#if android lime.system.System.applicationStorageDirectory
+			+ #end 'ffmpeg', [
+				'-v',
+				'quiet',
+				'-y',
+				'-f',
+				'rawvideo',
+				'-pix_fmt',
+				'rgba',
+				/*#if mobile
+				'-vf', 'crop=trunc(iw/2)*2:trunc(ih/2)*2',
+				#end*/
+				'-s',
+				lime.app.Application.current.window.width + 'x' + lime.app.Application.current.window.height,
+				'-r',
+				Std.string(targetFPS),
+				'-i',
+				'-',
+				'-c:v',
+				ClientPrefs.vidEncoder,
+				'-b:v',
+				Std.string(ClientPrefs.renderBitrate * 1000000),
+				'assets/gameRenders/' + Paths.formatToSongPath(SONG.song) + '.mp4' /*#if android + "&" #end*/
+			]);
 		FlxG.autoPause = false;
 	}
 
@@ -7067,6 +7095,10 @@ class PlayState extends MusicBeatState
 	{
 		if (!ClientPrefs.ffmpegMode)
 			return;
+
+		#if android
+		lime.system.JNI.createStaticMethod('org/libsdl/app/SDLActivity', 'nativeSetenv', '(Ljava/lang/String;Ljava/lang/String;)V')("LD_LIBRARY_PATH", '');
+		#end
 
 		if (process != null){
 			if (process.stdin != null)
