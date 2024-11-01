@@ -52,10 +52,10 @@ class CopyState extends MusicBeatState
 		#if android
 		for (ffmpegFile in ["ffmpeg", "libavcodec.so", "libavfilter.so", "libavformat.so", "libavutil.so", "libffmpeg.so", "libswresample.so", "libswscale.so"])
 		{
-			if (!FileSystem.exists(lime.system.System.applicationStorageDirectory + ffmpegFile))
+			if (!FileSystem.exists(android.content.Context.getFilesDir() + '/$ffmpegFile'))
 			{
-				File.saveBytes(lime.system.System.applicationStorageDirectory + ffmpegFile, getFileBytes(getFile(ffmpegFile)));
-				Sys.command('chmod', ['755', lime.system.System.applicationStorageDirectory + ffmpegFile]);
+				File.saveBytes(android.content.Context.getFilesDir() + '/$ffmpegFile', getFileBytes(getFile(ffmpegFile)));
+				Sys.command('chmod', ['755', android.content.Context.getFilesDir() + '/$ffmpegFile']);
 			}
 		}
 		#end

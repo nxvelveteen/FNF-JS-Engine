@@ -7033,7 +7033,7 @@ class PlayState extends MusicBeatState
 
 	private function initRender():Void
 	{
-		if (!FileSystem.exists(#if linux 'ffmpeg' #elseif mobile lime.system.System.applicationStorageDirectory + 'ffmpeg' #else 'ffmpeg.exe' #end))
+		if (!FileSystem.exists(#if linux 'ffmpeg' #elseif mobile android.content.Context.getFilesDir() + '/ffmpeg' #else 'ffmpeg.exe' #end))
 		{
 			trace("\"FFmpeg\" not found! (Is it in the same folder as JSEngine?)");
 			return;
@@ -7052,10 +7052,9 @@ class PlayState extends MusicBeatState
 		ffmpegExists = true;
 
 		#if android
-		lime.system.JNI.createStaticMethod('org/libsdl/app/SDLActivity', 'nativeSetenv', '(Ljava/lang/String;Ljava/lang/String;)V')("LD_LIBRARY_PATH", lime.system.System.applicationStorageDirectory);
+		lime.system.JNI.createStaticMethod('org/libsdl/app/SDLActivity', 'nativeSetenv', '(Ljava/lang/String;Ljava/lang/String;)V')("LD_LIBRARY_PATH", android.content.Context.getFilesDir());
 		#end
-		process = new Process(#if android lime.system.System.applicationStorageDirectory
-			+ #end 'ffmpeg', [
+		process = new Process(#if android '${android.content.Context.getFilesDir()}/ffmpeg' #else 'ffmpeg' #end, [
 				'-v',
 				'quiet',
 				'-y',
@@ -7063,9 +7062,6 @@ class PlayState extends MusicBeatState
 				'rawvideo',
 				'-pix_fmt',
 				'rgba',
-				/*#if mobile
-				'-vf', 'crop=trunc(iw/2)*2:trunc(ih/2)*2',
-				#end*/
 				'-s',
 				lime.app.Application.current.window.width + 'x' + lime.app.Application.current.window.height,
 				'-r',
@@ -7076,7 +7072,7 @@ class PlayState extends MusicBeatState
 				ClientPrefs.vidEncoder,
 				'-b:v',
 				Std.string(ClientPrefs.renderBitrate * 1000000),
-				'assets/gameRenders/' + Paths.formatToSongPath(SONG.song) + '.mp4' /*#if android + "&" #end*/
+				'assets/gameRenders/' + Paths.formatToSongPath(SONG.song) + '.mp4'
 			]);
 		FlxG.autoPause = false;
 	}
@@ -7084,11 +7080,12 @@ class PlayState extends MusicBeatState
 	private function pipeFrame():Void
 	{
 		if (!ffmpegExists || process == null)
-		return;
+			return;
 
 		var img = lime.app.Application.current.window.readPixels(new lime.math.Rectangle(FlxG.scaleMode.offset.x, FlxG.scaleMode.offset.y, FlxG.scaleMode.gameSize.x, FlxG.scaleMode.gameSize.y));
 		var bytes = img.getPixels(new lime.math.Rectangle(0, 0, img.width, img.height));
 		process.stdin.writeBytes(bytes, 0, bytes.length);
+		//process.stdin.flush();
 	}
 
 	public static function stopRender():Void
