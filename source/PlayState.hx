@@ -7033,7 +7033,7 @@ class PlayState extends MusicBeatState
 
 	private function initRender():Void
 	{
-		if (!FileSystem.exists(#if linux 'ffmpeg' #elseif mobile android.content.Context.getFilesDir() + '/ffmpeg' #else 'ffmpeg.exe' #end))
+		if (!FileSystem.exists(#if linux 'ffmpeg' #elseif android android.content.Context.getFilesDir() + '/ffmpeg' #else 'ffmpeg.exe' #end))
 		{
 			trace("\"FFmpeg\" not found! (Is it in the same folder as JSEngine?)");
 			return;
