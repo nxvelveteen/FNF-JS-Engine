@@ -47,8 +47,8 @@ class CoolUtil
 
 	public static var currentDifficulty:String = 'Normal';
 
-	public static var defaultSongs:Array<String> = ['tutorial', 'bopeebo', 'fresh', 'dad battle', 'spookeez', 'south', 'monster', 'pico', 'philly nice', 'blammed', 'satin panties', 'high', 'milf', 'cocoa', 'eggnog', 'winter horrorland', 'senpai', 'roses', 'thorns', 'ugh', 'guns', 'stress'];
-	public static var defaultSongsFormatted:Array<String> = ['dad-battle', 'philly-nice', 'satin-panties', 'winter-horrorland'];
+	public static var defaultSongs:Array<String> = ['tutorial', 'bopeebo', 'fresh', 'dad battle', 'spookeez', 'south', 'monster', 'pico', 'philly nice', 'blammed', 'satin panties', 'high', 'milf', 'cocoa', 'eggnog', 'winter horrorland', 'senpai', 'roses', 'thorns', 'ugh', 'guns', 'stress', 'darnell', 'lit up', '2hot'];
+	public static var defaultSongsFormatted:Array<String> = ['dad-battle', 'philly-nice', 'satin-panties', 'winter-horrorland', 'lit-up'];
 	
 	public static var defaultCharacters:Array<String> = ['dad', 'gf', 'gf-bent', 'gf-car', 'gf-christmas', 'gf-pixel', 'gf-tankmen', 'mom', 'mom-car', 'monster', 'monster-christmas', 'parents-christmas', 'pico', 'pico-player', 'senpai', 'senpai-angry', 'spirit', 'spooky', 'tankman', 'tankman-player'];
 
@@ -126,6 +126,9 @@ class CoolUtil
 		theBatch += "  exit /b\r\n";
 		theBatch += ")\r\n";
 		theBatch += "taskkill /F /IM JSEngine.exe\r\n";
+		theBatch += "echo JSE should have been killed now.\r\n";
+		theBatch += "echo Waiting for 5 seconds... (This is to make sure JSE is actually killed)\r\n";
+		theBatch += "timeout /t 5 /nobreak >nul\r\n";
 		theBatch += "cd /d \"%~dp0\"\r\n";
 		theBatch += "xcopy /e /y \"!sourceDirectory!\" \"!destinationDirectory!\"\r\n";
 		theBatch += "rd /s /q \"!sourceDirectory!\"\r\n";
