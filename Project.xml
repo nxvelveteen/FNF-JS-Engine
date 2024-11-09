@@ -19,9 +19,6 @@
 	<!--Mobile-specific-->
 	<window if="mobile" orientation="landscape" fullscreen="true" resizable="false" allow-shaders="true" require-shaders="true" allow-high-dpi="true" />
 
-	<!--Switch-specific-->
-	<window if="switch" orientation="landscape" fullscreen="true" width="0" height="0" resizable="true" />
-
 	<!-- _____________________________ Path Settings ____________________________ -->
 
 	<set name="BUILD_DIR" value="export/debug" if="debug" />
@@ -31,20 +28,19 @@
 	<classpath name="source" />
 	
 	<!-- PSYCH ENGINE CUSTOMIZATION -->
-	<define name="MODS_ALLOWED" />
-	<define name="LUA_ALLOWED" />
+	<define name="MODS_ALLOWED" if="desktop || mobile" unless="web" />
+	<define name="LUA_ALLOWED" if="desktop || mobile" unless="web" />
 	<define name="ACHIEVEMENTS_ALLOWED" />
-	<define name="VIDEOS_ALLOWED" unless="32bits"/>
+	<define name="VIDEOS_ALLOWED" if="desktop || mobile" unless="32bits || web"/>
 	<define name="PSYCH_WATERMARKS"/> <!-- DELETE THIS TO REMOVE WATERMARKS/DEV NAMES ON TITLE SCREEN -->
 	<define name="DISCORD_ALLOWED" if="desktop"/>
 
 	<assets path="assets/preload" rename="assets" exclude="*.ogg" if="web"/>
-	<assets path="assets/preload" rename="assets" exclude="*.mp3"  unless="web"/>
+	<assets path="assets/preload" rename="assets" exclude="*.mp3" unless="web"/>
 
 	<!-- DONT ENABLE THIS!! -->
 	<define name="CHECK_FOR_UPDATES" if="officialBuild" unless="ios" />
 
-	<!-- <define name="PRELOAD_ALL" /> -->
 	<define name="PRELOAD_ALL" unless="web" />
 	<define name="NO_PRELOAD_ALL" unless="PRELOAD_ALL"/>
 	
@@ -59,7 +55,7 @@
 		<library name="week5"         preload="true" />
 		<library name="week6"         preload="true" />
 		<library name="week7"         preload="true" />
-		<library name="weekend1"         preload="true" />
+		<library name="weekend1"      preload="true" />
 	</section>
 	
 	<section if="NO_PRELOAD_ALL">
@@ -71,7 +67,7 @@
 		<library name="week5"         preload="false" />
 		<library name="week6"         preload="false" />
 		<library name="week7"         preload="false" />
-		<library name="weekend1"         preload="false" />
+		<library name="weekend1"      preload="false" />
 	</section>
 	
 	<assets path="assets/videos"        library="videos"        if="VIDEOS_ALLOWED"/>
@@ -93,7 +89,7 @@
 	<assets path="assets/week6"         library="week6"         exclude="*.mp3" unless="web"/>
 	<assets path="assets/week7"         library="week7"         exclude="*.ogg" if="web"/>
 	<assets path="assets/week7"         library="week7"         exclude="*.mp3" unless="web"/>
-	<assets path="assets/weekend1"         library="weekend1"         exclude="*.mp3" unless="web"/>
+	<assets path="assets/weekend1"      library="weekend1"      exclude="*.mp3" unless="web"/>
 
 	<haxelib name="grig.audio"/>
 	<haxelib name="funkin.vis"/>

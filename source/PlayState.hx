@@ -1344,35 +1344,27 @@ class PlayState extends MusicBeatState
 			timeBar.destroy();
 		}
 
-		if (ClientPrefs.watermarkStyle == 'Vanilla') {
-			EngineWatermark = new FlxText(4,FlxG.height * 0.9 + 50,0,"", 16);
-			EngineWatermark.setFormat(Paths.font("vcr.ttf"), 16, FlxColor.WHITE, RIGHT, OUTLINE,FlxColor.BLACK);
-			EngineWatermark.scrollFactor.set();
-			add(EngineWatermark);
-			EngineWatermark.text = SONG.song + " " + CoolUtil.difficultyString() + " | JSE " + MainMenuState.psychEngineJSVersion;
-		}
-		if (ClientPrefs.watermarkStyle == 'Forever Engine') {
-			EngineWatermark = new FlxText(0, FlxG.height - 30, 0, "JS Engine v" + MainMenuState.psychEngineJSVersion, 16);
-			EngineWatermark.setFormat(Paths.font("vcr.ttf"), 16, FlxColor.WHITE, RIGHT, OUTLINE,FlxColor.BLACK);
-			EngineWatermark.updateHitbox();
-			EngineWatermark.x = FlxG.width - EngineWatermark.width - 5;
-			EngineWatermark.scrollFactor.set();
-			add(EngineWatermark);
-		}
-		if (ClientPrefs.watermarkStyle == 'JS Engine') {
-			EngineWatermark = new FlxText(4,FlxG.height * 0.1 - 70,0,"", 15);
-			EngineWatermark.setFormat(Paths.font("vcr.ttf"), 18, FlxColor.WHITE, RIGHT, OUTLINE,FlxColor.BLACK);
-			EngineWatermark.scrollFactor.set();
-			if (ClientPrefs.downScroll) EngineWatermark.y = (FlxG.height * 0.9 + 50);
-			add(EngineWatermark);
-			EngineWatermark.text = "You are now playing " + SONG.song + " on " + CoolUtil.difficultyString() + "! (JSE v" + MainMenuState.psychEngineJSVersion + ")";
-		}
-		if (ClientPrefs.watermarkStyle == 'Dave Engine') {
-			EngineWatermark = new FlxText(4,FlxG.height * 0.9 + 50,0,"", 16);
-			EngineWatermark.setFormat(Paths.font("comic.ttf"), 16, FlxColor.WHITE, RIGHT, OUTLINE,FlxColor.BLACK);
-			EngineWatermark.scrollFactor.set();
-			add(EngineWatermark);
-			EngineWatermark.text = SONG.song;
+		//figured i'd optimize the code for the enginewatermark creation. after all a lot of lines here were mostly the same
+
+		EngineWatermark = new FlxText(4,FlxG.height * 0.9 + 50,0,"", 16);
+		EngineWatermark.setFormat(Paths.font("vcr.ttf"), 16, FlxColor.WHITE, RIGHT, OUTLINE,FlxColor.BLACK);
+		EngineWatermark.scrollFactor.set();
+		add(EngineWatermark);
+
+		switch(ClientPrefs.watermarkStyle)
+		{
+			case 'Vanilla': EngineWatermark.text = SONG.song + " " + CoolUtil.difficultyString() + " | JSE " + MainMenuState.psychEngineJSVersion;
+			case 'Forever Engine': 
+				EngineWatermark.text = "JS Engine v" + MainMenuState.psychEngineJSVersion;
+				EngineWatermark.x = FlxG.width - EngineWatermark.width - 5;
+			case 'JS Engine': 
+				if (!ClientPrefs.downScroll) EngineWatermark.y = FlxG.height * 0.1 + 50;
+				EngineWatermark.text = "Playing " + SONG.song + " on " + CoolUtil.difficultyString() + " - JSE v" + MainMenuState.psychEngineJSVersion;
+			case 'Dave Engine':
+				EngineWatermark.setFormat(Paths.font("comic.ttf"), 16, FlxColor.WHITE, RIGHT, OUTLINE,FlxColor.BLACK);
+				EngineWatermark.text = SONG.song;
+
+			default: 
 		}
 
 		if (ClientPrefs.showcaseMode && !ClientPrefs.charsAndBG) {
@@ -1391,88 +1383,42 @@ class PlayState extends MusicBeatState
 			add(chromaScreen);
 		}
 
-		if (ClientPrefs.scoreStyle == 'Kade Engine')
+		// TODO: cleanup playstate, by moving most of this and other duplicate functions like healthbop, etc
+		scoreTxt = new FlxText(0, healthBarBG.y + 50, FlxG.width, "", 20);
+		scoreTxt.setFormat(Paths.font("vcr.ttf"), 16, FlxColor.WHITE, CENTER, OUTLINE,FlxColor.BLACK);
+		scoreTxt.scrollFactor.set();
+		scoreTxt.borderSize = 1;
+		scoreTxt.visible = !ClientPrefs.hideHud || !ClientPrefs.showcaseMode;
+		add(scoreTxt);
+
+		var style:String = ClientPrefs.scoreStyle;
+		var dadColors:Array<Int> = CoolUtil.getHealthColors(dad);
+
+		switch(style)
 		{
-			scoreTxt = new FlxText(0, healthBarBG.y + 50, FlxG.width, "", 20);
-			scoreTxt.setFormat(Paths.font("vcr.ttf"), 16, FlxColor.WHITE, CENTER, OUTLINE,FlxColor.BLACK);
-			scoreTxt.scrollFactor.set();
-			scoreTxt.borderSize = 1;
-			scoreTxt.visible = !ClientPrefs.hideHud || !ClientPrefs.showcaseMode;
-			add(scoreTxt);
+			case 'Kade Engine', 'Leather Engine': //do nothing lmao
+			case 'JS Engine':
+				scoreTxt.setFormat(Paths.font("vcr.ttf"), 18, FlxColor.fromRGB(dadColors[0], dadColors[1], dadColors[2]), CENTER, OUTLINE, FlxColor.BLACK);
+				scoreTxt.borderSize = 2;
+
+			case 'Dave Engine', 'Psych Engine', 'VS Impostor': 
+				scoreTxt.y = healthBarBG.y + (style == 'Dave Engine' ? 40 : 36);
+				scoreTxt.setFormat(Paths.font((style == 'Dave Engine' ? "comic.ttf" : "vcr.ttf")), 20, (style != 'VS Impostor' ? FlxColor.WHITE : FlxColor.fromRGB(dadColors[0], dadColors[1], dadColors[2])), CENTER, OUTLINE, FlxColor.BLACK);
+				scoreTxt.borderSize = 1.25;
+
+			case 'Doki Doki+', 'TGT V4': 
+				scoreTxt.y = healthBarBG.y + 48;
+				scoreTxt.setFormat(Paths.font((ClientPrefs.scoreStyle == 'TGT V4' ? "calibri.ttf" : "Aller_rg.ttf")), 20, FlxColor.WHITE, CENTER, OUTLINE, FlxColor.BLACK);
+				scoreTxt.borderSize = 1.25;
+
+			case 'Forever Engine', 'Vanilla':
+				if (style == 'Vanilla') scoreTxt.x = 200;
+				scoreTxt.y = healthBarBG.y + (style == 'Forever Engine' ? 40 : 30);
+				scoreTxt.setFormat(Paths.font("vcr.ttf"), (style == 'Vanilla' ? 16 : 18), FlxColor.WHITE, CENTER, OUTLINE, FlxColor.BLACK);
+				scoreTxt.borderSize = 1.25;
+				updateScore();
 		}
-		if (ClientPrefs.scoreStyle == 'JS Engine')
-		{
-			scoreTxt = new FlxText(0, healthBarBG.y + 50, FlxG.width, "", 18);
-			scoreTxt.setFormat(Paths.font("vcr.ttf"), 18, FlxColor.fromRGB(dad.healthColorArray[0], dad.healthColorArray[1], dad.healthColorArray[2]), CENTER, OUTLINE, FlxColor.BLACK);
-			scoreTxt.scrollFactor.set();
-			scoreTxt.borderSize = 2;
-			scoreTxt.visible = !ClientPrefs.hideHud || !ClientPrefs.showcaseMode;
-			add(scoreTxt);
-		}
-		if (ClientPrefs.scoreStyle == 'Leather Engine')
-		{
-			scoreTxt = new FlxText(0, healthBarBG.y + 50, FlxG.width, "", 20);
-			scoreTxt.setFormat(Paths.font("vcr.ttf"), 16, FlxColor.WHITE, CENTER, OUTLINE,FlxColor.BLACK);
-			scoreTxt.scrollFactor.set();
-			scoreTxt.borderSize = 1;
-			scoreTxt.visible = !ClientPrefs.hideHud || !ClientPrefs.showcaseMode;
-			add(scoreTxt);
-		}
-		if (ClientPrefs.scoreStyle == 'Dave Engine')
-		{
-			scoreTxt = new FlxText(0, healthBarBG.y + 40, FlxG.width, "", 20);
-			scoreTxt.setFormat(Paths.font("comic.ttf"), 20, FlxColor.WHITE, CENTER, OUTLINE, FlxColor.BLACK);
-			scoreTxt.scrollFactor.set();
-			scoreTxt.borderSize = 1.25;
-			scoreTxt.visible = !ClientPrefs.hideHud || !ClientPrefs.showcaseMode;
-			add(scoreTxt);
-		}
-		if (ClientPrefs.scoreStyle == 'Psych Engine')
-		{
-			scoreTxt = new FlxText(0, healthBarBG.y + 36, FlxG.width, "", 20);
-			scoreTxt.setFormat(Paths.font("vcr.ttf"), 20, FlxColor.WHITE, CENTER, OUTLINE, FlxColor.BLACK);
-			scoreTxt.scrollFactor.set();
-			scoreTxt.borderSize = 1.25;
-			scoreTxt.visible = !ClientPrefs.hideHud || !ClientPrefs.showcaseMode;
-			add(scoreTxt);
-		}
-		if (ClientPrefs.scoreStyle == 'Doki Doki+')
-		{
-			scoreTxt = new FlxText(0, healthBarBG.y + 48, FlxG.width, "", 20);
-			scoreTxt.setFormat(Paths.font("Aller_rg.ttf"), 20, FlxColor.WHITE, CENTER, OUTLINE, FlxColor.BLACK);
-			scoreTxt.scrollFactor.set();
-			scoreTxt.borderSize = 1.25;
-			scoreTxt.visible = !ClientPrefs.hideHud || !ClientPrefs.showcaseMode;
-			add(scoreTxt);
-		}
-		if (ClientPrefs.scoreStyle == 'TGT V4')
-		{
-			scoreTxt = new FlxText(0, healthBarBG.y + 48, FlxG.width, "", 20);
-			scoreTxt.setFormat(Paths.font("calibri.ttf"), 20, FlxColor.WHITE, CENTER, OUTLINE, FlxColor.BLACK);
-			scoreTxt.scrollFactor.set();
-			scoreTxt.borderSize = 1.25;
-			scoreTxt.visible = !ClientPrefs.hideHud || !ClientPrefs.showcaseMode;
-			add(scoreTxt);
-		}
-		if (ClientPrefs.scoreStyle == 'VS Impostor')
-		{
-			scoreTxt = new FlxText(0, healthBarBG.y + 36, FlxG.width, "", 20);
-			scoreTxt.scrollFactor.set();
-			scoreTxt.setFormat(Paths.font("vcr.ttf"), 20, FlxColor.fromRGB(dad.healthColorArray[0], dad.healthColorArray[1], dad.healthColorArray[2]), CENTER, OUTLINE, FlxColor.BLACK);
-			scoreTxt.scrollFactor.set();
-			scoreTxt.borderSize = 1.25;
-			scoreTxt.visible = !ClientPrefs.hideHud || !ClientPrefs.showcaseMode;
-			add(scoreTxt);
-		}
-		if (ClientPrefs.scoreStyle == 'Forever Engine')
-		{
-			scoreTxt = new FlxText(0, healthBarBG.y + 40, FlxG.width, "", 18);
-			scoreTxt.setFormat(Paths.font("vcr.ttf"), 18, FlxColor.WHITE, CENTER, OUTLINE, FlxColor.BLACK);
-			scoreTxt.borderSize = 1.25;
-			updateScore();
-			scoreTxt.scrollFactor.set();
-			add(scoreTxt);
-		}
+		style = null;
 		if (ClientPrefs.showcaseMode) {
 			scoreTxt.visible = false;
 			healthBarBG.visible = false;
@@ -1482,7 +1428,7 @@ class PlayState extends MusicBeatState
 		if (ClientPrefs.hideHud) {
 			scoreTxt.visible = false;
 			final daArray:Array<Dynamic> = [botplayTxt, healthBarBG, healthBar, iconP2, iconP1, timeBarBG, timeBar, timeTxt];
-						for (i in daArray){
+			for (i in daArray){
 				if (i != null)
 					i.visible = false;
 			}
@@ -1535,88 +1481,38 @@ class PlayState extends MusicBeatState
 		add(judgementCounter);
 		if (ClientPrefs.ratingCounter) updateRatingCounter();
 
+		//create default botplay text
+		botplayTxt = new FlxText(400, timeBarBG.y + 55, FlxG.width - 800, "BOTPLAY", 32);
+		botplayTxt.setFormat(Paths.font("vcr.ttf"), 32, FlxColor.WHITE, CENTER, OUTLINE, FlxColor.BLACK);
+		botplayTxt.scrollFactor.set();
+		botplayTxt.borderSize = 1.25;
+		botplayTxt.visible = cpuControlled && !ClientPrefs.showcaseMode;
+		add(botplayTxt);
+		if (ClientPrefs.downScroll)
+			botplayTxt.y = timeBarBG.y - 78;
+
 		// just because, people keep making issues about it
 		try{
-			if (ClientPrefs.botTxtStyle == 'Vanilla')
+			var botStyle = ClientPrefs.botTxtStyle;
+			switch(botStyle)
 			{
-				botplayTxt = new FlxText(400, timeBarBG.y + 55, FlxG.width - 800, "BOTPLAY", 32);
-				botplayTxt.setFormat(Paths.font("vcr.ttf"), 32, FlxColor.WHITE, CENTER, OUTLINE, FlxColor.BLACK);
-				botplayTxt.scrollFactor.set();
-				botplayTxt.borderSize = 1.25;
-				botplayTxt.visible = cpuControlled && !ClientPrefs.showcaseMode;
-				add(botplayTxt);
-				if (ClientPrefs.downScroll)
-					botplayTxt.y = timeBarBG.y - 78;
-			}
-			if (ClientPrefs.botTxtStyle == 'JS Engine')
-			{
-				botplayTxt = new FlxText(400, timeBarBG.y + 55, FlxG.width - 800, "Botplay Mode", 30);
-				botplayTxt.setFormat(Paths.font("vcr.ttf"), 30, FlxColor.WHITE, CENTER, OUTLINE, FlxColor.BLACK);
-				botplayTxt.scrollFactor.set();
-				botplayTxt.borderSize = 1.5;
-				botplayTxt.visible = cpuControlled && !ClientPrefs.showcaseMode;
-				add(botplayTxt);
-				if (ClientPrefs.downScroll)
-					botplayTxt.y = timeBarBG.y - 78;
-			}
-			if (ClientPrefs.botTxtStyle == 'Doki Doki+')
-			{
-				botplayTxt = new FlxText(400, timeBarBG.y + 55, FlxG.width - 800, "BOTPLAY", 32);
-				botplayTxt.setFormat(Paths.font("Aller_rg.ttf"), 32, FlxColor.WHITE, CENTER, OUTLINE, FlxColor.BLACK);
-				botplayTxt.scrollFactor.set();
-				botplayTxt.borderSize = 1.25;
-				botplayTxt.visible = cpuControlled && !ClientPrefs.showcaseMode;
-				add(botplayTxt);
-				if (ClientPrefs.downScroll)
-					botplayTxt.y = timeBarBG.y - 78;
-			}
-			if (ClientPrefs.botTxtStyle == 'TGT V4')
-			{
-				botplayTxt = new FlxText(400, timeBarBG.y + (ClientPrefs.downScroll ? -78 : 55), FlxG.width - 800, "[BUTTPLUG]", 32);
-				botplayTxt.setFormat(Paths.font("calibri.ttf"), 32, FlxColor.WHITE, CENTER, OUTLINE, FlxColor.BLACK);
-				botplayTxt.scrollFactor.set();
-				botplayTxt.borderSize = 1.25;
-				botplayTxt.visible = cpuControlled && !ClientPrefs.showcaseMode;
-				add(botplayTxt);
-				if (ClientPrefs.downScroll)
-					botplayTxt.y = timeBarBG.y - 78;
-			}
-			if (ClientPrefs.botTxtStyle == 'Dave Engine')
-			{
-				botplayTxt = new FlxText(400, timeBarBG.y + 55, FlxG.width - 800, "BOTPLAY", 32);
-				botplayTxt.setFormat(Paths.font("comic.ttf"), 32, FlxColor.WHITE, CENTER, OUTLINE, FlxColor.BLACK);
-				botplayTxt.scrollFactor.set();
-				botplayTxt.borderSize = 1.25;
-				botplayTxt.visible = cpuControlled && !ClientPrefs.showcaseMode;
-				add(botplayTxt);
-				if (ClientPrefs.downScroll)
-					botplayTxt.y = timeBarBG.y - 78;
-			}
-			if (ClientPrefs.botTxtStyle == 'VS Impostor')
-			{
-				botplayTxt = new FlxText(400, healthBarBG.y - 55, FlxG.width - 800, "BOTPLAY", 32);
-				botplayTxt.setFormat(Paths.font("vcr.ttf"), 32, FlxColor.fromRGB(dad.healthColorArray[0], dad.healthColorArray[1], dad.healthColorArray[2]), CENTER, OUTLINE, FlxColor.BLACK);
-				botplayTxt.scrollFactor.set();
-				botplayTxt.borderSize = 1.25;
-				botplayTxt.visible = cpuControlled && !ClientPrefs.showcaseMode;
-				add(botplayTxt);
-				if (ClientPrefs.downScroll)
-				{
-					botplayTxt.y = timeBarBG.y - 78;
-				}
+				case 'Vanilla': //Do nothing.
+				case 'JS Engine': 
+					botplayTxt.text = 'Botplay Mode';
+					botplayTxt.borderSize = 1.5;
+
+				case 'Doki Doki+':
+					botplayTxt.setFormat(Paths.font("Aller_rg.ttf"), 32, FlxColor.WHITE, CENTER, OUTLINE, FlxColor.BLACK);
+				case 'TGT V4':
+					botplayTxt.setFormat(Paths.font("calibri.ttf"), 32, FlxColor.WHITE, CENTER, OUTLINE, FlxColor.BLACK);
+				case 'Dave Engine':
+					botplayTxt.setFormat(Paths.font("comic.ttf"), 32, FlxColor.WHITE, CENTER, OUTLINE, FlxColor.BLACK);
+				case 'VS Impostor':
+					botplayTxt.setFormat(Paths.font("vcr.ttf"), 32, FlxColor.fromRGB(dadColors[0], dadColors[1], dadColors[2]), CENTER, OUTLINE, FlxColor.BLACK);
 			}
 		}
 		catch(e){
-			trace("Failed to display/create botplayTxt " + e);
-			// just in case, we default it to the regular psych botplayTxt
-			botplayTxt = new FlxText(400, timeBarBG.y + 55, FlxG.width - 800, "BOTPLAY", 32);
-			botplayTxt.setFormat(Paths.font("vcr.ttf"), 32, FlxColor.WHITE, CENTER, OUTLINE, FlxColor.BLACK);
-			botplayTxt.scrollFactor.set();
-			botplayTxt.borderSize = 1.25;
-			botplayTxt.visible = cpuControlled && !ClientPrefs.showcaseMode;
-			add(botplayTxt);
-			if (ClientPrefs.downScroll)
-				botplayTxt.y = timeBarBG.y - 78;
+			trace("Failed to display/create botplayTxt: " + e);
 		}
 		if (botplayTxt != null){
 			if (!cpuControlled && practiceMode) {
@@ -2187,6 +2083,11 @@ class PlayState extends MusicBeatState
 
 	function schoolIntro(?dialogueBox:DialogueBox):Void
 	{
+		if (dialogueBox == null){
+			startCountdown();
+			return;
+		} // don't load any of this, since there's not even any dialog
+
 		inCutscene = true;
 		var black:FlxSprite = new FlxSprite(-100, -100).makeGraphic(FlxG.width * 2, FlxG.height * 2, FlxColor.BLACK);
 		black.scrollFactor.set();
@@ -2226,47 +2127,41 @@ class PlayState extends MusicBeatState
 			}
 			else
 			{
-				if (dialogueBox != null)
+				if (Paths.formatToSongPath(SONG.song) == 'thorns')
 				{
-					if (Paths.formatToSongPath(SONG.song) == 'thorns')
+					add(senpaiEvil);
+					senpaiEvil.alpha = 0;
+					new FlxTimer().start(0.3, function(swagTimer:FlxTimer)
 					{
-						add(senpaiEvil);
-						senpaiEvil.alpha = 0;
-						new FlxTimer().start(0.3, function(swagTimer:FlxTimer)
+						senpaiEvil.alpha += 0.15;
+						if (senpaiEvil.alpha < 1)
 						{
-							senpaiEvil.alpha += 0.15;
-							if (senpaiEvil.alpha < 1)
+							swagTimer.reset();
+						}
+						else
+						{
+							senpaiEvil.animation.play('idle');
+							FlxG.sound.play(Paths.sound('Senpai_Dies'), 1, false, null, true, function()
 							{
-								swagTimer.reset();
-							}
-							else
+								remove(senpaiEvil);
+								remove(red);
+								FlxG.camera.fade(FlxColor.WHITE, 0.01, true, function()
+								{
+									add(dialogueBox);
+									camHUD.visible = true;
+								}, true);
+							});
+							new FlxTimer().start(3.2, function(deadTime:FlxTimer)
 							{
-								senpaiEvil.animation.play('idle');
-								FlxG.sound.play(Paths.sound('Senpai_Dies'), 1, false, null, true, function()
-								{
-									remove(senpaiEvil);
-									remove(red);
-									FlxG.camera.fade(FlxColor.WHITE, 0.01, true, function()
-									{
-										add(dialogueBox);
-										camHUD.visible = true;
-									}, true);
-								});
-								new FlxTimer().start(3.2, function(deadTime:FlxTimer)
-								{
-									FlxG.camera.fade(FlxColor.WHITE, 1.6, false);
-								});
-							}
-						});
-					}
-					else
-					{
-						add(dialogueBox);
-					}
+								FlxG.camera.fade(FlxColor.WHITE, 1.6, false);
+							});
+						}
+					});
 				}
 				else
-					startCountdown();
-
+				{
+					add(dialogueBox);
+				}
 				remove(black);
 			}
 		});
@@ -2651,6 +2546,9 @@ class PlayState extends MusicBeatState
 
 			case 'VS Impostor':
 				tempScore = 'Score: ' + formattedScore + ' $divider Combo Breaks: ' + formattedSongMisses  + (ClientPrefs.showComboInfo ? ' $divider Combo: ' + formattedCombo : '') + npsString + ' $divider Accuracy: ' + Highscore.floorDecimal(ratingPercent * 100, 2) + '% ['  + fcString + ']';
+
+			case 'Vanilla':
+				tempScore = 'Score: ' + formattedScore;
 		}
 
 		scoreTxt.text = '${tempScore}\n';
@@ -2698,16 +2596,12 @@ class PlayState extends MusicBeatState
 		callOnLuas('onSkipDialogue', [dialogueCount]);
 	}
 
-	var previousFrameTime:Int = 0;
-	var lastReportedPlayheadPosition:Int = 0;
 	var songTime:Float = 0;
 
 	function startSong():Void
 	{
 		startingSong = false;
 
-		previousFrameTime = FlxG.game.ticks;
-		lastReportedPlayheadPosition = 0;
 		if (ClientPrefs.songLoading)
 		{
 			var diff:String = (SONG.specialAudioName.length > 1 ? SONG.specialAudioName : CoolUtil.difficultyString()).toLowerCase();
@@ -3106,11 +3000,12 @@ class PlayState extends MusicBeatState
 
 		if (ClientPrefs.noteColorStyle == 'Char-Based')
 		{
-			for (note in notes){
-				if (note == null)
-					continue;
-				note.updateRGBColors();
-			}
+			for (group in [notes, sustainNotes])
+				for (note in group){
+					if (note == null)
+						continue;
+					if (ClientPrefs.enableColorShader) note.updateRGBColors();
+				}
 		}
 
 		unspawnNotes.sort(sortByTime);
@@ -3216,7 +3111,7 @@ class PlayState extends MusicBeatState
 	public var skipArrowStartTween:Bool = false; //for lua
 	private function generateStaticArrows(player:Int):Void
 	{
-		var strumLine:FlxPoint = FlxPoint.get(middleScroll ? STRUM_X_MIDDLESCROLL : STRUM_X, (ClientPrefs.downScroll) ? FlxG.height - 150 : 50);
+		final strumLine:FlxPoint = FlxPoint.get(middleScroll ? STRUM_X_MIDDLESCROLL : STRUM_X, (ClientPrefs.downScroll) ? FlxG.height - 150 : 50);
 		for (i in 0...4)
 		{
 			var targetAlpha:Float = 1;
@@ -3226,7 +3121,7 @@ class PlayState extends MusicBeatState
 				else if(middleScroll) targetAlpha = ClientPrefs.oppNoteAlpha;
 			}
 
-			var noteSkinExists:Bool = FileSystem.exists("assets/shared/images/noteskins/" + (player == 0 ? dadNoteskin : bfNoteskin)) || FileSystem.exists(Paths.modsImages("noteskins/" + (player == 0 ? dadNoteskin : bfNoteskin)));
+			final noteSkinExists:Bool = FileSystem.exists("assets/shared/images/noteskins/" + (player == 0 ? dadNoteskin : bfNoteskin)) || FileSystem.exists(Paths.modsImages("noteskins/" + (player == 0 ? dadNoteskin : bfNoteskin)));
 
 			var babyArrow:StrumNote = new StrumNote(middleScroll ? STRUM_X_MIDDLESCROLL : STRUM_X, strumLine.y, i, player);
 			babyArrow.downScroll = ClientPrefs.downScroll;
@@ -4679,11 +4574,12 @@ class PlayState extends MusicBeatState
 				}
 				if (ClientPrefs.noteColorStyle == 'Char-Based')
 				{
-					for (note in notes){
-						if (note == null)
-							continue;
-						if (ClientPrefs.enableColorShader) note.updateRGBColors();
-					}
+					for (group in [notes, sustainNotes])
+						for (note in group){
+							if (note == null)
+								continue;
+							if (ClientPrefs.enableColorShader) note.updateRGBColors();
+						}
 				}
 			}
 
@@ -5079,15 +4975,8 @@ class PlayState extends MusicBeatState
 		if (ClientPrefs.songLoading) FlxG.sound.music.volume = 0;
 		if (ClientPrefs.songLoading) vocals.volume = opponentVocals.volume = 0;
 
-		if(noTrans)
-		{
-			FlxTransitionableState.skipNextTransOut = true;
-			FlxG.resetState();
-		}
-		else
-		{
-			FlxG.resetState();
-		}
+		FlxTransitionableState.skipNextTransOut = noTrans;
+		FlxG.resetState();
 	}
 
 	public var totalPlayed:Int = 0;
@@ -5214,7 +5103,7 @@ class PlayState extends MusicBeatState
 
 				FlxTween.cancelTweensOf(spr);
 				comboGroup.remove(spr, true);
-				spr.kill();
+				spr.destroy();
 			}
 
 			if (showRating && ClientPrefs.ratingPopups && !ClientPrefs.simplePopups) {
@@ -5258,8 +5147,8 @@ class PlayState extends MusicBeatState
 					startDelay: 0.7 / playbackRate,
 					onComplete: function(tween:FlxTween)
 					{
-						rating.kill();
-					}
+						rating.destroy();
+					},
 				});
 			}
 
@@ -5321,7 +5210,7 @@ class PlayState extends MusicBeatState
 					FlxTween.tween(numScore, {alpha: 0}, 0.2 / playbackRate, {
 						onComplete: function(tween:FlxTween)
 						{
-							numScore.kill();
+							numScore.destroy();
 						},
 						startDelay: 1.4 / playbackRate
 					});

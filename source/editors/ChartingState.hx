@@ -1,6 +1,6 @@
 package editors;
 
-import flash.geom.Rectangle;
+import openfl.geom.Rectangle;
 import haxe.Json;
 import haxe.format.JsonParser;
 import haxe.io.Bytes;
@@ -49,7 +49,7 @@ import openfl.utils.ByteArray;
 import openfl.events.UncaughtErrorEvent;
 using StringTools;
 #if sys
-import flash.media.Sound;
+import openfl.media.Sound;
 import sys.FileSystem;
 import sys.io.File;
 #end
@@ -251,6 +251,9 @@ class ChartingState extends MusicBeatState
 	public static var vortex:Bool = false;
 	public var mouseQuant:Bool = false;
 	public var hitsoundVol:Float = 1;
+
+	var autoSaveTimer:FlxTimer;
+	public var autoSaveLength:Float = 90; // 2 minutes
 	override function create()
 	{
 		idleMusic = new EditingMusic();
@@ -510,6 +513,24 @@ class ChartingState extends MusicBeatState
 		autosaveIndicator.scrollFactor.set();
 		autosaveIndicator.antialiasing = ClientPrefs.globalAntialiasing;
 		add(autosaveIndicator);
+		if(autoSaveTimer != null) {
+			autoSaveTimer.cancel();
+			autoSaveTimer = null;
+			autosaveIndicator.alpha = 0;
+		}
+		// TODO: expand this more & maybe port the 1.0 system to here
+		autoSaveTimer = new FlxTimer().start(autoSaveLength, function(tmr:FlxTimer) {
+			FlxTween.tween(autosaveIndicator, {alpha: 1}, 1, {
+				ease: FlxEase.quadInOut,
+				onComplete: function (twn:FlxTween) {
+					FlxTween.tween(autosaveIndicator, {alpha: 0}, 1, {
+						startDelay: 0.1,
+						ease: FlxEase.quadInOut
+					});
+				}
+			});
+			autosaveSong();
+		}, 0);
 
 		addSongUI();
 		addSectionUI();
@@ -673,6 +694,9 @@ class ChartingState extends MusicBeatState
 		});
 		var autosaveButton:FlxButton = new FlxButton(saveEvents.x, reloadSongJson.y + 60, "Save to Autosave", function()
 		{
+			if (autoSaveTimer != null)
+				autoSaveTimer.reset(autoSaveLength);
+
 			autosaveSong();
 		});
 
