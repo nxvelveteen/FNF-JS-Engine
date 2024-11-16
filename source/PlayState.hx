@@ -3134,7 +3134,7 @@ class PlayState extends MusicBeatState
 			if (!isStoryMode && !skipArrowStartTween)
 			{
 				babyArrow.alpha = 0;
-				FlxTween.tween(babyArrow, {alpha: targetAlpha}, Conductor.crochet / (1000/3) / playbackRate, {ease: FlxEase.circOut, startDelay: 0.5 + (0.2 * i) / Conductor.crochet / (1000/3) / playbackRate});
+				FlxTween.tween(babyArrow, {alpha: targetAlpha}, 1/(SONG.bpm/240) / playbackRate, {ease: FlxEase.circOut, startDelay: 0.5 + (0.2 * i) / (SONG.bpm/240) / playbackRate});
 			}
 			else
 			{
