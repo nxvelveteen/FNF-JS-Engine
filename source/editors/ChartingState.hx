@@ -1247,7 +1247,7 @@ class ChartingState extends MusicBeatState
 		});
 		var clearLeftSectionButton:FlxButton = new FlxButton(duetButton.x, duetButton.y + 30, "Clear Left Side", function()
 		{
-			if (_song.notes[curSection].sectionNotes == null) return;
+			if (_song.notes[curSection] == null || _song.notes[curSection] != null && _song.notes[curSection].sectionNotes == null) return;
 			saveUndo(_song); //this is really weird so im saving it as an undoable action just in case it does the wrong section
 			var removeThese = [];
 			for (noteIndex in 0..._song.notes[curSection].sectionNotes.length) {
@@ -1266,7 +1266,7 @@ class ChartingState extends MusicBeatState
 		});
 		var clearRightSectionButton:FlxButton = new FlxButton(clearLeftSectionButton.x + 100, clearLeftSectionButton.y, "Clear Right Side", function()
 		{
-			if (_song.notes[curSection].sectionNotes == null) return;
+			if (_song.notes[curSection] == null || _song.notes[curSection] != null && _song.notes[curSection].sectionNotes == null) return;
 			saveUndo(_song); //this is really weird so im saving it as an undoable action just in case it does the wrong section
 			var removeThese = [];
 			for (noteIndex in 0..._song.notes[curSection].sectionNotes.length) {
@@ -4364,6 +4364,8 @@ class ChartingState extends MusicBeatState
 		}
 			cpp.vm.Gc.enable(true);
 		if (unsavedChanges) unsavedChanges = false;
+		if (autoSaveTimer != null)
+				autoSaveTimer.reset(autoSaveLength);
 	}
 
 	function sortByTime(Obj1:Array<Dynamic>, Obj2:Array<Dynamic>):Int
