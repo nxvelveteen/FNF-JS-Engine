@@ -168,6 +168,14 @@ class VisualsUISubState extends BaseOptionsMenu
 			false);
 		addOption(option);
 
+		var option:Option = new Option('Showcase Style: ',
+			"In what format would you like your showcase?",
+			'showcaseST',
+			'string',
+			'JS',
+			['JS', 'AMZ']);
+		addOption(option);
+
 		var option:Option = new Option('Time Text Bounce',
 			'If checked, the time bar text will bounce on every beat hit.',
 			'timeBounce',
@@ -588,7 +596,7 @@ class VisualsUISubState extends BaseOptionsMenu
 		{
 			var note:StrumNote = notes.members[i];
 			if(notesTween[i] != null) notesTween[i].cancel();
-			if(curSelected == noteOptionID)
+			if(optionsArray[curSelected].name == 'Note Skins:')
 				notesTween[i] = FlxTween.tween(note, {y: noteY}, Math.abs(note.y / (200 + noteY)) / 3, {ease: FlxEase.quadInOut});
 			else
 				notesTween[i] = FlxTween.tween(note, {y: -200}, Math.abs(note.y / (200 + noteY)) / 3, {ease: FlxEase.quadInOut});
