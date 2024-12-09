@@ -1084,7 +1084,7 @@ class PlayState extends MusicBeatState
 				timeBar.alpha = 0;
 				timeBar.visible = showTime && !ClientPrefs.timeBarType.contains('(No Bar)');
 				timeBarBG.sprTracker = timeBar;
-				timeBar.createFilledBar(FlxColor.GRAY, FlxColor.fromRGB(57, 255, 20));
+				timeBar.createFilledBar(FlxColor.GRAY, FlxColor.fromRGB(dad.healthColorArray[0], dad.healthColorArray[1], dad.healthColorArray[2]));
 				insert(members.indexOf(timeBarBG), timeBar);
 
 			case 'Doki Doki+':
