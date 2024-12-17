@@ -73,13 +73,10 @@ class CopyState extends MusicBeatState
 		CoolUtil.showPopUp("Seems like you have some missing files that are necessary to run the game\nPress OK to begin the copy process", "Notice!");
 
 		#if android
-		for (ffmpegFile in ["ffmpeg", "libavcodec.so", "libavfilter.so", "libavformat.so", "libavutil.so", "libffmpeg.so", "libswresample.so", "libswscale.so"])
+		if (!FileSystem.exists(android.content.Context.getFilesDir() + '/ffmpeg'))
 		{
-			if (!FileSystem.exists(android.content.Context.getFilesDir() + '/$ffmpegFile'))
-			{
-				File.saveBytes(android.content.Context.getFilesDir() + '/$ffmpegFile', getFileBytes(getFile(ffmpegFile)));
-				Sys.command('chmod', ['755', android.content.Context.getFilesDir() + '/$ffmpegFile']);
-			}
+			File.saveBytes(android.content.Context.getFilesDir() + '/ffmpeg', getFileBytes(getFile('ffmpeg')));
+			Sys.command('chmod', ['777', android.content.Context.getFilesDir() + '/ffmpeg']);
 		}
 		#end
 		

@@ -105,13 +105,6 @@
 
 	<section if="android">
 		<assets path='art/ffmpeg-android/arm64/ffmpeg' rename="ffmpeg" />
-		<assets path='art/ffmpeg-android/arm64/libavcodec.so' rename="libavcodec.so" />
-		<assets path='art/ffmpeg-android/arm64/libavfilter.so' rename="libavfilter.so" />
-		<assets path='art/ffmpeg-android/arm64/libavformat.so' rename="libavformat.so" />
-		<assets path='art/ffmpeg-android/arm64/libavutil.so' rename="libavutil.so" />
-		<assets path='art/ffmpeg-android/arm64/libffmpeg.so' rename="libffmpeg.so" />
-		<assets path='art/ffmpeg-android/arm64/libswresample.so' rename="libswresample.so" />
-		<assets path='art/ffmpeg-android/arm64/libswscale.so' rename="libswscale.so" />
 	</section>
 
 	<assets path="assets/fonts" />

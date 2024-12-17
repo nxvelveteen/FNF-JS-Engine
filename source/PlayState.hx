@@ -6859,7 +6859,7 @@ class PlayState extends MusicBeatState
 				ClientPrefs.vidEncoder,
 				'-b:v',
 				Std.string(ClientPrefs.renderBitrate * 1000000),
-				'assets/gameRenders/' + Paths.formatToSongPath(SONG.song) + '.mp4'
+				Sys.getCwd() + 'assets/gameRenders/' + Paths.formatToSongPath(SONG.song) + '.mp4'
 			]);
 		FlxG.autoPause = false;
 	}
