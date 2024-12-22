@@ -8,7 +8,7 @@ THIS NOT THE JS ENGINE BASE REPO. THIS BRANCH MADE BY [mcagabe19](https://github
   <br>
   <b>JS Engine Mobile</b>
   <br>
-  <i>(JordanSantiago engine)</i>
+  <i>(Jordan Santiago Engine)</i>
   <br>
 </h1>
 

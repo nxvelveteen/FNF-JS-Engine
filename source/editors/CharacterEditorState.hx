@@ -115,11 +115,9 @@ class CharacterEditorState extends MusicBeatState
 		ghostLayer = new FlxTypedGroup<FlxSprite>();
 		add(ghostLayer);
 
-		var pointer:FlxGraphic = FlxGraphic.fromClass(GraphicCursorCross);
-		cameraFollowPointer = new FlxSprite().loadGraphic(pointer);
+		cameraFollowPointer = new FlxSprite().loadGraphic(FlxGraphic.fromClass(GraphicCursorCross));
 		cameraFollowPointer.setGraphicSize(40, 40);
 		cameraFollowPointer.updateHitbox();
-		cameraFollowPointer.color = FlxColor.WHITE;
 		add(cameraFollowPointer);
 
 		changeBGbutton = new FlxButton(FlxG.width - 360, 25, "", function()
@@ -1200,18 +1198,21 @@ class CharacterEditorState extends MusicBeatState
 	}
 
 	function updatePointerPos() {
-		var x:Float = char.getMidpoint().x;
-		var y:Float = char.getMidpoint().y;
-		if(!char.isPlayer) {
-			x += 150 + char.cameraPosition[0];
-		} else {
-			x -= 100 + char.cameraPosition[0];
-		}
-		y -= 100 - char.cameraPosition[1];
+		if(char == null || cameraFollowPointer == null) return;
 
-		x -= cameraFollowPointer.width / 2;
-		y -= cameraFollowPointer.height / 2;
-		cameraFollowPointer.setPosition(x, y);
+		var offX:Float = 0;
+		var offY:Float = 0;
+		if(!char.isPlayer)
+		{
+			offX = char.getMidpoint().x + 150 + char.cameraPosition[0];
+			offY = char.getMidpoint().y - 100 + char.cameraPosition[1];
+		}
+		else
+		{
+			offX = char.getMidpoint().x - 100 - char.cameraPosition[0];
+			offY = char.getMidpoint().y - 100 + char.cameraPosition[1];
+		}
+		cameraFollowPointer.setPosition(offX, offY);
 	}
 
 	function findAnimationByName(name:String):AnimArray {
