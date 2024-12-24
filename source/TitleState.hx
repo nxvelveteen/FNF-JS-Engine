@@ -90,6 +90,12 @@ class TitleState extends MusicBeatState
 		swagShader = new ColorSwap();
 		super.create();
 
+		if (!FlxG.save.data.did_warning)
+		{
+			FlxG.save.data.did_warning = true;
+			CoolUtil.showPopUp("Please note that Jordan Santiago does not work on this port!\n\nIf you have any issues or questions with this version, please contact @mcagabe19 (mc.9 on Discord)!\n\n", "Important");
+		}
+
 		#if (CHECK_FOR_UPDATES)
 		if(ClientPrefs.checkForUpdates && !closedState && !Main.askedToUpdate) {
 			trace('checking for update');
