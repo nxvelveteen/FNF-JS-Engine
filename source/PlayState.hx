@@ -2853,9 +2853,11 @@ class PlayState extends MusicBeatState
 							case 0:
 								var boyfriendToGrab:Boyfriend = boyfriendMap.get(charChangeNames[0]);
 								if (boyfriendToGrab != null && boyfriendToGrab.noteskin.length > 0) bfNoteskin = boyfriendToGrab.noteskin;
+								else bfNoteskin = '';
 							case 1:
 								var dadToGrab:Character = dadMap.get(charChangeNames[0]);
 								if (dadToGrab != null && dadToGrab.noteskin.length > 0) dadNoteskin = dadToGrab.noteskin;
+								else dadNoteskin = '';
 						}
 						charChangeTimes.shift();
 						charChangeNames.shift();
@@ -2932,9 +2934,9 @@ class PlayState extends MusicBeatState
 				
 					var ratio:Float = Conductor.bpm / currentBPMLol;
 		
-					final floorSus:Int = Math.floor(swagNote.sustainLength / Conductor.stepCrochet);
-					if (floorSus > 0) {
-						for (susNote in 0...floorSus + 1) {
+					final roundSus:Int = Math.round(swagNote.sustainLength / Conductor.stepCrochet);
+					if (roundSus > 0) {
+						for (susNote in 0...roundSus + 1) {
 
 							final sustainNote:PreloadedChartNote = cast {
 								strumTime: daStrumTime + (Conductor.stepCrochet * susNote),
@@ -2947,7 +2949,7 @@ class PlayState extends MusicBeatState
 								gfNote: songNotes[3] == 'GF Sing' || (section.gfSection && songNotes[1] < 4),
 								noAnimation: songNotes[3] == 'No Animation',
 								isSustainNote: true,
-								isSustainEnd: susNote == floorSus,
+								isSustainEnd: susNote == roundSus,
 								sustainScale: 1 / ratio,
 								parentST: swagNote.strumTime,
 								parentSL: swagNote.sustainLength,
@@ -4471,6 +4473,7 @@ class PlayState extends MusicBeatState
 								if (ClientPrefs.bfIconStyle == "OS 'Engine'") iconP1.changeIcon('bfos');
 							}
 							if (boyfriend.noteskin.length > 0) bfNoteskin = boyfriend.noteskin;
+							else bfNoteskin = '';
 						}
 						setOnLuas('boyfriendName', boyfriend.curCharacter);
 
@@ -4499,12 +4502,13 @@ class PlayState extends MusicBeatState
 								
 								if (scoreTxt != null && !ClientPrefs.hideHud) FlxTween.color(scoreTxt, 1, scoreTxt.color, FlxColor.fromRGB(dad.healthColorArray[0], dad.healthColorArray[1], dad.healthColorArray[2]));
 							}
-							if (ClientPrefs.scoreStyle == 'JS Engine' && !ClientPrefs.hideHud) {
+							if (ClientPrefs.scoreStyle == 'JS Engine' && !ClientPrefs.hideHud)
 								if (scoreTxt != null) FlxTween.color(scoreTxt, 1, scoreTxt.color, FlxColor.fromRGB(dad.healthColorArray[0], dad.healthColorArray[1], dad.healthColorArray[2]));
-							}
+
 							if (dadAnim != '') dad.playAnim(dadAnim, true);
 						}
 							if (dad.noteskin.length > 0) dadNoteskin = dad.noteskin;
+							else dadNoteskin = '';
 						setOnLuas('dadName', dad.curCharacter);
 
 					case 2:
@@ -4532,10 +4536,10 @@ class PlayState extends MusicBeatState
 				if (ClientPrefs.showNotes)
 				{
 					for (i in strumLineNotes.members)
-						if ((i.player == 0 ? dadNoteskin : bfNoteskin).length > 0) 
+						if ((i.player == 0 ? dadNoteskin : bfNoteskin) != null) 
 						{
 							i.updateNoteSkin(i.player == 0 ? dadNoteskin : bfNoteskin);
-							i.useRGBShader = false;
+							i.useRGBShader = (i.player == 0 ? dadNoteskin : bfNoteskin).length < 1;
 						}
 				}
 				if (ClientPrefs.noteColorStyle == 'Char-Based')
