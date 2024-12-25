@@ -230,7 +230,7 @@ class OptionsState extends MusicBeatState
 				selectorRight.y = item.y;
 			}
 		}
-		camFollow.setPosition(FlxG.width / 2, 20 + (curSelected * (grpOptions.members.length * 10)));
+		camFollow.setPosition(FlxG.width / 2, (curSelected * (grpOptions.members.length * 10)));
 
 		FlxG.sound.play(Paths.sound('scrollMenu'));
 	}
