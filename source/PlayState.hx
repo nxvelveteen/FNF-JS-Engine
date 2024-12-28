@@ -1619,9 +1619,8 @@ class PlayState extends MusicBeatState
 			Paths.music(Paths.formatToSongPath(ClientPrefs.pauseMusic));
 
 		if(cpuControlled && ClientPrefs.randomBotplayText && ClientPrefs.botTxtStyle != 'Hide' && botplayTxt != null && ffmpegInfo != 'Frame Time')
-		{
 			botplayTxt.text = theListBotplay[FlxG.random.int(0, theListBotplay.length - 1)];
-		}
+
 		if (botplayTxt != null) ogBotTxt = botplayTxt.text;
 		
 		resetRPC();
@@ -2158,28 +2157,31 @@ class PlayState extends MusicBeatState
 		});
 	}
 
+	var fps:Float = 60;
+	var bfCanPan:Bool = false;
+	var dadCanPan:Bool = false;
+	var clear:Bool = false;
 	function camPanRoutine(anim:String = 'singUP', who:String = 'bf'):Void {
 		if (SONG.notes[curSection] != null)
 		{
-		var fps:Float = FlxG.updateFramerate;
-		final bfCanPan:Bool = SONG.notes[curSection].mustHitSection;
-		final dadCanPan:Bool = !SONG.notes[curSection].mustHitSection;
-		var clear:Bool = false;
-		switch (who) {
-			case 'bf' | 'boyfriend': clear = bfCanPan;
-			case 'oppt' | 'dad': clear = dadCanPan;
-		}
-		//FlxG.elapsed is stinky poo poo for this, it just makes it look jank as fuck
-		if (clear) {
-			if (fps == 0) fps = 1;
-			switch (anim.split('-')[0])
-			{
-				case 'singUP': moveCamTo[1] = -40*ClientPrefs.panIntensity*240*playbackRate/fps;
-				case 'singDOWN': moveCamTo[1] = 40*ClientPrefs.panIntensity*240*playbackRate/fps;
-				case 'singLEFT': moveCamTo[0] = -40*ClientPrefs.panIntensity*240*playbackRate/fps;
-				case 'singRIGHT': moveCamTo[0] = 40*ClientPrefs.panIntensity*240*playbackRate/fps;
+			fps = FlxG.updateFramerate;
+			bfCanPan = SONG.notes[curSection].mustHitSection;
+			dadCanPan = !SONG.notes[curSection].mustHitSection;
+			switch (who) {
+				case 'bf' | 'boyfriend': clear = bfCanPan;
+				case 'oppt' | 'dad': clear = dadCanPan;
 			}
-		}
+			//FlxG.elapsed is stinky poo poo for this, it just makes it look jank as fuck
+			if (clear) {
+				if (fps == 0) fps = 1;
+				switch (anim.split('-')[0])
+				{
+					case 'singUP': moveCamTo[1] = -40*ClientPrefs.panIntensity*240*playbackRate/fps;
+					case 'singDOWN': moveCamTo[1] = 40*ClientPrefs.panIntensity*240*playbackRate/fps;
+					case 'singLEFT': moveCamTo[0] = -40*ClientPrefs.panIntensity*240*playbackRate/fps;
+					case 'singRIGHT': moveCamTo[0] = 40*ClientPrefs.panIntensity*240*playbackRate/fps;
+				}
+			}
 		}
 	}
 
@@ -3844,6 +3846,7 @@ class PlayState extends MusicBeatState
 						spawnedNote = (unspawnNotes[notesAddedCount].isSustainNote ? sustainNotes : notes).recycle(Note);
 						spawnedNote.setupNoteData(unspawnNotes[notesAddedCount]);
 					}
+
 					if (!ClientPrefs.noSpawnFunc) callOnLuas('onSpawnNote', [(!unspawnNotes[notesAddedCount].isSustainNote ? notes.members.indexOf(notes.members[0]) : sustainNotes.members.indexOf(sustainNotes.members[0])), unspawnNotes[notesAddedCount].noteData, unspawnNotes[notesAddedCount].noteType, unspawnNotes[notesAddedCount].isSustainNote]);
 					notesAddedCount++;
 				}
@@ -4036,18 +4039,20 @@ class PlayState extends MusicBeatState
 		iconP2.updateHitbox();
 	}
 
+	var percent:Float = 0;
+	var center:Float = 0;
 	public dynamic function updateIconsPosition()
 	{
 		if (ClientPrefs.smoothHealth)
 		{
-			final percent:Float = 1 - (ClientPrefs.smoothHPBug ? (displayedHealth / maxHealth) : (FlxMath.bound(displayedHealth, 0, maxHealth) / maxHealth));
+			percent = 1 - (ClientPrefs.smoothHPBug ? (displayedHealth / maxHealth) : (FlxMath.bound(displayedHealth, 0, maxHealth) / maxHealth));
 
 			iconP1.x = 0 + healthBar.x + (healthBar.width * percent) + (150 * iconP1.scale.x - 150) / 2 - iconOffset;
 			iconP2.x = 0 + healthBar.x + (healthBar.width * percent) - (150 * iconP2.scale.x) / 2 - iconOffset * 2;
 		}
 		else //mb forgot to include this
 		{
-			final center:Float = healthBar.x + (healthBar.width * (FlxMath.remapToRange(healthBar.percent, 0, 100, 100, 0) * 0.01));
+			center = healthBar.x + (healthBar.width * (FlxMath.remapToRange(healthBar.percent, 0, 100, 100, 0) * 0.01));
 			iconP1.x = center + (150 * iconP1.scale.x - 150) / 2 - iconOffset;
 			iconP2.x = center - (150 * iconP2.scale.x) / 2 - iconOffset * 2;
 		}
@@ -5043,6 +5048,8 @@ class PlayState extends MusicBeatState
 		if (noteDiff > ClientPrefs.goodWindow && ClientPrefs.shitGivesMiss && ClientPrefs.ratingIntensity == 'Harsh') noteMiss(note);
 		if (noteDiff > ClientPrefs.sickWindow && ClientPrefs.shitGivesMiss && ClientPrefs.ratingIntensity == 'Very Harsh')noteMiss(note);
 	}
+
+	var separatedScore:Array<Dynamic> = [];
 	private function popUpScore(note:Note = null, ?miss:Bool = false):Void
 	{
 		popUpsFrame += 1;
@@ -5100,7 +5107,7 @@ class PlayState extends MusicBeatState
 				var tempCombo:Float = (combo > 0 ? combo : -combo);
 				var tempComboAlt:Float = tempCombo;
 				
-				final separatedScore:Array<Dynamic> = [];
+				separatedScore = [];
 				while(tempCombo >= 10)
 				{
 					separatedScore.unshift(Math.ffloor(tempCombo / 10) % 10);
@@ -5573,36 +5580,11 @@ class PlayState extends MusicBeatState
 		{
 			//first, process whether or not the note should be hit. this prevents pointless strum following
 			if (!daNote.mustPress && !daNote.hitByOpponent && !daNote.ignoreNote && daNote.strumTime <= Conductor.songPosition)
-			{
-				if (!ClientPrefs.showcaseMode || ClientPrefs.charsAndBG) opponentNoteHit(daNote);
-				if (ClientPrefs.showcaseMode && !ClientPrefs.charsAndBG)
-				{
-					if (!daNote.isSustainNote) {
-						enemyHits += 1 * polyphony;
-						if (ClientPrefs.showNPS) {
-							oppNotesHitArray.push(1 * polyphony);
-							oppNotesHitDateArray.push(Conductor.songPosition);
-						}
-					}
-					invalidateNote(daNote);
-				}
-			}
+				opponentNoteHit(daNote);
 
 			if(daNote.mustPress) {
-				if((cpuControlled || usingBotEnergy && strumsHeld[daNote.noteData]) && daNote.strumTime <= Conductor.songPosition && !daNote.ignoreNote) {
-					if (!ClientPrefs.showcaseMode || ClientPrefs.charsAndBG) goodNoteHit(daNote);
-					if (ClientPrefs.showcaseMode && !ClientPrefs.charsAndBG)
-					{
-						if (!daNote.isSustainNote) {
-							totalNotesPlayed += 1 * polyphony;
-							if (ClientPrefs.showNPS) {
-								notesHitArray.push(1 * polyphony);
-								notesHitDateArray.push(Conductor.songPosition);
-							}
-						}
-						invalidateNote(daNote);
-					}
-				}
+				if((cpuControlled || usingBotEnergy && strumsHeld[daNote.noteData]) && daNote.strumTime <= Conductor.songPosition && !daNote.ignoreNote)
+					goodNoteHit(daNote);
 			}
 			if (!daNote.exists) return;
 
@@ -5871,7 +5853,7 @@ class PlayState extends MusicBeatState
 				if (daNote.animSuffix.length > 0 && oppChar.hasAnimation(animToPlay + daNote.animSuffix))
 					animToPlay = singAnimations[Std.int(Math.abs(daNote.noteData))] + daNote.animSuffix;
 
-				if (ClientPrefs.cameraPanning) inline camPanRoutine(animToPlay, (!opponentChart ? 'dad' : 'bf'));
+				if (ClientPrefs.cameraPanning) camPanRoutine(animToPlay, (!opponentChart ? 'dad' : 'bf'));
 
 				if (oppChar != null)
 				{
