@@ -83,7 +83,7 @@ class CopyState extends MusicBeatState
 		{
 			case "armv7" | "armv7l" | "armv8l":
 				archPrefix = "armv7a";
-			case "arm64" | "aarch64" | "armv8" | :
+			case "arm64" | "aarch64" | "armv8":
 				archPrefix = "aarch64";
 			case "x86" | "i386" | "i686":
 				archPrefix = "x86";
