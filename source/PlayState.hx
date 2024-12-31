@@ -6764,9 +6764,6 @@ class PlayState extends MusicBeatState
 
 		ffmpegExists = true;
 
-		#if android
-		lime.system.JNI.createStaticMethod('org/libsdl/app/SDLActivity', 'nativeSetenv', '(Ljava/lang/String;Ljava/lang/String;)V')("LD_LIBRARY_PATH", android.content.Context.getFilesDir());
-		#end
 		process = new Process(#if android '${android.content.Context.getFilesDir()}/ffmpeg' #else 'ffmpeg' #end, [
 				'-v',
 				'quiet',
@@ -6805,10 +6802,6 @@ class PlayState extends MusicBeatState
 	{
 		if (!ClientPrefs.ffmpegMode)
 			return;
-
-		#if android
-		lime.system.JNI.createStaticMethod('org/libsdl/app/SDLActivity', 'nativeSetenv', '(Ljava/lang/String;Ljava/lang/String;)V')("LD_LIBRARY_PATH", '');
-		#end
 
 		if (process != null){
 			if (process.stdin != null)

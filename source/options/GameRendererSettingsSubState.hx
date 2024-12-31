@@ -92,7 +92,7 @@ class GameRendererSettingsSubState extends BaseOptionsMenu
 			'vidEncoder',
 			'string',
 			'libx264',
-			['libx264', 'libx264rgb', 'libx265', 'libxvid', 'libsvtav1', 'mpeg2video']);
+			['libx264', 'libx264rgb' #if !android , 'libx265', 'libxvid', 'libsvtav1' #end, 'mpeg2video']);
 		addOption(option);
 
 		var option:Option = new Option('Classic Rendering Mode', //Name

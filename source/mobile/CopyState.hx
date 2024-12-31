@@ -40,6 +40,9 @@ import sys.FileSystem;
 
 using StringTools;
 
+#if (android && cpp)
+@:headerInclude('sys/utsname.h')
+#end
 class CopyState extends MusicBeatState
 {
 	public static var locatedFiles:Array<String> = [];
@@ -56,6 +59,9 @@ class CopyState extends MusicBeatState
 	var failedFilesStack:Array<String> = [];
 	var canUpdate:Bool = true;
 	var shouldCopy:Bool = false;
+	#if android
+	var archPrefix:String = "";
+	#end
 
 	private static final textFilesExtensions:Array<String> = ['ini', 'txt', 'xml', 'hxs', 'hx', 'lua', 'json', 'frag', 'vert'];
 
@@ -73,9 +79,21 @@ class CopyState extends MusicBeatState
 		CoolUtil.showPopUp("Seems like you have some missing files that are necessary to run the game\nPress OK to begin the copy process", "Notice!");
 
 		#if android
+		switch (getArch().toLowerCase())
+		{
+			case "armv7" | "armv7l" | "armv8l":
+				archPrefix = "armv7a";
+			case "arm64" | "aarch64" | "armv8" | :
+				archPrefix = "aarch64";
+			case "x86" | "i386" | "i686":
+				archPrefix = "x86";
+			case "x86_64" | "amd64":
+				archPrefix = "x86_64";
+		}
+		
 		if (!FileSystem.exists(android.content.Context.getFilesDir() + '/ffmpeg'))
 		{
-			File.saveBytes(android.content.Context.getFilesDir() + '/ffmpeg', getFileBytes(getFile('ffmpeg')));
+			File.saveBytes(android.content.Context.getFilesDir() + '/ffmpeg-$archPrefix', getFileBytes(getFile('ffmpeg')));
 			Sys.command('chmod', ['777', android.content.Context.getFilesDir() + '/ffmpeg']);
 		}
 		#end
@@ -238,5 +256,16 @@ class CopyState extends MusicBeatState
 
 		return (maxLoopTimes < 0);
 	}
+
+	#if (android && cpp)
+	@:functionCode('
+		struct utsname osInfo{};
+		uname(&osInfo);
+		return ::String(osInfo.machine);
+	')
+	@:noCompletion
+	private function getArch():String
+		return null;
+	#end
 }
 #end
