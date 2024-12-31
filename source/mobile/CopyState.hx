@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024 Mobile Porting Team
+ * Copyright (C) 2025 Mobile Porting Team
  *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the "Software"),
@@ -84,7 +84,7 @@ class CopyState extends MusicBeatState
 			case "armv7" | "armv7l" | "armv8l":
 				archPrefix = "armv7a";
 			case "arm64" | "aarch64" | "armv8":
-				archPrefix = "aarch64";
+				archPrefix = "arm64";
 			case "x86" | "i386" | "i686":
 				archPrefix = "x86";
 			case "x86_64" | "amd64":
