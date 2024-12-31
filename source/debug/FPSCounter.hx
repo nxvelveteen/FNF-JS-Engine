@@ -43,10 +43,12 @@ class FPSCounter extends TextField
 	var fpsMultiplier:Float = 1.0;
 	var deltaTimeout:Float = 0.0;
 	public var timeoutDelay:Float = 50;
+	var now:Float = 0;
 	// Event Handlers
 	override function __enterFrame(deltaTime:Float):Void
 	{
-		final now:Float = haxe.Timer.stamp() * 1000;
+		if (!ClientPrefs.showFPS) return;
+		now = haxe.Timer.stamp() * 1000;
 		times.push(now);
 		while (times[0] < now - 1000 / fpsMultiplier) times.shift();
 		if (deltaTimeout <= timeoutDelay)
@@ -89,11 +91,9 @@ class FPSCounter extends TextField
 
 	public dynamic function updateText():Void   // so people can override it in hscript
 	{
-		text = (ClientPrefs.showFPS ? "FPS: " + (ClientPrefs.ffmpegMode ? ClientPrefs.targetFPS : Math.round(currentFPS)) : "");
+		text = "FPS: " + (ClientPrefs.ffmpegMode ? ClientPrefs.targetFPS : Math.round(currentFPS));
 		if (ClientPrefs.ffmpegMode)
-		{
 			text += " (Rendering Mode)";
-		}
 
 		if (ClientPrefs.showRamUsage) text += "\nRAM: " + FlxStringUtil.formatBytes(memory) + (ClientPrefs.showMaxRamUsage ? " / " + FlxStringUtil.formatBytes(mempeak) : "");
 		if (ClientPrefs.debugInfo)

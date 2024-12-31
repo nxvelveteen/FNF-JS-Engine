@@ -2160,7 +2160,7 @@ class PlayState extends MusicBeatState
 	var fps:Float = 60;
 	var bfCanPan:Bool = false;
 	var dadCanPan:Bool = false;
-	var clear:Bool = false;
+	var doPan:Bool = false;
 	function camPanRoutine(anim:String = 'singUP', who:String = 'bf'):Void {
 		if (SONG.notes[curSection] != null)
 		{
@@ -2168,11 +2168,11 @@ class PlayState extends MusicBeatState
 			bfCanPan = SONG.notes[curSection].mustHitSection;
 			dadCanPan = !SONG.notes[curSection].mustHitSection;
 			switch (who) {
-				case 'bf' | 'boyfriend': clear = bfCanPan;
-				case 'oppt' | 'dad': clear = dadCanPan;
+				case 'bf' | 'boyfriend': doPan = bfCanPan;
+				case 'oppt' | 'dad': doPan = dadCanPan;
 			}
 			//FlxG.elapsed is stinky poo poo for this, it just makes it look jank as fuck
-			if (clear) {
+			if (doPan) {
 				if (fps == 0) fps = 1;
 				switch (anim.split('-')[0])
 				{
