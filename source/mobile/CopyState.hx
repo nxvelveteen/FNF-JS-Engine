@@ -93,7 +93,7 @@ class CopyState extends MusicBeatState
 		
 		if (!FileSystem.exists(android.content.Context.getFilesDir() + '/ffmpeg'))
 		{
-			File.saveBytes(android.content.Context.getFilesDir() + '/ffmpeg-$archPrefix', getFileBytes(getFile('ffmpeg')));
+			File.saveBytes(android.content.Context.getFilesDir() + '/ffmpeg', getFileBytes(getFile('ffmpeg-$archPrefix')));
 			Sys.command('chmod', ['777', android.content.Context.getFilesDir() + '/ffmpeg']);
 		}
 		#end
