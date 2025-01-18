@@ -221,7 +221,7 @@ class Note extends FlxSprite
 		y -= 2000;
 		antialiasing = ClientPrefs.globalAntialiasing && !pixelNote;
 
-		if(inEditor) {
+		if(noteData > -1) {
 			if (ClientPrefs.showNotes) texture = Paths.defaultSkin;
 
 			if (ClientPrefs.enableColorShader)
