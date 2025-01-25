@@ -1,6 +1,6 @@
 <!-- this is an secret -->
 # NOTE
-THIS NOT THE JS ENGINE BASE REPO. THIS BRANCH MADE BY [mcagabe19](https://github.com/mcagabe19) AND ALL CREDITS GOES TO HER.
+THIS NOT THE JS ENGINE BASE REPO. THIS BRANCH IS MADE BY [mcagabe19](https://github.com/mcagabe19) AND ALL CREDITS GOES TO HER.
 
 <h1 align="center">
   <br>
