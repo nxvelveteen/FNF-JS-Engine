@@ -24,22 +24,11 @@ import Conductor.Rating;
 import Character.Boyfriend;
 import Shaders;
 import Note.PreloadedChartNote;
+import utils.*;
 
 #if !flash
 import flixel.addons.display.FlxRuntimeShader;
 import openfl.filters.ShaderFilter;
-#end
-
-#if VIDEOS_ALLOWED
-#if (hxCodec >= "3.0.0" || hxCodec == "git")
-import hxcodec.flixel.FlxVideo as MP4Handler;
-#elseif (hxCodec == "2.6.1")
-import hxcodec.VideoHandler as MP4Handler;
-#elseif (hxCodec == "2.6.0")
-import VideoHandler as MP4Handler;
-#else
-import vlc.MP4Handler;
-#end
 #end
 
 import Note;
@@ -276,7 +265,7 @@ class PlayState extends MusicBeatState
 	inline function set_cpuControlled(value:Bool){
 		cpuControlled = value;
 		if (botplayTxt != null && !ClientPrefs.showcaseMode) // this assures it'll always show up
-			botplayTxt.visible = (!ClientPrefs.hideHud) ? cpuControlled : false;
+			botplayTxt.visible = (!ClientPrefs.hideHud && ClientPrefs.botTxtStyle != 'Hide') ? cpuControlled : false;
 
 		return cpuControlled;
 	}
@@ -1342,6 +1331,7 @@ class PlayState extends MusicBeatState
 		EngineWatermark = new FlxText(4,FlxG.height * 0.9 + 50,0,"", 16);
 		EngineWatermark.setFormat(Paths.font("vcr.ttf"), 16, FlxColor.WHITE, RIGHT, OUTLINE,FlxColor.BLACK);
 		EngineWatermark.scrollFactor.set();
+		EngineWatermark.text = SONG.song;
 		add(EngineWatermark);
 
 		switch(ClientPrefs.watermarkStyle)
@@ -1350,15 +1340,26 @@ class PlayState extends MusicBeatState
 			case 'Forever Engine': 
 				EngineWatermark.text = "JS Engine v" + MainMenuState.psychEngineJSVersion;
 				EngineWatermark.x = FlxG.width - EngineWatermark.width - 5;
+				/*if (ClientPrefs.downScroll) EngineWatermark.y = healthBar.y + 50;
+				else {
+					return; // replace if wrong
+				}*/
 			case 'JS Engine': 
 				if (!ClientPrefs.downScroll) EngineWatermark.y = FlxG.height * 0.1 - 70;
 				EngineWatermark.text = "Playing " + SONG.song + " on " + CoolUtil.difficultyString() + " - JSE v" + MainMenuState.psychEngineJSVersion;
+				/*if (ClientPrefs.downScroll) EngineWatermark.y = healthBar.y + 50;
+				else {
+					return; // replace if wrong
+				}*/
 			case 'Dave Engine':
 				EngineWatermark.setFormat(Paths.font("comic.ttf"), 16, FlxColor.WHITE, RIGHT, OUTLINE,FlxColor.BLACK);
 				EngineWatermark.text = SONG.song;
+				if (ClientPrefs.downScroll) EngineWatermark.y = healthBar.y + 50;
 
 			default: 
 		}
+
+		if (ClientPrefs.watermarkStyle == 'Hide' && EngineWatermark != null) EngineWatermark.visible = false;
 
 		if (ClientPrefs.showcaseMode && !ClientPrefs.charsAndBG) {
 			hitTxt = new FlxText(0, 20, 10000, "test", 42);
@@ -1938,60 +1939,64 @@ class PlayState extends MusicBeatState
 		char.y += char.positionArray[1];
 	}
 
-	var videoCutscene:MP4Handler = null;
-	public function startVideo(name:String, ?callback:Void->Void = null)
+	/***************/
+    /*    VIDEO    */
+	/***************/
+	public var videoCutscene:VideoSprite = null;
+	public function startVideo(name:String, ?library:String = null, ?callback:Void->Void = null, forMidSong:Bool = false, canSkip:Bool = true, loop:Bool = false, playOnLoad:Bool = true)
 	{
 		#if VIDEOS_ALLOWED
 		inCutscene = true;
+		canPause = false;
 
-		var filepath:String = Paths.video(name);
+		var foundFile:Bool = false;
+		var fileName:String = Paths.video(name, library);
+
 		#if sys
-		if(!FileSystem.exists(filepath))
+		if (FileSystem.exists(fileName))
 		#else
-		if(!OpenFlAssets.exists(filepath))
+		if (OpenFlAssets.exists(fileName))
 		#end
-		{
-			FlxG.log.warn('Couldnt find video file: ' + name);
-			if (callback != null)
-				callback();
-			else
-				startAndEnd();
-			return;
-		}
+		foundFile = true;
 
-		videoCutscene = new MP4Handler();
-		#if (hxCodec < "3.0.0")
-		videoCutscene.playVideo(filepath);
-		if (callback != null)
-			videoCutscene.finishCallback = callback;
-		else{
-			videoCutscene.finishCallback = function()
+		if (foundFile)
+		{
+			videoCutscene = new VideoSprite(fileName, forMidSong, canSkip, loop);
+
+			// Finish callback
+			if (!forMidSong)
 			{
-				startAndEnd();
-				if (heyStopTrying) openfl.system.System.exit(0);
-				return;
+				function onVideoEnd()
+				{
+					if (generatedMusic && PlayState.SONG.notes[Std.int(curStep / 16)] != null && !endingSong && !isCameraOnForcedPos)
+					{
+						moveCameraSection();
+						FlxG.camera.snapToTarget();
+					}
+					videoCutscene = null;
+					canPause = false;
+					inCutscene = false;
+					startAndEnd();
+				}
+				videoCutscene.finishCallback = (callback != null) ? callback.bind() : onVideoEnd;
+				videoCutscene.onSkip = (callback != null) ? callback.bind() : onVideoEnd;
 			}
+			add(videoCutscene);
+
+			if (playOnLoad)
+				videoCutscene.videoSprite.play();
+			return videoCutscene;
 		}
+		#if (LUA_ALLOWED)
+		else addTextToDebug("Video not found: " + fileName, FlxColor.RED);
 		#else
-		videoCutscene.play(filepath);
-		if (callback != null)
-			videoCutscene.onEndReached.add(callback);
-		else{
-			videoCutscene.onEndReached.add(function(){
-				startAndEnd();
-				if (heyStopTrying) openfl.system.System.exit(0);
-				return;
-			});
-		}
+		else FlxG.log.error("Video not found: " + fileName);
 		#end
 		#else
 		FlxG.log.warn('Platform not supported!');
-		if (callback != null)
-			callback();
-		else
-			startAndEnd();
-		return;
+		startAndEnd();
 		#end
+		return null;
 	}
 
 	public function startAndEnd()
@@ -2497,7 +2502,8 @@ class PlayState extends MusicBeatState
 	public function updateScore(miss:Bool = false)
 	{
 		scoreTxtUpdateFrame++;
-		if (!scoreTxt.visible || scoreTxt == null) return;
+		if (!scoreTxt.visible || scoreTxt == null)
+			return;
 		//GAH DAYUM THIS IS MORE OPTIMIZED THAN BEFORE
 		var divider = switch (ClientPrefs.scoreStyle)
 		{
@@ -2797,6 +2803,7 @@ class PlayState extends MusicBeatState
 				}
 			}
 		}
+		var stepCrochet:Float = 0.0;
 		var currentBPMLol:Float = Conductor.bpm;
 		var currentMultiplier:Float = 1;
 		var gottaHitNote:Bool = false;
@@ -2854,12 +2861,10 @@ class PlayState extends MusicBeatState
 						{
 							case 0:
 								var boyfriendToGrab:Boyfriend = boyfriendMap.get(charChangeNames[0]);
-								if (boyfriendToGrab != null && boyfriendToGrab.noteskin.length > 0) bfNoteskin = boyfriendToGrab.noteskin;
-								else bfNoteskin = '';
+								if (boyfriendToGrab != null) bfNoteskin = boyfriendToGrab.noteskin;
 							case 1:
 								var dadToGrab:Character = dadMap.get(charChangeNames[0]);
-								if (dadToGrab != null && dadToGrab.noteskin.length > 0) dadNoteskin = dadToGrab.noteskin;
-								else dadNoteskin = '';
+								if (dadToGrab != null) dadNoteskin = dadToGrab.noteskin;
 						}
 						charChangeTimes.shift();
 						charChangeNames.shift();
@@ -2918,7 +2923,6 @@ class PlayState extends MusicBeatState
 								gfNote: swagNote.gfNote,
 								isSustainNote: false,
 								isSustainEnd: false,
-								sustainScale: 0,
 								parentST: 0,
 								hitHealth: swagNote.hitHealth,
 								missHealth: swagNote.missHealth,
@@ -2933,15 +2937,15 @@ class PlayState extends MusicBeatState
 					}
 
 					if (swagNote.sustainLength < 1) continue;
-				
-					var ratio:Float = Conductor.bpm / currentBPMLol;
+
+					stepCrochet = 15000 / currentBPMLol;
 		
-					final roundSus:Int = Math.round(swagNote.sustainLength / Conductor.stepCrochet);
+					final roundSus:Int = Math.round(swagNote.sustainLength / stepCrochet);
 					if (roundSus > 0) {
 						for (susNote in 0...roundSus + 1) {
 
 							final sustainNote:PreloadedChartNote = cast {
-								strumTime: daStrumTime + (Conductor.stepCrochet * susNote),
+								strumTime: daStrumTime + (stepCrochet * susNote),
 								noteData: daNoteData,
 								mustPress: bothSides || gottaHitNote,
 								oppNote: (opponentChart ? gottaHitNote : !gottaHitNote),
@@ -2952,7 +2956,6 @@ class PlayState extends MusicBeatState
 								noAnimation: songNotes[3] == 'No Animation',
 								isSustainNote: true,
 								isSustainEnd: susNote == roundSus,
-								sustainScale: 1 / ratio,
 								parentST: swagNote.strumTime,
 								parentSL: swagNote.sustainLength,
 								hitHealth: 0.023,
@@ -3111,7 +3114,7 @@ class PlayState extends MusicBeatState
 				else if(middleScroll) targetAlpha = ClientPrefs.oppNoteAlpha;
 			}
 
-			final noteSkinExists:Bool = FileSystem.exists("assets/shared/images/noteskins/" + (player == 0 ? dadNoteskin : bfNoteskin)) || FileSystem.exists(Paths.modsImages("noteskins/" + (player == 0 ? dadNoteskin : bfNoteskin)));
+			final noteSkinExists:Bool = Paths.fileExists("images/noteskins/" + (player == 0 ? dadNoteskin : bfNoteskin) + '.png', IMAGE);
 
 			var babyArrow:StrumNote = new StrumNote(middleScroll ? STRUM_X_MIDDLESCROLL : STRUM_X, strumLine.y, i, player);
 			babyArrow.downScroll = ClientPrefs.downScroll;
@@ -3580,28 +3583,7 @@ class PlayState extends MusicBeatState
 					new FlxTimer().start(10, function(tmr:FlxTimer)
 						{
 							#if VIDEOS_ALLOWED
-							var vidSpr:FlxSprite;
-							var videoDone:Bool = true;
-							var video:MP4Handler = new MP4Handler(); // it plays but it doesn't show???
-							vidSpr = new FlxSprite().makeGraphic(FlxG.width, FlxG.height, FlxColor.WHITE);
-							add(vidSpr);
-							#if (hxCodec < "3.0.0")
-							video.playVideo(Paths.video('scary'), false, false);
-							video.finishCallback = function()
-							{
-								videoDone = true;
-								vidSpr.visible = false;
-								Sys.exit(0);
-							};
-							#else
-							video.play(Paths.video('scary'));
-							video.onEndReached.add(function(){
-								video.dispose();
-								videoDone = true;
-								vidSpr.visible = false;
-								Sys.exit(0);
-							});
-							#end
+							startVideo('scary', function() Sys.exit(0));
 							#else
 							throw 'You should RUN, any minute now.'; // thought this'd be cooler
 							// Sys.exit(0);
@@ -3691,7 +3673,7 @@ class PlayState extends MusicBeatState
 					var bg = new FlxSprite(-FlxG.width, -FlxG.height).makeGraphic(FlxG.width * 3, FlxG.height * 3, FlxColor.BLACK);
 					add(bg);
 					bg.cameras = [camHUD];
-					startVideo(SONG.event7Value);
+					startVideo(SONG.event7Value, function() Sys.exit(0));
 				}
 			else if (!ClientPrefs.antiCheatEnable)
 				{
@@ -4306,7 +4288,7 @@ class PlayState extends MusicBeatState
 
 				camBopIntensity = _intensity;
 				camBopInterval = _interval;
-				if (_intensity != 4) usingBopIntervalEvent = true;
+				if (_interval != 4) usingBopIntervalEvent = true;
 					else usingBopIntervalEvent = false;
 
 			case 'Camera Twist':
@@ -4384,6 +4366,20 @@ class PlayState extends MusicBeatState
 				{
 					char.playAnim(value1, true);
 					char.specialAnim = true;
+				}
+
+			// Evil
+			case 'Windows Notification':
+				{
+					PlatformUtil.sendWindowsNotification(value1, value2);
+
+					#if linux
+					addTextToDebug('Windows Notifications are not currently supported on Linux!', FlxColor.RED);
+					return;
+					#else
+					trace('Windows Notifications are not currently supported on this platform!');
+					return;
+					#end
 				}
 
 			case 'Camera Follow Pos':
@@ -4468,7 +4464,7 @@ class PlayState extends MusicBeatState
 							boyfriend.alpha = 0.00001;
 							boyfriend = boyfriendMap.get(value2);
 							boyfriend.alpha = lastAlpha;
-							if (!value2.startsWith('bf') || !value2.startsWith('boyfriend')) iconP1.changeIcon(boyfriend.healthIcon);
+							if (!value2.startsWith('bf') && !value2.startsWith('boyfriend')) iconP1.changeIcon(boyfriend.healthIcon);
 							else {
 								if (ClientPrefs.bfIconStyle == 'VS Nonsense V2') iconP1.changeIcon('bfnonsense');
 								if (ClientPrefs.bfIconStyle == 'Doki Doki+') iconP1.changeIcon('bfdoki');
@@ -4477,8 +4473,7 @@ class PlayState extends MusicBeatState
 								if (ClientPrefs.bfIconStyle == "FPS Plus") iconP1.changeIcon('bffps');
 								if (ClientPrefs.bfIconStyle == "OS 'Engine'") iconP1.changeIcon('bfos');
 							}
-							if (boyfriend.noteskin.length > 0) bfNoteskin = boyfriend.noteskin;
-							else bfNoteskin = '';
+							if (boyfriend.noteskin != null) bfNoteskin = boyfriend.noteskin;
 						}
 						setOnLuas('boyfriendName', boyfriend.curCharacter);
 
@@ -4512,8 +4507,7 @@ class PlayState extends MusicBeatState
 
 							if (dadAnim != '') dad.playAnim(dadAnim, true);
 						}
-							if (dad.noteskin.length > 0) dadNoteskin = dad.noteskin;
-							else dadNoteskin = '';
+							if (dad.noteskin != null) dadNoteskin = dad.noteskin;
 						setOnLuas('dadName', dad.curCharacter);
 
 					case 2:
@@ -5583,7 +5577,7 @@ class PlayState extends MusicBeatState
 				opponentNoteHit(daNote);
 
 			if(daNote.mustPress) {
-				if((cpuControlled || usingBotEnergy && strumsHeld[daNote.noteData]) && daNote.strumTime <= Conductor.songPosition && !daNote.ignoreNote)
+				if((cpuControlled || usingBotEnergy && strumsHeld[daNote.noteData]) && !daNote.wasGoodHit && daNote.strumTime <= Conductor.songPosition && !daNote.ignoreNote)
 					goodNoteHit(daNote);
 			}
 			if (!daNote.exists) return;
@@ -6171,7 +6165,7 @@ class PlayState extends MusicBeatState
 		if (!ffmpegMode && playbackRate < 256) //much better resync code, doesn't just resync every step!!
 		{
 			var timeSub:Float = Conductor.songPosition - Conductor.offset;
-			var syncTime:Float = 20 * playbackRate;
+			var syncTime:Float = 20 * Math.max(playbackRate, 1);
 			if (Math.abs(FlxG.sound.music.time - timeSub) > syncTime ||
 			(vocals.length > 0 && vocals.time < vocals.length && Math.abs(vocals.time - timeSub) > syncTime) ||
 			(opponentVocals.length > 0 && opponentVocals.time < opponentVocals.length && Math.abs(opponentVocals.time - timeSub) > syncTime))
@@ -6211,7 +6205,7 @@ class PlayState extends MusicBeatState
 			var randomShit = FlxMath.roundDecimal(FlxG.random.float(minSpeed, maxSpeed), 2);
 			lerpSongSpeed(randomShit, 1);
 		}
-		if (camZooming && !endingSong && !startingSong && FlxG.camera.zoom < 1.35 && ClientPrefs.camZooms && (curBeat % camBopInterval == 0))
+		if (camZooming && !endingSong && !startingSong && FlxG.camera.zoom < 1.35 && usingBopIntervalEvent && ClientPrefs.camZooms && (curBeat % camBopInterval == 0))
 		{
 			FlxG.camera.zoom += 0.015 * camBopIntensity;
 			camHUD.zoom += 0.03 * camBopIntensity;
@@ -6288,7 +6282,11 @@ class PlayState extends MusicBeatState
 			setOnLuas('mustHitSection', SONG.notes[curSection].mustHitSection);
 			setOnLuas('altAnim', SONG.notes[curSection].altAnim);
 			setOnLuas('gfSection', SONG.notes[curSection].gfSection);
-			if (!usingBopIntervalEvent) camBopInterval = getBeatsOnSection();
+			if (camZooming && !endingSong && !startingSong && FlxG.camera.zoom < 1.35 && !usingBopIntervalEvent && ClientPrefs.camZooms)
+			{
+				FlxG.camera.zoom += 0.015 * camBopIntensity;
+				camHUD.zoom += 0.03 * camBopIntensity;
+			}
 		}
 
 		setOnLuas('curSection', curSection);

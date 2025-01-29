@@ -43,8 +43,17 @@ class NotesSubState extends MusicBeatSubstate
 
 	var modeBG:FlxSprite;
 	var notesBG:FlxSprite;
+	var coverBG:FlxSprite;
 
 	var tipTxt:FlxText;
+
+	var quantNames:Array<String> = [
+		'4th', '8th', '12th', '16th',
+		'24th', '32nd', '48th', '64th',
+		'96th', '128th', '192nd', '256th',
+		'384th', '512th', '768th', '1024th',
+		'1536th', '2048th', '3072nd', '6144th'
+	];
 
 	public function new() {
 		super();
@@ -77,15 +86,23 @@ class NotesSubState extends MusicBeatSubstate
 		notesBG.alpha = 0.4;
 		add(notesBG);
 
+		if (ClientPrefs.noteColorStyle == 'Quant-Based') {
+			notesBG.makeGraphic(2400, 125, FlxColor.BLACK);
+		}
+
 		modeNotes = new FlxTypedGroup<FlxSprite>();
 		add(modeNotes);
 
 		myNotes = new FlxTypedGroup<StrumNote>();
 		add(myNotes);
 
-		var bg:FlxSprite = new FlxSprite(720).makeGraphic(FlxG.width - 720, FlxG.height, FlxColor.BLACK);
-		bg.alpha = 0.25;
-		add(bg);
+		noteTxts = new FlxTypedGroup<AttachedText>();
+		add(noteTxts);
+
+		coverBG = new FlxSprite(720).makeGraphic(FlxG.width - 720, FlxG.height, FlxColor.BLACK);
+		coverBG.alpha = 0.25;
+		add(coverBG);
+		
 		var bg:FlxSprite = new FlxSprite(750, 160).makeGraphic(FlxG.width - 780, 540, FlxColor.BLACK);
 		bg.alpha = 0.25;
 		add(bg);
@@ -345,7 +362,7 @@ class NotesSubState extends MusicBeatSubstate
 					}
 				});
 			}
-			else if (pointerOverlaps(myNotes))
+			else if (!pointerOverlaps(coverBG) && pointerOverlaps(myNotes))
 			{
 				myNotes.forEachAlive(function(note:StrumNote) {
 					if (curSelectedNote != note.ID && pointerOverlaps(note))
@@ -434,13 +451,16 @@ class NotesSubState extends MusicBeatSubstate
 		}
 		else if(virtualPad.buttonC.justPressed || controls.RESET && hexTypeNum < 0)
 		{
+			var colors:Array<FlxColor> = ClientPrefs.noteColorStyle != 'Quant-Based' ? !onPixel ? ClientPrefs.defaultArrowRGB[curSelectedNote] :
+			ClientPrefs.defaultPixelRGB[curSelectedNote] : ClientPrefs.defaultQuantRGB[curSelectedNote];
 			if(FlxG.keys.pressed.SHIFT || FlxG.gamepads.anyJustPressed(LEFT_SHOULDER))
 			{
 				for (i in 0...3)
 				{
 					var strumRGB:RGBShaderReference = myNotes.members[curSelectedNote].rgbShader;
-					var color:FlxColor = !onPixel ? ClientPrefs.defaultArrowRGB[curSelectedNote][i] :
-													ClientPrefs.defaultPixelRGB[curSelectedNote][i];
+					var color = colors[i];
+					
+					if (ClientPrefs.noteColorStyle == 'Quant-Based') color = ClientPrefs.defaultQuantRGB[curSelectedNote][i];
 					switch(i)
 					{
 						case 0:
@@ -453,9 +473,32 @@ class NotesSubState extends MusicBeatSubstate
 					dataArray[curSelectedNote][i] = color;
 				}
 			}
-			setShaderColor(!onPixel ? ClientPrefs.defaultArrowRGB[curSelectedNote][curSelectedMode] : ClientPrefs.defaultPixelRGB[curSelectedNote][curSelectedMode]);
+			setShaderColor(colors[curSelectedMode]);
 			FlxG.sound.play(Paths.sound('cancelMenu'), 0.6);
 			updateColors();
+		}
+		if (ClientPrefs.noteColorStyle == 'Quant-Based')
+		{
+			var xIndex:Float = 0;
+			var lerpVal:Float = (1 - Math.exp(-48 * elapsed));
+			for (i in 0...myNotes.length)
+			{
+				xIndex = i;
+				var item = myNotes.members[i];
+				if (curSelectedNote > 2 && dataArray.length > 4)
+					xIndex -= Math.min(curSelectedNote - 2, dataArray.length - 4);
+
+				var xPos:Float = 150 + (120 * xIndex);
+
+				item.x += (xPos - item.x) * lerpVal;
+			}
+			xIndex = Math.min(curSelectedNote, dataArray.length - 2);
+			if (dataArray.length > 4)
+					if (curSelectedNote < 2) xIndex = 0;
+						else xIndex -= 2;
+
+			var xPos:Float = 140 - (120 * xIndex);
+			notesBG.x += (xPos - notesBG.x) * lerpVal;
 		}
 	}
 
@@ -535,6 +578,7 @@ class NotesSubState extends MusicBeatSubstate
 	var skinNote:FlxSprite;
 	var modeNotes:FlxTypedGroup<FlxSprite>;
 	var myNotes:FlxTypedGroup<StrumNote>;
+	var noteTxts:FlxTypedGroup<AttachedText>;
 	var bigNote:Note;
 	public function spawnNotes()
 	{
@@ -547,20 +591,27 @@ class NotesSubState extends MusicBeatSubstate
 			spawnNotes();
 			return;
 		}
-		dataArray = !onPixel ? ClientPrefs.arrowRGB : ClientPrefs.arrowRGBPixel;
+		dataArray = ClientPrefs.noteColorStyle != 'Quant-Based' ? !onPixel ? ClientPrefs.arrowRGB : ClientPrefs.arrowRGBPixel : ClientPrefs.quantRGB;
 		if (onPixel) PlayState.stageUI = "pixel";
 
-		// clear groups
+		//clear groups
 		modeNotes.forEachAlive(function(note:FlxSprite) {
 			note.kill();
 			note.destroy();
 		});
+		modeNotes.clear();
+
 		myNotes.forEachAlive(function(note:StrumNote) {
 			note.kill();
 			note.destroy();
 		});
-		modeNotes.clear();
 		myNotes.clear();
+
+		noteTxts.forEachAlive(function(txt:AttachedText) {
+			txt.kill();
+			txt.destroy();
+		});
+		noteTxts.clear();
 
 		if(skinNote != null)
 		{
@@ -606,10 +657,19 @@ class NotesSubState extends MusicBeatSubstate
 			Note.globalRgbShaders[i].g = dataArray[i][1];
 			Note.globalRgbShaders[i].b = dataArray[i][2];
 
-			var newNote:StrumNote = new StrumNote(150 + (480 / dataArray.length * i), 200, i, 0);
+			var newNote:StrumNote = new StrumNote(150 + (120 * i), 200, i%4, 0);
 			newNote.rgbShader.r = dataArray[i][0];
 			newNote.rgbShader.g = dataArray[i][1];
 			newNote.rgbShader.b = dataArray[i][2];
+
+			if (ClientPrefs.noteColorStyle == 'Quant-Based')
+			{
+				var txt:AttachedText = new AttachedText(quantNames[i], 0, 0, true);
+				txt.sprTracker = newNote;
+				txt.copyAlpha = true;
+				txt.scaleX = txt.scaleY = 2 / txt.letters.length;
+				noteTxts.add(txt);
+			}
 			
 			newNote.useRGBShader = true;
 			newNote.setGraphicSize(102);
@@ -620,16 +680,17 @@ class NotesSubState extends MusicBeatSubstate
 		
 		bigNote = new Note(0, 0);
 		bigNote.setPosition(250, 325);
-		bigNote.setGraphicSize(250);
 		bigNote.pixelNote = onPixel;
 		if (onPixel) @:privateAccess bigNote.reloadNote(Paths.defaultSkin);
+		else bigNote.texture = Paths.defaultSkin;
+		bigNote.setGraphicSize(250);
 		bigNote.updateHitbox();
 		bigNote.rgbShader.parent = Note.globalRgbShaders[curSelectedNote];
 		bigNote.shader = Note.globalRgbShaders[curSelectedNote].shader;
-		for (i in 0...Note.colArray.length)
+		for (i in 0...dataArray.length)
 		{
-			if(!onPixel) bigNote.animation.addByPrefix('note$i', Note.colArray[i] + '0', 24, true);
-			else bigNote.animation.add('note$i', [i + 4], 24, true);
+			if(!onPixel) bigNote.animation.addByPrefix('note$i', Note.colArray[i%4] + '0', 24, true);
+			else bigNote.animation.add('note$i', [i%4 + 4], 24, true);
 		}
 		insert(members.indexOf(myNotes) + 1, bigNote);
 		_storedColor = getShaderColor();

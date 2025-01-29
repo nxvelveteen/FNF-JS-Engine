@@ -21,6 +21,7 @@ import openfl.utils.Assets;
 #end
 import flixel.text.FlxText;
 import shaders.RGBPalette.RGBShaderReference;
+import utils.CoolSystemStuff;
 
 using StringTools;
 
@@ -68,23 +69,9 @@ class CoolUtil
 		resH = height/baseH;
 	}
 
-	public static function getUsername():String
-	{
-		// uhh this one is self explanatory
-		return Sys.getEnv("USERNAME");
-	}
-
-	public static function getUserPath():String
-	{
-		// this one is also self explantory
-		return Sys.getEnv("USERPROFILE");
-	}
-
-	public static function getTempPath():String
-	{
-		// gets appdata temp folder lol
-		return Sys.getEnv("TEMP");
-	}
+	public static var getUsername = CoolSystemStuff.getUsername;
+	public static var getUserPath = CoolSystemStuff.getUserPath;
+	public static var getTempPath = CoolSystemStuff.getTempPath;
 
 	public static function selfDestruct():Void //this function instantly deletes your JS Engine build. i stole this from vs marcello source so if this gets used for malicious purposes im removing it
 	{
@@ -257,14 +244,19 @@ class CoolUtil
 
 	public static final beats:Array<Int> = [4, 8, 12, 16, 24, 32, 48, 64, 96, 128, 192,256,384,512,768,1024,1536,2048,3072,6144];
 
+	static var foundQuant:Int = 0;
+	static var theCurBPM:Float = 0;
+	static var stepCrochet:Float = 0;
+	static var latestBpmChangeIndex = 0;
+	static var latestBpmChange = null;
 	public static function checkNoteQuant(note:Note, timeToCheck:Float, ?rgbShader:RGBShaderReference) 
 	{
 		if (ClientPrefs.noteColorStyle == 'Quant-Based' && (ClientPrefs.showNotes && ClientPrefs.enableColorShader))
 		{
-			var theCurBPM = Conductor.bpm;
-			var stepCrochet:Float = (60 / theCurBPM) * 1000;
-			var latestBpmChangeIndex = -1;
-			var latestBpmChange = null;
+			theCurBPM = Conductor.bpm;
+			stepCrochet = (60 / theCurBPM) * 1000;
+			latestBpmChangeIndex = -1;
+			latestBpmChange = null;
 
 			for (i in 0...Conductor.bpmChangeMap.length) {
 				var bpmchange = Conductor.bpmChangeMap[i];
@@ -285,77 +277,16 @@ class CoolUtil
 				if (beat % (6144 / beats[i]) == 0)
 				{
 					beat = beats[i];
+					foundQuant = i;
 					break;
 				}			
 			}
 			
-			if (rgbShader != null) switch (beat)
-			{
-				case 4: //red
-					rgbShader.r = 0xFFF9393F;
-					rgbShader.b = 0xFF651038;
-				case 8: //blue
-					rgbShader.r = 0xFF3A48F5;
-					rgbShader.b = 0xFF0C3D60;
-				case 12: //purple
-					rgbShader.r = 0xFFB200FF;
-					rgbShader.b = 0xFF57007F;
-				case 16: //yellow
-					rgbShader.r = 0xFFFFD800;
-					rgbShader.b = 0xFF4D4100;
-				case 24: //pink
-					rgbShader.r = 0xFFFF00DC;
-					rgbShader.b = 0xFF740066;
-				case 32: //orange
-					rgbShader.r = 0xFFFF6A00;
-					rgbShader.b = 0xFF652800;
-				case 48: //cyan
-					rgbShader.r = 0xFF00FFFF;
-					rgbShader.b = 0xFF004B5E;
-				case 64: //green
-					rgbShader.r = 0xFF12FA05;
-					rgbShader.b = 0xFF0A4447;
-				case 96: //salmon lookin ass
-					rgbShader.r = 0xFFFF7F7F;
-					rgbShader.b = 0xFF592C2C;
-				case 128: //light purple shit
-					rgbShader.r = 0xFFD67FFF;
-					rgbShader.b = 0xFF5F3870;
-				case 192: //turquioe i cant spell
-					rgbShader.r = 0xFF00FF90;
-					rgbShader.b = 0xFF003921;
-				case 256: //shit (the color of it)
-					rgbShader.r = 0xFF7F3300;
-					rgbShader.b = 0xFF401800;
-				case 384: //dark green
-					rgbShader.r = 0xFF007F0E;
-					rgbShader.b = 0xFF003404;
-				case 512: //darj blue
-					rgbShader.r = 0xFF230093;
-					rgbShader.b = 0xFF0F0043;
-				case 768: //gray ok
-					rgbShader.r = 0xFFE7E7E7;
-					rgbShader.b = 0xFF2A2A2A;
-				case 1024: //turqyuarfhiouhifueaig but dark
-					rgbShader.r = 0xFF00AB64;
-					rgbShader.b = 0xFF00321E;
-				case 1536: //pure death
-					rgbShader.r = 0xFF000000;
-					rgbShader.b = 0xFF000000;
-				case 2048: //piss and shit color
-					rgbShader.r = 0xFFA69C52;
-					rgbShader.b = 0xFF2F2D17;
-				case 3072: //boring ass color
-					rgbShader.r = 0xFFFFF9AB;
-					rgbShader.b = 0xFF45442F;
-				case 6144: //why did i do this? idk tbh, it just funni
-					rgbShader.r = 0xFFFF6A00;
-					rgbShader.b = 0xFF652800;
-				default: // white/gray
-					rgbShader.r = 0xFFFFFFFF;
-					rgbShader.b = 0xFF434343;
+			if (rgbShader != null) {
+				rgbShader.r = ClientPrefs.quantRGB[foundQuant][0];
+				rgbShader.g = ClientPrefs.quantRGB[foundQuant][1];
+				rgbShader.b = ClientPrefs.quantRGB[foundQuant][2];
 			}
-			if (rgbShader != null) rgbShader.g = 0xFFFFFFFF;
 		}
 	}
 	

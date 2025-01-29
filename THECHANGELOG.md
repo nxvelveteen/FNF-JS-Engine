@@ -1,11 +1,8 @@
-1.40.0;
+1.42.0;
 
-Merry Christmas!
-
-Added a rare Santa startup that ONLY shows between the dates 12/16 to 12/31!
-The default menu theme is now a Christmas remix!
-Removed everything related to SB Engine
-Fixed camera pointer not showing in the Character Editor
-Noteskins now change to your default skin if you call "Change Character" and the character doesn't have a noteskin field
-Sustain lengths are now rounded instead of floored
-Fixed a bug where some users wouldn't be able to scroll in the Options menu. Additionally, scrolling between the option categories is now more centered.
+Added an option to have.. no menu music
+New tips and botplay text AND new crash text
+(Windows only) New Windows Notification Event (just like in Exploitation!)
+OpenFL downgraded to 9.3.3, 9.4.0 caused some shaders to implode
+Changed the video library from hxCodec to hxvlc
+Fixed note alpha not working correctly again

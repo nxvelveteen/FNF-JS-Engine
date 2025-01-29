@@ -2,18 +2,6 @@ package;
 
 import flixel.input.keyboard.FlxKey;
 
-#if VIDEOS_ALLOWED
-#if (hxCodec >= "3.0.0" || hxCodec == "git")
-import hxcodec.flixel.FlxVideo as MP4Handler;
-#elseif (hxCodec == "2.6.1")
-import hxcodec.VideoHandler as MP4Handler;
-#elseif (hxCodec == "2.6.0")
-import VideoHandler as MP4Handler;
-#else
-import vlc.MP4Handler;
-#end
-#end
-
 class StartupState extends MusicBeatState
 {
 	var logo:FlxSprite;
@@ -23,6 +11,53 @@ class StartupState extends MusicBeatState
 	var date:Date = Date.now();
 
 	var canChristmas = false;
+
+	private var vidSprite:VideoSprite = null;
+	private function startVideo(name:String, ?library:String = null, ?callback:Void->Void = null, canSkip:Bool = true, loop:Bool = false, playOnLoad:Bool = true)
+	{
+		#if VIDEOS_ALLOWED
+		var foundFile:Bool = false;
+		var fileName:String = Paths.video(name, library);
+
+		#if sys
+		if (FileSystem.exists(fileName))
+		#else
+		if (OpenFlAssets.exists(fileName))
+		#end
+		foundFile = true;
+
+		if (foundFile)
+		{
+			vidSprite = new VideoSprite(fileName, false, canSkip, loop);
+
+			// Finish callback
+			function onVideoEnd()
+			{
+				vidSprite = null;
+				FlxG.switchState(TitleState.new);
+			}
+			vidSprite.finishCallback = (callback != null) ? callback.bind() : onVideoEnd;
+			vidSprite.onSkip = (callback != null) ? callback.bind() : onVideoEnd;
+			insert(0, vidSprite);
+
+			if (playOnLoad)
+				vidSprite.videoSprite.play();
+			return vidSprite;
+		}
+		else {
+			FlxG.log.error("Video not found: " + fileName);
+			new FlxTimer().start(0.1, function(tmr:FlxTimer) {
+				doIntro();
+			});
+		}
+		#else
+		FlxG.log.warn('Platform not supported!');
+		new FlxTimer().start(0.1, function(tmr:FlxTimer) {
+			doIntro();
+		});
+		#end
+		return null;
+	}
 
 	override public function create():Void
 	{
@@ -49,7 +84,10 @@ class StartupState extends MusicBeatState
 		skipTxt.scrollFactor.set();
 		skipTxt.alpha = 0;
 		skipTxt.y -= skipTxt.textField.textHeight;
-		add(skipTxt);
+		if (vidSprite != null)
+			insert(1, skipTxt);
+		else
+			add(skipTxt);
 
 		FlxTween.tween(skipTxt, {alpha: 1}, 1);
 
@@ -71,26 +109,9 @@ class StartupState extends MusicBeatState
 	}
 
 	function doIntro() {
-		/*
 		#if debug // for testing purposes
-			final vidSprite = new MP4Handler(); // it plays but it doesn't show???
-			#if (hxCodec < "3.0.0")
-			vidSprite.playVideo(Paths.video('broCopiedDenpa', 'splash'), false, false);
-			vidSprite.finishCallback = function()
-			{
-				try { vidSprite.dispose(); }
-				catch (e) {}
-				FlxG.switchState(TitleState.new);
-			};
-			#else
-			vidSprite.play(Paths.video('broCopiedDenpa', 'splash'));
-			vidSprite.onEndReached.add(function(){
-				vidSprite.dispose();
-				FlxG.switchState(TitleState.new);
-			});
-			#end
+			startVideo('broCopiedDenpa', 'splash');
 		#else
-		*/
 		final theIntro:Int = FlxG.random.int(0, maxIntros);
 		switch (theIntro) {
 			case 0:
@@ -124,41 +145,11 @@ class StartupState extends MusicBeatState
 				FlxTween.tween(logo, {alpha: 1, "scale.x": 1, "scale.y": 1}, 1.35, {ease: FlxEase.expoOut, onComplete: _ -> onIntroDone(0.6)});
 			case 4:
 				#if VIDEOS_ALLOWED
-					var vidSprite = new MP4Handler(); // it plays but it doesn't show???
-					#if (hxCodec < "3.0.0")
-					vidSprite.playVideo(Paths.video('bambiStartup', 'splash'), false, false);
-					vidSprite.finishCallback = function()
-					{
-						try { vidSprite.dispose(); }
-						catch (e) {}
-						FlxG.switchState(TitleState.new);
-					};
-					#else
-					vidSprite.play(Paths.video('bambiStartup', 'splash'));
-					vidSprite.onEndReached.add(function(){
-						vidSprite.dispose();
-						FlxG.switchState(TitleState.new);
-					});
-					#end
+					startVideo('bambiStartup', 'splash');
 				#end
 			case 5:
 				#if VIDEOS_ALLOWED
-					var vidSprite = new MP4Handler(); // it plays but it doesn't show???
-					#if (hxCodec < "3.0.0")
-					vidSprite.playVideo(Paths.video('broCopiedDenpa', 'splash'), false, false);
-					vidSprite.finishCallback = function()
-					{
-						try { vidSprite.dispose(); }
-						catch (e) {}
-						FlxG.switchState(TitleState.new);
-					};
-					#else
-					vidSprite.play(Paths.video('broCopiedDenpa', 'splash'));
-					vidSprite.onEndReached.add(function(){
-						vidSprite.dispose();
-						FlxG.switchState(TitleState.new);
-					});
-					#end
+					startVideo('broCopiedDenpa', 'splash');
 				#end
 			case 6:
 				if (canChristmas)
@@ -169,9 +160,11 @@ class StartupState extends MusicBeatState
 					logo.updateHitbox();
 					logo.screenCenter();
 					FlxTween.tween(logo, {alpha: 1, "scale.x": 1, "scale.y": 1}, 2, {ease: FlxEase.expoOut, onComplete: _ -> onIntroDone(1.5)});
-				} else doIntro();
+				} 
+				else 
+					doIntro();
 		}
-		// #end
+		#end
 	}
 
 	override function update(elapsed:Float)

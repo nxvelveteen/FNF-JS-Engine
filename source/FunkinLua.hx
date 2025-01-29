@@ -339,15 +339,13 @@ class FunkinLua {
 			}
 
             var arr:Array<String> = funk.runtimeShaders.get(shader);
-			// Both FlxGame and FlxCamera has a _filters array and a setFilters function
-			// We should maybe make an interface for that?
             var camera = getCam(cam);
             @:privateAccess {
-            if (camera._filters == null)
-                camera._filters = [];
+            if (camera.filters == null)
+                camera.filters = [];
 				final filter = new ShaderFilter(new FlxRuntimeShader(arr[0], arr[1]));
 				storedFilters.set(index, filter);
-				camera._filters.push(filter);
+				camera.filters.push(filter);
             }
             return true;
 			#else

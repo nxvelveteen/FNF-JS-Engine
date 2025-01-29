@@ -32,7 +32,6 @@ typedef PreloadedChartNote = {
 	isSustainNote:Bool,
 	isSustainEnd:Bool,
 	sustainLength:Float,
-	sustainScale:Float,
 	parentST:Float,
 	parentSL:Float,
 	hitHealth:Float,
@@ -104,6 +103,7 @@ class Note extends FlxSprite
 	public var lateHitMult:Float = 1;
 	public var lowPriority:Bool = false;
 
+	public static final SUSTAIN_SIZE:Int = 44;
 	public static final swagWidth:Float = 160 * 0.7;
 	
 	public static final colArray:Array<String> = ['purple', 'blue', 'green', 'red'];
@@ -144,7 +144,7 @@ class Note extends FlxSprite
 
 	public var texture(default, set):String = null;
 
-	public var sustainScale:Float = 1;
+	public var sustainScale:Float = 1.0;
 
 	public var noAnimation:Bool = false;
 	public var noMissAnimation:Bool = false;
@@ -243,7 +243,7 @@ class Note extends FlxSprite
 				var newRGB:RGBPalette = new RGBPalette();
 				globalRgbShaders[noteData] = newRGB;
 
-				var arr:Array<FlxColor> = (!PlayState.isPixelStage) ? ClientPrefs.arrowRGB[noteData] : ClientPrefs.arrowRGBPixel[noteData];
+				var arr:Array<FlxColor> = ClientPrefs.noteColorStyle != 'Quant-Based' ? (!PlayState.isPixelStage) ? ClientPrefs.arrowRGB[noteData] : ClientPrefs.arrowRGBPixel[noteData] : ClientPrefs.quantRGB[noteData];
 				if (noteData > -1 && noteData <= arr.length)
 				{
 					newRGB.r = arr[0];
@@ -432,7 +432,7 @@ class Note extends FlxSprite
 		if (isSustainNote) 
 		{
 			flipY = ClientPrefs.downScroll;
-			scale.y = (animation != null && animation.curAnim != null && animation.curAnim.name.endsWith('end') ? 1 : Conductor.stepCrochet * 0.0105 * (songSpeed * multSpeed) * sustainScale);
+			scale.set(0.7, animation != null && animation.curAnim != null && animation.curAnim.name.endsWith('end') ? 1 : Conductor.stepCrochet * 0.0105 * (songSpeed * multSpeed) * sustainScale);
 
 			if (PlayState.isPixelStage) 
 			{
@@ -602,7 +602,6 @@ class Note extends FlxSprite
 		gfNote = chartNoteData.gfNote;
 		isSustainNote = chartNoteData.isSustainNote;
 		isSustainEnd = chartNoteData.isSustainEnd;
-		sustainScale = chartNoteData.sustainScale;
 		lowPriority = chartNoteData.lowPriority;
 		if (isSustainNote) {
 			parentST = chartNoteData.parentST;
@@ -652,6 +651,13 @@ class Note extends FlxSprite
 			animation.play(colArray[noteData % 4] + (chartNoteData.isSustainEnd ? 'holdend' : 'hold'));
 			updateHitbox();
 			offsetX -= width / 2;
+
+			if (PlayState.isPixelStage)
+				if (!isSustainEnd) scale.y *= 1.19 * (6 / height);
+			else
+				sustainScale = Note.SUSTAIN_SIZE / frameHeight;
+				
+			updateHitbox();
 		}
 		else {
 			animation.play(colArray[noteData % 4] + 'Scroll');
@@ -669,12 +675,12 @@ class Note extends FlxSprite
 		if (!mustPress) 
 		{
 			visible = ClientPrefs.opponentStrums;
-			alpha = multAlpha = ClientPrefs.middleScroll ? ClientPrefs.oppNoteAlpha : 1;
+			alpha = ClientPrefs.middleScroll ? ClientPrefs.oppNoteAlpha : 1;
 		}
 		else
 		{
 			if (!visible) visible = true;
-			for (i in [alpha, multAlpha]) if (i != 1) i = 1;
+			if (alpha != 1) alpha = 1; //if (multAlpha != 1) multAlpha = 1;
 		}
 		if (flipY) flipY = false;
 	}

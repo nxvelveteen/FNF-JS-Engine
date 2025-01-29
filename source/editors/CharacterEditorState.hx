@@ -1287,6 +1287,12 @@ class CharacterEditorState extends MusicBeatState
 			positionCameraYStepper.value = char.cameraPosition[1];
 			reloadAnimationDropDown();
 			updatePresence();
+			shakeScreenBox.checked = char.shakeScreen;
+			shakeIntensityStepper.value = char.shakeIntensity;
+			shakeDurationStepper.value = char.shakeDuration;
+			healthDrainCheckBox.checked = char.healthDrain;
+			drainAmountStepper.value = char.drainAmount;
+			minimumHealthStepper.value = char.drainFloor;
 		}
 	}
 

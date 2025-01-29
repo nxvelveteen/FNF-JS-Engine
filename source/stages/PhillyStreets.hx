@@ -215,12 +215,18 @@ class PhillyStreets extends BaseStage
 		if(!videoEnded && videoName != null)
 		{
 			#if VIDEOS_ALLOWED
-			game.startVideo(videoName, function()
+			final shit = game.startVideo(videoName, '', function()
 			{
 				videoEnded = true;
 				game.videoCutscene = null;
 				videoCutscene();
 			});
+			if (shit == null) // returns an VideoSprite, if it returns null then something went wrong
+			{
+				videoEnded = true;
+				videoCutscene();
+				FlxG.log.warn('Video ended early! Was the video not found?');
+			}
 
 			#else //Make a timer to prevent it from crashing due to sprites not being ready yet.
 			new FlxTimer().start(0.0, function(tmr:FlxTimer)
@@ -241,7 +247,8 @@ class PhillyStreets extends BaseStage
 		camFollowPos.x += 250;
 		FlxG.camera.snapToTarget();
 		FlxG.camera.zoom = 1.3;
-		spraycan.cutscene = true;
+		if (spraycan != null)
+			spraycan.cutscene = true;
 
 		cutsceneHandler = new CutsceneHandler();
 		cutsceneHandler.endTime = 10;
@@ -358,6 +365,7 @@ class PhillyStreets extends BaseStage
 
 			spraycan.visible = spraycan.active = spraycan.cutscene = false;
 			camHUD.alpha = 1;
+			game.canPause = true;
 			startCountdown();
 		};
 		cutsceneHandler.skipCallback = function()

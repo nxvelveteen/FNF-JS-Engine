@@ -14,6 +14,10 @@ import mobile.CopyState;
 import lime.graphics.Image;
 #end
 
+#if desktop
+import backend.ALSoftConfig; // Just to make sure DCE doesn't remove this, since it's not directly referenced anywhere else.
+#end
+
 using StringTools;
 
 #if linux
@@ -92,7 +96,8 @@ class Main extends Sprite {
         "Error: Sorry i already have a girlfriend",
         "did you know theres a total of 51 silly messages",
         "whoopsies looks like i forgot to fix this",
-        "Game used Crash. It's super effective!"
+        "Game used Crash. It's super effective!",
+	"ARK: Survival Evolved"
     ];
 
 	// You can pretty much ignore everything from here on - your code should go in your states.

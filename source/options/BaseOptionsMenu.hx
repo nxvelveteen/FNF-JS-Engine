@@ -365,6 +365,21 @@ class BaseOptionsMenu extends MusicBeatSubstate
 
 			if(virtualPad.buttonC.justPressed || controls.RESET)
 			{
+				if (!FlxG.keys.pressed.SHIFT) 
+				{
+					var leOption:Option = optionsArray[curSelected];
+					leOption.setValue(leOption.defaultValue);
+					if(leOption.type != 'bool')
+					{
+						if(leOption.type == 'string')
+						{
+							leOption.curOption = leOption.options.indexOf(leOption.getValue());
+						}
+						updateTextFrom(leOption);
+					}
+					leOption.change();
+				}
+				else
 				for (i in 0...optionsArray.length)
 				{
 					var leOption:Option = optionsArray[i];
