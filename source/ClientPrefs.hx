@@ -192,7 +192,7 @@ class ClientPrefs { //default settings if it can't find a save file containing y
 	public static var unlockFPS:Bool = false;
 	public static var renderBitrate:Float = 5.0;
 	public static var vidEncoder:String = 'libx264';
-	public static var oldFFmpegMode:Bool = false;
+	public static var oldFFmpegMode:Bool = #if mobile true #else false #end;
 	public static var lossless:Bool = false;
 	public static var quality:Int = 50;
 	public static var renderGCRate:Float = 5.0;

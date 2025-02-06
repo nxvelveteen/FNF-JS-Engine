@@ -6777,7 +6777,7 @@ class PlayState extends MusicBeatState
 
 	private function initRender():Void
 	{
-		if (!FileSystem.exists(#if linux 'ffmpeg' #elseif android android.content.Context.getFilesDir() + '/ffmpeg' #else 'ffmpeg.exe' #end))
+		if (!FileSystem.exists(#if linux 'ffmpeg' #else 'ffmpeg.exe' #end))
 		{
 			trace("\"FFmpeg\" not found! (Is it in the same folder as JSEngine?)");
 			return;
@@ -6795,7 +6795,7 @@ class PlayState extends MusicBeatState
 
 		ffmpegExists = true;
 
-		process = new Process(#if android '${android.content.Context.getFilesDir()}/ffmpeg' #else 'ffmpeg' #end, [
+		process = new Process('ffmpeg', [
 				'-v',
 				'quiet',
 				'-y',

@@ -92,15 +92,17 @@ class GameRendererSettingsSubState extends BaseOptionsMenu
 			'vidEncoder',
 			'string',
 			'libx264',
-			['libx264', 'libx264rgb' #if !android , 'libx265', 'libxvid', 'libsvtav1' #end, 'mpeg2video']);
+			['libx264', 'libx264rgb' #if !mobile , 'libx265', 'libxvid', 'libsvtav1' #end, 'mpeg2video']);
 		addOption(option);
 
+		#if !mobile
 		var option:Option = new Option('Classic Rendering Mode', //Name
 			'If checked, the game will use the old Rendering Mode from 1.20.0.',
 			'oldFFmpegMode',
 			'bool',
 			false);
 		addOption(option);
+		#end
 
 		var option:Option = new Option('Lossless Screenshots',
 			"If checked, screenshots will save as PNGs.\nOtherwise, It uses JPEG.",
