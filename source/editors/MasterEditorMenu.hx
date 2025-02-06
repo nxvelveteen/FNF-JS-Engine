@@ -58,7 +58,7 @@ class MasterEditorMenu extends MusicBeatState
 			grpTexts.add(leText);
 			leText.snapToPosition();
 		}
-		
+
 		#if MODS_ALLOWED
 		var textBG:FlxSprite = new FlxSprite(0, FlxG.height - 42).makeGraphic(FlxG.width, 42, 0xFF000000);
 		textBG.alpha = 0.6;
@@ -68,14 +68,15 @@ class MasterEditorMenu extends MusicBeatState
 		directoryTxt.setFormat(Paths.font("vcr.ttf"), 32, FlxColor.WHITE, CENTER);
 		directoryTxt.scrollFactor.set();
 		add(directoryTxt);
-		
+
 		for (folder in Paths.getModDirectories())
 		{
 			directories.push(folder);
 		}
 
 		var found:Int = directories.indexOf(Paths.currentModDirectory);
-		if(found > -1) curDirectory = found;
+		if (found > -1)
+			curDirectory = found;
 		changeDirectory();
 		#end
 		changeSelection();
@@ -98,11 +99,11 @@ class MasterEditorMenu extends MusicBeatState
 			changeSelection(1);
 		}
 		#if MODS_ALLOWED
-		if(controls.UI_LEFT_P)
+		if (controls.UI_LEFT_P)
 		{
 			changeDirectory(-1);
 		}
-		if(controls.UI_RIGHT_P)
+		if (controls.UI_RIGHT_P)
 		{
 			changeDirectory(1);
 		}
@@ -113,7 +114,8 @@ class MasterEditorMenu extends MusicBeatState
 
 		if (controls.ACCEPT)
 		{
-			switch(options[curSelected]) {
+			switch (options[curSelected])
+			{
 				case 'Character Editor':
 					LoadingState.loadAndSwitchState(() -> new CharacterEditorState(Character.DEFAULT_CHARACTER, false));
 				case 'Week Editor':
@@ -124,7 +126,7 @@ class MasterEditorMenu extends MusicBeatState
 					LoadingState.loadAndSwitchState(DialogueCharacterEditorState.new, false);
 				case 'Dialogue Editor':
 					LoadingState.loadAndSwitchState(DialogueEditorState.new, false);
-				case 'Chart Editor'://felt it would be cool maybe
+				case 'Chart Editor': // felt it would be cool maybe
 					LoadingState.loadAndSwitchState(ChartingState.new, false);
 				case 'Note Splash Debug':
 					LoadingState.loadAndSwitchState(NoteSplashDebugState.new, false);
@@ -136,7 +138,43 @@ class MasterEditorMenu extends MusicBeatState
 			FreeplayState.destroyFreeplayVocals();
 			#end
 		}
-		
+
+		if (FlxG.keys.justPressed.SEVEN)
+		{
+			for (i in 1...100)
+			{
+				var peep:FlxSprite = new FlxSprite();
+				var x:Float = FlxG.random.float(-32, 1316);
+				peep.makeGraphic(32, 32, FlxColor.RED);
+				peep.x = x;
+				peep.y = FlxG.random.float(-200, -800);
+				FlxTween.tween(peep, {x: x + FlxG.random.float(-250, 250), y: 760, angle: FlxG.random.float(-180, 180)}, FlxG.random.float(1.5, 2), {
+					onComplete: function(e)
+					{
+						peep.destroy();
+					},
+					ease: FlxEase.expoIn
+				});
+				add(peep);
+			}
+
+			var murder:FlxSprite = new FlxSprite();
+			murder.loadGraphic(Paths.image('troll'));
+			murder.screenCenter();
+			new FlxTimer().start(1.5, function(f)
+			{
+				FlxTween.tween(murder, {alpha: 0}, 0.5, {
+					onComplete: function(e)
+					{
+						murder.destroy();
+					}
+				});
+			});
+			add(murder);
+
+			FlxG.sound.play(Paths.sound('troll'));
+		}
+
 		var bullShit:Int = 0;
 		for (item in grpTexts.members)
 		{
@@ -174,13 +212,13 @@ class MasterEditorMenu extends MusicBeatState
 
 		curDirectory += change;
 
-		if(curDirectory < 0)
+		if (curDirectory < 0)
 			curDirectory = directories.length - 1;
-		if(curDirectory >= directories.length)
+		if (curDirectory >= directories.length)
 			curDirectory = 0;
-	
+
 		WeekData.setDirectoryFromWeek();
-		if(directories[curDirectory] == null || directories[curDirectory].length < 1)
+		if (directories[curDirectory] == null || directories[curDirectory].length < 1)
 			directoryTxt.text = '< No Mod Directory Loaded >';
 		else
 		{

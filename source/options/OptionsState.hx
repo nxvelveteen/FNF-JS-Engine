@@ -151,6 +151,7 @@ class OptionsState extends MusicBeatState
 		addVirtualPad(LEFT_FULL, ClientPrefs.mobileCPlayStateVpad ? A_B_C : A_B);
 		virtualPad.camera = otherCamera;
 		persistentUpdate = true;
+		FlxG.mouse.visible = false;
 	}
 
 	override function update(elapsed:Float) {

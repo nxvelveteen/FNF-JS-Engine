@@ -183,7 +183,10 @@ class FunkinLua {
 		set('gfSection', false);
 
 		set('npsSpeedMult', PlayState.instance.npsSpeedMult);
-		set('polyphony', PlayState.instance.polyphony);
+
+		// these things are useless
+		set('polyphonyOppo', PlayState.instance.polyphonyOppo);
+		set('polyphonyBF', PlayState.instance.polyphonyBF);
 
 		// Gameplay settings
 		set('healthGainMult', PlayState.instance.healthGain);
@@ -1356,6 +1359,34 @@ class FunkinLua {
 
 			if(testicle != null) {
 				PlayState.instance.modchartTweens.set(tag, FlxTween.tween(testicle, {alpha: value}, duration / PlayState.instance.playbackRate, {ease: getFlxEaseByString(ease),
+					onComplete: function(twn:FlxTween) {
+						PlayState.instance.callOnLuas('onTweenCompleted', [tag]);
+						PlayState.instance.modchartTweens.remove(tag);
+					}
+				}));
+			}
+		});
+		Lua_helper.add_callback(lua, "noteTweenScaleX", function(tag:String, note:Int, value:Dynamic, duration:Float, ease:String) {
+			cancelTween(tag);
+			if(note < 0) note = 0;
+			var testicle:StrumNote = PlayState.instance.strumLineNotes.members[note % PlayState.instance.strumLineNotes.length];
+			
+			if(testicle != null) {
+				PlayState.instance.modchartTweens.set(tag, FlxTween.tween(testicle, {"scale.x": value - 0.3}, duration, {ease: getFlxEaseByString(ease),
+					onComplete: function(twn:FlxTween) {
+						PlayState.instance.callOnLuas('onTweenCompleted', [tag]);
+						PlayState.instance.modchartTweens.remove(tag);
+					}
+				}));
+			}
+		});
+		Lua_helper.add_callback(lua, "noteTweenScaleY", function(tag:String, note:Int, value:Dynamic, duration:Float, ease:String) {
+			cancelTween(tag);
+			if(note < 0) note = 0;
+			var testicle:StrumNote = PlayState.instance.strumLineNotes.members[note % PlayState.instance.strumLineNotes.length];
+			
+			if(testicle != null) {
+				PlayState.instance.modchartTweens.set(tag, FlxTween.tween(testicle, {"scale.y": value - 0.3}, duration, {ease: getFlxEaseByString(ease),
 					onComplete: function(twn:FlxTween) {
 						PlayState.instance.callOnLuas('onTweenCompleted', [tag]);
 						PlayState.instance.modchartTweens.remove(tag);

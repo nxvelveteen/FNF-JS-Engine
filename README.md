@@ -4,7 +4,7 @@ THIS NOT THE JS ENGINE BASE REPO. THIS BRANCH IS MADE BY [mcagabe19](https://git
 
 <h1 align="center">
   <br>
-  <a href="https://github.com/JordanSantiagoYT/FNF-JS-Engine"><img src="assets/exclude/images/jslol.png" alt="JSengine" width="150"></a>
+  <a href="https://github.com/JordanSantiagoYT/FNF-JS-Engine"><img src="/art/iconOG.png" alt="JSengine" width="150"></a>
   <br>
   <b>JS Engine Mobile</b>
   <br>
@@ -48,7 +48,7 @@ This contains lots and lots of customizable and features built in to JS Engine, 
 
 There is like lots and lots of stuff Jordan have missed, but at least you would like those features built in **JS ENGINE**
 
-# Screenshots
+# Screenshots and Gameplays
 
 ![Screenshot 2024-07-07 14-00-00](https://github.com/JordanSantiagoYT/FNF-JS-Engine/assets/108278470/d4e89995-fa14-40bf-a5d6-d1647548fd93)
 
@@ -56,6 +56,11 @@ There is like lots and lots of stuff Jordan have missed, but at least you would 
 
 ![Screenshot 2024-07-07 13-58-45](https://github.com/JordanSantiagoYT/FNF-JS-Engine/assets/108278470/a65ea8b5-8b0d-4643-b7e0-cddd3972422b)
 
+![image](https://github.com/user-attachments/assets/aea20297-1695-4b83-b17e-342685490414)
+- Gameplay from @TheStinkern
+
+![0203(1)](https://github.com/user-attachments/assets/15620fa6-52a9-4090-996f-80a80bda32ef)
+- Gameplay from @TheStinkern
 # FAQs
 
 Frequently Asked Questions (FAQs) are found in [here](https://github.com/JordanSantiagoYT/FNF-JS-Engine/wiki) or you can simply see it below.
@@ -64,7 +69,7 @@ Frequently Asked Questions (FAQs) are found in [here](https://github.com/JordanS
 
 A: Yes, you can! just be sure to credit me ([@mcagabe19 on YouTube](https://www.youtube.com/@mcagabe19)) and give a link to this page. or [the link to download the latest release.](https://github.com/JordanSantiagoYT/FNF-JS-Engine/releases/latest)
 
-**Q: How do I (change the background, add characters, etc.)?**
+**Q: How do I change and add things?**
 
 A: You do it here the [same way you'd do it in Psych Engine.](https://github.com/ShadowMario/FNF-PsychEngine/wiki)
 
@@ -86,9 +91,28 @@ if you wish to disable things like *Lua Scripts* or *Video Cutscenes*, you can r
 
 inside `Project.xml`, you will find several variables to customize JS Engine to your liking
 
-to start you off, disabling Videos should be simple, simply Delete the line `"VIDEOS_ALLOWED"` or comment it out by wrapping the line in XML-like comments, like this `<!-- YOUR_LINE_HERE -->`
+to start you off, disabling Videos should be simple, simply Delete the line `"VIDEOS_ALLOWED"` or comment it out by wrapping the line in XML-like comments, like this: `<!-- YOUR_LINE_HERE -->`
 
-same goes for *Lua Scripts*, comment out or delete the line with `LUA_ALLOWED`, this and other customization options are all available within the `Project.xml` file
+same goes for *Lua Scripts*, comment out or delete the line with `LUA_ALLOWED`, this and other customization options are all available within the `Project.xml` file.
+
+# Contributers
+
+@JordanSantiagoYT (of course)
+- He's the owner... What do you think?
+
+@TheStinkern
+- Was originaly going to only answer issues and try to fix it.
+  - Also trying to learn haxe a bit.
+
+@moxie-coder
+- Codes part of the engine
+
+@NAEL2XD
+- Does pull requests
+
+@PatoFlamejanteTV
+- Small coding, also made a PDF guide for JS Engine.
+
 <details>
   <summary><h2>OG Psych Engine Credits and Stuff</h2></summary>
   

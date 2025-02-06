@@ -135,6 +135,8 @@ class Note extends FlxSprite
 	public var copyY:Bool = true;
 	public var copyAngle:Bool = true;
 	public var copyAlpha:Bool = true;
+	public var copyScaleX:Bool = true;
+	public var copyScaleY:Bool = true;
 
 	public var hitHealth:Float = 0.023;
 	public var missHealth:Float = 0.0475;
@@ -437,6 +439,7 @@ class Note extends FlxSprite
 			if (PlayState.isPixelStage) 
 			{
 				scale.y *= PlayState.daPixelZoom * 1.20;
+				scale.x *= PlayState.daPixelZoom;
 			}
 			updateHitbox();
 		}
@@ -464,6 +467,15 @@ class Note extends FlxSprite
 				}
 				y -= (frameHeight * scale.y) - (Note.swagWidth / 2);
 			}
+		}
+
+		if(copyScaleX && !isSustainNote) //if i did this on sustain notes it would break, sorry!
+		{
+			scale.x = strum.scale.x;
+		}
+		if(copyScaleY && !isSustainNote)
+		{
+			scale.y = strum.scale.y;
 		}
 	}
 
@@ -652,9 +664,7 @@ class Note extends FlxSprite
 			updateHitbox();
 			offsetX -= width / 2;
 
-			if (PlayState.isPixelStage)
-				if (!isSustainEnd) scale.y *= 1.19 * (6 / height);
-			else
+			if (!PlayState.isPixelStage)
 				sustainScale = Note.SUSTAIN_SIZE / frameHeight;
 				
 			updateHitbox();

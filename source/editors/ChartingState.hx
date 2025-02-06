@@ -108,7 +108,7 @@ class ChartingState extends MusicBeatState
 		['Screen Shake', "Value 1: Camera shake\nValue 2: HUD shake\n\nEvery value works as the following example: \"1, 0.05\".\nThe first number (1) is the duration.\nThe second number (0.05) is the intensity."],
 		['Camera Bopping', "Makes the camera do funny bopping\n\nValue 1: Bopping Speed (how many beats you want before it bops)\nValue 2: Bopping Intensity (how hard you want it to bop, default is 1)\n\nTo reset camera bopping, place a new event and put both values as '4' and '1' respectively."],
 		['Camera Twist', "Makes the camera spin!! or twist ig\nValue 1: Twist intensity\nValue 2: Twist intensity 2"],
-		['Change Note Multiplier', "Changes the amount of notes played every time you hit a note.\n\nValue 1: Note Multiplier that you want."],
+		['Change Note Multiplier', "Changes the amount of notes played every time you hit a note.\n\nValue 1 for NM\nValue 2 for Which (1 = Oppo, 2 = BF)\nLeave V2 empty for both."], // nael revamped this!
 		['Fake Song Length', "Shows a fake song length on the time bar.\n\nValue 1: The fake length (in seconds)\nValue 2: Should it tween? (true = yes, anything else = no)\nTo reset the song length to normal, make Value 1 null."],
 		['Change Character', "Value 1: Character to change (Dad, BF, GF)\nValue 2: New character's name"],
 		['Change Scroll Speed', "Value 1: Scroll Speed Multiplier (1 is default)\nValue 2: Time it takes to change fully in seconds."],

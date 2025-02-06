@@ -7,7 +7,7 @@ class StartupState extends MusicBeatState
 	var logo:FlxSprite;
 	var skipTxt:FlxText;
 
-	var maxIntros:Int = 3;
+	var maxIntros:Int = 6;
 	var date:Date = Date.now();
 
 	var canChristmas = false;
@@ -61,7 +61,6 @@ class StartupState extends MusicBeatState
 
 	override public function create():Void
 	{
-		#if VIDEOS_ALLOWED maxIntros += 2; #end
 		if (date.getMonth() == 11 && date.getDate() >= 16 && date.getDate() <= 31) //Only triggers if the date is between 12/16 and 12/31
 		{
 			canChristmas = true;
@@ -146,10 +145,14 @@ class StartupState extends MusicBeatState
 			case 4:
 				#if VIDEOS_ALLOWED
 					startVideo('bambiStartup', 'splash');
+				#else
+					doIntro();
 				#end
 			case 5:
 				#if VIDEOS_ALLOWED
 					startVideo('broCopiedDenpa', 'splash');
+				#else
+					doIntro();
 				#end
 			case 6:
 				if (canChristmas)
