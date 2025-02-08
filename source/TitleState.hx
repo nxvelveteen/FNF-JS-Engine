@@ -211,11 +211,7 @@ class TitleState extends MusicBeatState
 				Conductor.changeBPM(120);
 			case 'Anniversary':
 				Conductor.changeBPM(115);
-			case 'Base Game' | 'Default': // just in case you're not making a source mod & wanna change this
-				Conductor.changeBPM(titleJSON.bpm);
-			case 'None':
-				Conductor.changeBPM(titleJSON.bpm);
-			case 'Christmas':
+			case 'Base Game' | 'Default' | 'None' | 'Christmas': // just in case you're not making a source mod & wanna change this
 				Conductor.changeBPM(titleJSON.bpm);
 			default: // fallback
 				Conductor.changeBPM(titleJSON.bpm);

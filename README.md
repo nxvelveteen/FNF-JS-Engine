@@ -61,6 +61,8 @@ There is like lots and lots of stuff Jordan have missed, but at least you would 
 
 ![0203(1)](https://github.com/user-attachments/assets/15620fa6-52a9-4090-996f-80a80bda32ef)
 - Gameplay from @TheStinkern
+  - See the full gameplay [here](https://www.youtube.com/watch?v=Z2iXD1FbX1I)
+
 # FAQs
 
 Frequently Asked Questions (FAQs) are found in [here](https://github.com/JordanSantiagoYT/FNF-JS-Engine/wiki) or you can simply see it below.
@@ -112,6 +114,9 @@ same goes for *Lua Scripts*, comment out or delete the line with `LUA_ALLOWED`, 
 
 @PatoFlamejanteTV
 - Small coding, also made a PDF guide for JS Engine.
+
+@mcagabe19
+- Ported JS Engine to mobile
 
 <details>
   <summary><h2>OG Psych Engine Credits and Stuff</h2></summary>

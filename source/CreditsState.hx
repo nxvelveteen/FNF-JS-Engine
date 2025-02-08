@@ -99,6 +99,8 @@ class CreditsState extends MusicBeatState
 			['NotMagniill', 'magniill', 'Code for the Sustain Note Splashes', 'https://github.com/notmagniill', 'FFBD40'],
 			['chromasen', 'chromasen', 'Code for the Windows Notification Event', 'https://www.youtube.com/channel/UCgGk4oZt3We-ktkEOV9HY1Q', 'FFFFFF'],
 			['Erizur', 'erizur', 'Cross-Platform code for the Windows Notification Event', 'https://www.youtube.com/channel/UCdCAaQzt9yOGfFM0gJDJ4bQ', 'FFFFFF'],
+			['Slushi (Andres)', 'slushi', 'Actual working code for the Windows Notification Event', 'https://github.com/Slushi-Github/Slushi-Engine/tree/main', '8FD9D1'],
+			['Nael2xd', 'nael', 'Fellow Contributor of JS Engine', 'https://www.youtube.com/@Nael2xd', '880000'],
 			[''],
 			['Psych Engine Team'],
 			['Shadow Mario',		'shadowmario',		'Main Programmer of Psych Engine',								'https://twitter.com/Shadow_Mario_',	'444444'],
