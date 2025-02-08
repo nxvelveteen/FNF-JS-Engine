@@ -103,13 +103,6 @@
 	</section>
 	<assets path='art/readme.txt' rename='do NOT readme.txt' unless="mobile" />
 
-	<section if="android">
-		<assets path='art/ffmpeg-android/ffmpeg-armv7a' rename="ffmpeg-armv7a" />
-		<assets path='art/ffmpeg-android/ffmpeg-arm64' rename="ffmpeg-arm64" />
-		<assets path='art/ffmpeg-android/ffmpeg-x86' rename="ffmpeg-x86" />
-		<assets path='art/ffmpeg-android/ffmpeg-x86_64' rename="ffmpeg-x86_64" />
-	</section>
-
 	<!-- OpenAL config -->
 	<section if="desktop">
 		<assets path="alsoft.txt" rename="plugins/alsoft.ini" type="text" if="windows"/>
