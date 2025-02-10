@@ -1,4 +1,4 @@
-package;
+package utils;
 
 // code from https://github.com/Slushi-Github/Slushi-Engine/blob/main/funkinscsource/slushi/others/systemUtils/HiddenProcess.hx
 

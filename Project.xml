@@ -112,8 +112,8 @@
 	<assets path="assets/fonts" />
 	<!-- _______________________________ Libraries ______________________________ -->
 
-	<haxelib name="lime" />
-	<haxelib name="flixel" />
+	<haxelib name="lime" version="git"/>
+	<haxelib name="flixel" version="git"/>
 	<haxelib name="flixel-ui" version="2.6.1" />
 	<haxelib name="flixel-addons" version="3.2.3" />
 	<haxelib name="away3d" version="git"/>

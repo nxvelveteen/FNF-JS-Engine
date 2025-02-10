@@ -26,7 +26,6 @@ import Character.Boyfriend;
 import Shaders;
 import Note.PreloadedChartNote;
 import utils.*;
-import HiddenProcess;
 
 #if !flash
 import flixel.addons.display.FlxRuntimeShader;
@@ -1343,17 +1342,9 @@ class PlayState extends MusicBeatState
 			case 'Forever Engine': 
 				EngineWatermark.text = "JS Engine v" + MainMenuState.psychEngineJSVersion;
 				EngineWatermark.x = FlxG.width - EngineWatermark.width - 5;
-				/*if (ClientPrefs.downScroll) EngineWatermark.y = healthBar.y + 50;
-				else {
-					return; // replace if wrong
-				}*/
 			case 'JS Engine': 
 				if (!ClientPrefs.downScroll) EngineWatermark.y = FlxG.height * 0.1 - 70;
 				EngineWatermark.text = "Playing " + SONG.song + " on " + CoolUtil.difficultyString() + " - JSE v" + MainMenuState.psychEngineJSVersion;
-				/*if (ClientPrefs.downScroll) EngineWatermark.y = healthBar.y + 50;
-				else {
-					return; // replace if wrong
-				}*/
 			case 'Dave Engine':
 				EngineWatermark.setFormat(Paths.font("comic.ttf"), 16, FlxColor.WHITE, RIGHT, OUTLINE,FlxColor.BLACK);
 				EngineWatermark.text = SONG.song;
@@ -1987,7 +1978,6 @@ class PlayState extends MusicBeatState
 						moveCameraSection();
 						FlxG.camera.snapToTarget();
 					}
-					videoCutscene = null;
 					canPause = false;
 					inCutscene = false;
 					startAndEnd();

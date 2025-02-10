@@ -195,7 +195,7 @@ class Alphabet extends FlxSpriteGroup
 		}
 	}
 
-	private static var Y_PER_ROW:Float = 85;
+	private static var Y_PER_ROW:Float = 100;
 
 	private function createLetters(newText:String)
 	{
@@ -217,7 +217,7 @@ class Alphabet extends FlxSpriteGroup
 				{
 					if (consecutiveSpaces > 0)
 					{
-						xPos += 28 * consecutiveSpaces * scaleX;
+						xPos += 40 * consecutiveSpaces * scaleX;
 						rowData[rows] = xPos;
 						if(!bold && xPos >= FlxG.width * 0.65)
 						{

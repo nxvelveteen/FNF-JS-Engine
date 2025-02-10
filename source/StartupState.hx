@@ -33,7 +33,6 @@ class StartupState extends MusicBeatState
 			// Finish callback
 			function onVideoEnd()
 			{
-				vidSprite = null;
 				FlxG.switchState(TitleState.new);
 			}
 			vidSprite.finishCallback = (callback != null) ? callback.bind() : onVideoEnd;
@@ -143,17 +142,9 @@ class StartupState extends MusicBeatState
 				logo.screenCenter();
 				FlxTween.tween(logo, {alpha: 1, "scale.x": 1, "scale.y": 1}, 1.35, {ease: FlxEase.expoOut, onComplete: _ -> onIntroDone(0.6)});
 			case 4:
-				#if VIDEOS_ALLOWED
-					startVideo('bambiStartup', 'splash');
-				#else
-					doIntro();
-				#end
+				startVideo('bambiStartup', 'splash');
 			case 5:
-				#if VIDEOS_ALLOWED
-					startVideo('broCopiedDenpa', 'splash');
-				#else
-					doIntro();
-				#end
+				startVideo('broCopiedDenpa', 'splash');
 			case 6:
 				if (canChristmas)
 				{
