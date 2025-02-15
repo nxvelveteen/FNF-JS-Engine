@@ -44,8 +44,10 @@
     },
     {
       "name": "hxvlc",
-      "type": "haxelib",
-      "version": "1.9.2"
+      "type": "git",
+      "dir": null,
+      "ref": "main",
+      "url": "https://github.com/MobilePorting/hxvlc.git"
     },
     {
       "name": "hscript",
