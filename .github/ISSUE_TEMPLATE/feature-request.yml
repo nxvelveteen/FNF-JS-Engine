@@ -1,5 +1,5 @@
 name: Feature Request
-description: No, i won't add 6K/etc to the engine, stop asking for it. I won't add a Stage Editor neither since you guys already did it using LUA
+description: 'No, I am not going to add 6K/etc notes to the engine, this will break noteskins.'
 labels: [enhancement, status: pending triage]
 body:
   - type: textarea
@@ -19,6 +19,6 @@ body:
         - A good idea
         - Stage Editor and 6K+ support.
         - Better LUA mod support idea
-        - Code optimization that would make the game faster. (You should make a PR if this is your request, by the way.)
+        - Code optimization that would make the game faster. (You should make a Pull Request if this is your request, by the way.)
     validations:
       required: true

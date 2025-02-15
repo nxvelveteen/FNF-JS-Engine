@@ -95,13 +95,13 @@ class FPSCounter extends TextField
 		if (ClientPrefs.ffmpegMode)
 			text += " (Rendering Mode)";
 
-		if (ClientPrefs.showRamUsage) text += "\nRAM: " + FlxStringUtil.formatBytes(memory) + (ClientPrefs.showMaxRamUsage ? " / " + FlxStringUtil.formatBytes(mempeak) : "");
+		if (ClientPrefs.showRamUsage) text += "\nMemory: " + FlxStringUtil.formatBytes(memory) + (ClientPrefs.showMaxRamUsage ? " / " + FlxStringUtil.formatBytes(mempeak) : "");
 		if (ClientPrefs.debugInfo)
 		{
-			text += '\nState: ${Type.getClassName(Type.getClass(FlxG.state))}';
+			text += '\nCurrent state: ${Type.getClassName(Type.getClass(FlxG.state))}';
 			if (FlxG.state.subState != null)
-				text += '\nSubstate: ${Type.getClassName(Type.getClass(FlxG.state.subState))}';
-			text += "\nSystem: " + '${System.platformLabel} ${System.platformVersion}';
+				text += '\nCurrent substate: ${Type.getClassName(Type.getClass(FlxG.state.subState))}';
+			text += "\nOS: " + '${System.platformLabel} ${System.platformVersion}';
 		}
 	}
 

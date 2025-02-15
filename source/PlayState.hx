@@ -1348,7 +1348,7 @@ class PlayState extends MusicBeatState
 			case 'Dave Engine':
 				EngineWatermark.setFormat(Paths.font("comic.ttf"), 16, FlxColor.WHITE, RIGHT, OUTLINE,FlxColor.BLACK);
 				EngineWatermark.text = SONG.song;
-				if (ClientPrefs.downScroll) EngineWatermark.y = healthBar.y + 50;
+				EngineWatermark.y = healthBar.y + 50;
 
 			default: 
 		}
