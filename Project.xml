@@ -124,7 +124,7 @@
 	<haxelib name="linc_luajit" if="LUA_ALLOWED"/>
 	<!--<haxelib name="hxCodec" if="VIDEOS_ALLOWED"/>-->
 
-	<haxelib name="hxvlc" if="VIDEOS_ALLOWED" version="1.9.2"/>
+	<haxelib name="hxvlc" if="VIDEOS_ALLOWED" ersion="git"/>
 
 	<haxelib name="hxdiscord_rpc" if="DISCORD_ALLOWED" />
 	<haxelib name="flxanimate"/>
