@@ -3307,9 +3307,6 @@ class PlayState extends MusicBeatState
 	var botEnergyCooldown:Float = 0;
 	var energyDrainSpeed:Float = 1;
 	var energyRefillSpeed:Float = 1;
-	var NOTE_SPAWN_TIME:Float = 0;
-
-	var spawnedNote:Note = new Note();
 
 	override public function update(elapsed:Float)
 	{
@@ -3815,41 +3812,7 @@ class PlayState extends MusicBeatState
 
 		skippedCount = 0;
 
-		if (unspawnNotes.length > 0 && unspawnNotes[0] != null)
-		{
-			NOTE_SPAWN_TIME = (ClientPrefs.dynamicSpawnTime ? (1600 / songSpeed) : 1600 * ClientPrefs.noteSpawnTime);
-			if (notesAddedCount != 0) notesAddedCount = 0;
-
-			if (notesAddedCount > unspawnNotes.length)
-				notesAddedCount -= (notesAddedCount - unspawnNotes.length);
-
-			if (!unspawnNotes[notesAddedCount].wasHit)
-			{
-				while (unspawnNotes[notesAddedCount] != null && unspawnNotes[notesAddedCount].strumTime <= Conductor.songPosition) {
-					unspawnNotes[notesAddedCount].wasHit = true;
-					unspawnNotes[notesAddedCount].mustPress ? goodNoteHit(null, unspawnNotes[notesAddedCount]): opponentNoteHit(null, unspawnNotes[notesAddedCount]);
-					notesAddedCount++;
-					skippedCount++;
-					if (skippedCount > maxSkipped) maxSkipped = skippedCount;
-				}
-			}
-			if (ClientPrefs.showNotes || !ClientPrefs.showNotes && !cpuControlled)
-			{
-				while (unspawnNotes[notesAddedCount] != null && unspawnNotes[notesAddedCount].strumTime - Conductor.songPosition < (NOTE_SPAWN_TIME / unspawnNotes[notesAddedCount].multSpeed)) {
-					if (ClientPrefs.fastNoteSpawn) (unspawnNotes[notesAddedCount].isSustainNote ? sustainNotes : notes).spawnNote(unspawnNotes[notesAddedCount]);
-					else
-					{
-						spawnedNote = (unspawnNotes[notesAddedCount].isSustainNote ? sustainNotes : notes).recycle(Note);
-						spawnedNote.setupNoteData(unspawnNotes[notesAddedCount]);
-					}
-
-					if (!ClientPrefs.noSpawnFunc) callOnLuas('onSpawnNote', [(!unspawnNotes[notesAddedCount].isSustainNote ? notes.members.indexOf(notes.members[0]) : sustainNotes.members.indexOf(sustainNotes.members[0])), unspawnNotes[notesAddedCount].noteData, unspawnNotes[notesAddedCount].noteType, unspawnNotes[notesAddedCount].isSustainNote]);
-					notesAddedCount++;
-				}
-			}
-			if (notesAddedCount > 0)
-				unspawnNotes.splice(0, notesAddedCount);
-		}
+		spawnNotes();
 
 		if (generatedMusic)
 		{
@@ -5643,6 +5606,51 @@ class PlayState extends MusicBeatState
 		
 		stagesFunc(function(stage:BaseStage) stage.noteMissPress(direction));
 		callOnLuas('noteMissPress', [direction]);
+	}
+
+	//This function handles note spawning.
+	var NOTE_SPAWN_TIME:Float = 0;
+	var targetNote:PreloadedChartNote = null;
+	var spawnedNote:Note = new Note();
+	function spawnNotes()
+	{
+		if (unspawnNotes[0] != null)
+		{
+			notesAddedCount = 0;
+			NOTE_SPAWN_TIME = (ClientPrefs.dynamicSpawnTime ? (1600 / songSpeed) : 1600 * ClientPrefs.noteSpawnTime);
+			targetNote = unspawnNotes[notesAddedCount];
+
+			if (!targetNote.wasHit)
+			{
+				while (targetNote != null && targetNote.strumTime <= Conductor.songPosition) {
+					targetNote.wasHit = true;
+					targetNote.mustPress ? goodNoteHit(null, targetNote) : opponentNoteHit(null, targetNote);
+					notesAddedCount++;
+					if (unspawnNotes[notesAddedCount] != null) targetNote = unspawnNotes[notesAddedCount];
+					else break;
+					skippedCount++;
+					if (skippedCount > maxSkipped) maxSkipped = skippedCount;
+				}
+			}
+			if (ClientPrefs.showNotes || !ClientPrefs.showNotes && !cpuControlled)
+			{
+				while (targetNote.strumTime - Conductor.songPosition < (NOTE_SPAWN_TIME / targetNote.multSpeed)) {
+					if (ClientPrefs.fastNoteSpawn) (targetNote.isSustainNote ? sustainNotes : notes).spawnNote(targetNote);
+					else
+					{
+						spawnedNote = (targetNote.isSustainNote ? sustainNotes : notes).recycle(Note);
+						spawnedNote.setupNoteData(targetNote);
+					}
+
+					if (!ClientPrefs.noSpawnFunc) callOnLuas('onSpawnNote', [(!targetNote.isSustainNote ? notes.members.indexOf(notes.members[0]) : sustainNotes.members.indexOf(sustainNotes.members[0])), targetNote.noteData, targetNote.noteType, targetNote.isSustainNote]);
+					notesAddedCount++;
+					if (unspawnNotes[notesAddedCount] != null) targetNote = unspawnNotes[notesAddedCount];
+					else break;
+				}
+			}
+			if (notesAddedCount > 0)
+				unspawnNotes.splice(0, notesAddedCount);
+		}
 	}
 
 	function updateNote(daNote:Note):Void
