@@ -45,7 +45,6 @@ class VideoSprite extends FlxSpriteGroup {
 		// initialize sprites
 		videoSprite = new FlxVideoSprite();
 		videoSprite.antialiasing = ClientPrefs.globalAntialiasing;
-		videoSprite.autoPause = autoPause;
 		add(videoSprite);
 		if(canSkip) this.canSkip = true;
 
