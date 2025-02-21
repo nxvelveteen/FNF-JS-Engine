@@ -533,7 +533,7 @@ class Note extends FlxSprite
 		{
 			case 'Rainbow':
 			superCoolColor = new FlxColor(0xFFFF0000);
-			superCoolColor.hue = (strumTime / 5000 * 360) % 360;
+			superCoolColor.hue = (strumTime / (ClientPrefs.rainbowTime * 1000) * 360) % 360;
 			rgbShader.r = superCoolColor;
 			rgbShader.g = FlxColor.WHITE;
 			rgbShader.b = superCoolColor.getDarkened(0.7);

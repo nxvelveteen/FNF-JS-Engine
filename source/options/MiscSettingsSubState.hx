@@ -32,7 +32,7 @@ class MiscSettingsSubState extends BaseOptionsMenu
 		rpcTitle = 'Miscellaneous Settings Menu'; //for Discord Rich Presence
 
 		var option:Option = new Option('Use JS Engine Recharts', //Name
-			'If checked, the base game charts will use the JS Engine specific recharts.', //Description
+			'If checked, songs will have an optional "JSHard" difficulty (if available.)\nUse this difficulty for the JSE-specific recharts.', //Description
 			'JSEngineRecharts', //Save data variable name
 			'bool', //Variable type
 			false); //Default value
@@ -52,8 +52,22 @@ class MiscSettingsSubState extends BaseOptionsMenu
 			false); //Default value
 		addOption(option);
 
-		cameras = [FlxG.cameras.list[FlxG.cameras.list.length-1]];
+		//credit to Nael2xd for the idea
+		var option:Option = new Option('Rainbow Note Shift Speed', //Name
+			'Changes the amount of time between 1 cycle for Rainbow Notes.\n(Make sure you have your note colors set to "Rainbow" to see this in action!)', //Description
+			'rainbowTime', //Save data variable name
+			'float', //Variable type
+			5.0); //Default value
+		option.scrollSpeed = 4;
+		option.minValue = 0.01;
+		option.maxValue = 100;
+		option.changeValue = 0.01;
+		option.decimals = 2; //lol
+		option.displayFormat = '%vs';
+		addOption(option);
 
+		cameras = [FlxG.cameras.list[FlxG.cameras.list.length-1]];
+		
 		super();
 	}
 }
