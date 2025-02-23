@@ -9,9 +9,6 @@ import Controls;
 class ClientPrefs { //default settings if it can't find a save file containing your current settings
 	#if mobile
 	public static var screensaver:Bool = false;
-	#if android
-	public static var storageType:String = "EXTERNAL_DATA";
-	#end
 	#end
 	public static var mobileCAlpha:Float = FlxG.onMobile ? 0.6 : 0;
 	public static var mobileCEx:Bool = false;

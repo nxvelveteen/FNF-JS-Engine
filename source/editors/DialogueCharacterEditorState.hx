@@ -796,7 +796,7 @@ class DialogueCharacterEditorState extends MusicBeatState
 			var characterName:String = splittedImage[0].toLowerCase().replace(' ', '');
 
 			#if mobile
-			SUtil.saveContent('$characterName.json', data); // gacha horror referance
+			StorageUtil.saveContent('$characterName.json', data); // gacha horror referance
 			#else
 			_file = new FileReference();
 			_file.addEventListener(Event.COMPLETE, onSaveComplete);

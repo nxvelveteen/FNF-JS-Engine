@@ -33,16 +33,10 @@ import flixel.input.keyboard.FlxKey;
 
 class MobileOptionsSubState extends BaseOptionsMenu
 {
-	#if android
-	var storageTypes:Array<String> = ["EXTERNAL_DATA", "EXTERNAL_OBB", "EXTERNAL_MEDIA", "EXTERNAL"];
-	var externalPaths:Array<String> = SUtil.checkExternalPaths(true);
-	final lastStorageType:String = ClientPrefs.storageType;
-	#end
 	final hintOptions:Array<String> = ["No Gradient", "No Gradient (Old)", "Gradient", "Hidden"];
 
 	public function new()
 	{
-		#if android if (!externalPaths.contains('\n')) storageTypes = storageTypes.concat(externalPaths); #end
 		title = 'Mobile Options';
 		rpcTitle = 'Mobile Options Menu'; // for Discord Rich Presence, fuck it
 
@@ -114,45 +108,8 @@ class MobileOptionsSubState extends BaseOptionsMenu
 			addOption(option);
 		}
 
-		#if android
-		var option:Option = new Option('Storage Type',
-			'Which folder Psych Engine should use?\n(CHANGING THIS MAKES DELETE YOUR OLD FOLDER!!)',
-			'storageType',
-			'string',
-			null,
-			storageTypes);
-			addOption(option);
-		#end
-
 		cameras = [FlxG.cameras.list[FlxG.cameras.list.length-1]];
 
 		super();
-	}
-
-	#if android
-	function onStorageChange():Void
-	{
-		File.saveContent(lime.system.System.applicationStorageDirectory + 'storagetype.txt', ClientPrefs.storageType);
-	
-		var lastStoragePath:String = StorageType.fromStrForce(lastStorageType) + '/';
-	
-		try
-		{
-			Sys.command('rm', ['-rf', lastStoragePath]);
-		}
-		catch (e:haxe.Exception)
-			trace('Failed to remove last directory. (${e.message})');
-	}
-	#end
-
-	override public function destroy() {
-		super.destroy();
-		#if android
-		if (ClientPrefs.storageType != lastStorageType) {
-			onStorageChange();
-			CoolUtil.showPopUp('Storage Type has been changed and you needed restart the game!!\nPress OK to close the game.', 'Notice!');
-			lime.system.System.exit(0);
-		}
-		#end
 	}
 }

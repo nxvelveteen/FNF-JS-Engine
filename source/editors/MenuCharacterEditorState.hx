@@ -414,7 +414,7 @@ class MenuCharacterEditorState extends MusicBeatState
 			var characterName:String = splittedImage[splittedImage.length-1].toLowerCase().replace(' ', '');
 
 			#if mobile
-			SUtil.saveContent('$characterName.json', data); // gacha horror referance
+			StorageUtil.saveContent('$characterName.json', data); // gacha horror referance
 			#else
 			_file = new FileReference();
 			_file.addEventListener(Event.COMPLETE, onSaveComplete);

@@ -4348,7 +4348,7 @@ class ChartingState extends MusicBeatState
 			if (difficulty.toLowerCase() != 'normal')
 				gamingName = gamingName + '-' + Paths.formatToSongPath(difficulty);
 
-			SUtil.saveContent('$gamingName.json', data.trim());
+			StorageUtil.saveContent('$gamingName.json', data.trim());
 			#else
 			_file = new FileReference();
 			_file.addEventListener(Event.COMPLETE, onSaveComplete);
@@ -4388,7 +4388,7 @@ class ChartingState extends MusicBeatState
 		if ((data != null) && (data.length > 0))
 		{
 			#if mobile
-			SUtil.saveContent('events.json', data.trim());
+			StorageUtil.saveContent('events.json', data.trim());
 			#else
 			_file = new FileReference();
 			_file.addEventListener(Event.COMPLETE, onSaveComplete);
