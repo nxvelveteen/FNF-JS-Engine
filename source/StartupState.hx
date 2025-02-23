@@ -7,10 +7,12 @@ class StartupState extends MusicBeatState
 	var logo:FlxSprite;
 	var skipTxt:FlxText;
 
-	var maxIntros:Int = 6;
+	var maxIntros:Int = 7;
 	var date:Date = Date.now();
 
 	var canChristmas = false;
+	var canAutism = false;
+
 
 	private var vidSprite:VideoSprite = null;
 	private function startVideo(name:String, ?library:String = null, ?callback:Void->Void = null, canSkip:Bool = true, loop:Bool = false, playOnLoad:Bool = true)
@@ -64,6 +66,11 @@ class StartupState extends MusicBeatState
 		{
 			canChristmas = true;
 			maxIntros += 1; //JOLLY SANTA!!!
+		}
+		else if (date.getMonth() == 4 && date.getDate() == 1) // funny
+		{
+			canAutism = true;
+			maxIntros += 1; //autism!!!!!!!!!!!!!!!!!!!!!!oubgrebiugerbiuegrs
 		}
 
 		FlxTransitionableState.skipNextTransIn = true;
@@ -162,6 +169,20 @@ class StartupState extends MusicBeatState
 					} 
 					else 
 						doIntro();
+					
+				case 7:
+					if (canAutism)
+					{
+						FlxG.sound.play(Paths.sound('aprilFools', 'splash'));
+						logo.loadGraphic(Paths.image('autism', 'splash'));
+						logo.scale.set(0.1,0.1);
+						logo.updateHitbox();
+						logo.screenCenter();
+						FlxTween.tween(logo, {alpha: 1, "scale.x": 1, "scale.y": 1}, 0.95, {ease: FlxEase.linear, onComplete: _ -> onIntroDone()});
+					} 
+					else 
+						doIntro();
+					
 			}
 		}
 		#end

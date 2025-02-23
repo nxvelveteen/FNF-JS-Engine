@@ -5,7 +5,37 @@ body:
   - type: textarea
     id: description
     attributes:
-      label: "Describe your problem here. If you are modding, please try testing your problem in a clean version of the engine instead, this ensures the problem is actually caused by the engine itself. Also, if you're using an older version of JSE, please try the latest action build in the Actions tab or the latest release build. The issue has probably been fixed since that version. Oh yeah, and also be sure to check the pinned 'JS Engine: Known Issues' issue, to double check if your issue hasn't already been found!"
+      label: "Describe your problem here."
+    validations:
+      required: true
+
+  - type: dropdown
+    id: outdatedBuildCheck
+    attributes:
+      label: "Did you check if the problem occurs in the latest build?"
+      options:
+        - "Yes"
+        - "No"
+    validations:
+      required: true
+
+  - type: dropdown
+    id: knownIssueCheck
+    attributes:
+      label: "Did you check if there's a problem that you are trying to figure out on (this issue)[https://github.com/JordanSantiagoYT/FNF-JS-Engine/issues/359]?"
+      options:
+        - "No"
+        - "Yes"
+    validations:
+      required: true
+      
+  - type: dropdown
+    id: dupeCheck
+    attributes:
+      label: "Did you check if there's any similar issues?"
+      options:
+        - "No"
+        - "Yes"
     validations:
       required: true
 

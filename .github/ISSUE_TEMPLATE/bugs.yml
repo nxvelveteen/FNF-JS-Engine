@@ -10,9 +10,29 @@ body:
       required: true
 
   - type: dropdown
-    id: Measures
+    id: outdatedBuildCheck
     attributes:
-      label: 'Did you see if the "bug" occurs on the latest commit?'
+      label: "Did you check if the problem occurs in the latest build?"
+      options:
+        - "Yes"
+        - "No"
+    validations:
+      required: true
+
+  - type: dropdown
+    id: knownIssueCheck
+    attributes:
+      label: "Did you check if there's a problem that you are trying to figure out on (this issue)[https://github.com/JordanSantiagoYT/FNF-JS-Engine/issues/359]?"
+      options:
+        - "No"
+        - "Yes"
+    validations:
+      required: true
+      
+  - type: dropdown
+    id: dupeCheck
+    attributes:
+      label: "Did you check if there's any similar issues?"
       options:
         - "No"
         - "Yes"
