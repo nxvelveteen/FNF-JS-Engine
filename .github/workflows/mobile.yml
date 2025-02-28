@@ -28,11 +28,6 @@ jobs:
         with:
           haxe-version: 4.3.6
 
-      - name: Install Libraries
-        run: |
-          haxelib install hmm --quiet
-          haxelib run hmm install --quiet
-      
       - name: Setup Android NDK
         if: startsWith(matrix.os, 'ubuntu')
         shell: bash
@@ -41,8 +36,13 @@ jobs:
           echo "Downloading Android NDK r28..."
           curl -sSfL -o android-ndk.tar.xz "https://github.com/MobilePorting/android-ndk-cosmo/releases/download/r28/android-ndk-r28-unix.tar.xz"
           echo "Extracting Android NDK r28..."
-          tar -xvf android-ndk.tar.xz
+          tar -xf android-ndk.tar.xz
           echo "NDK r28 successfully downloaded and extracted!"
+
+      - name: Install Libraries
+        run: |
+          haxelib install hmm --quiet
+          haxelib run hmm install --quiet
 
       - name: Configure Android
         if: startsWith(matrix.os, 'ubuntu')
