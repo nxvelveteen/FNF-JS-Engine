@@ -11,17 +11,19 @@ body:
   - type: dropdown
     id: outdatedBuildCheck
     attributes:
-      label: "Did you check if the problem occurs in the latest build?"
+      label: "If its a problem you are having, did you check if the problem occurs in the latest build?"
       options:
-        - "Yes"
         - "No"
+        - "Yes"
+        - "No, it's not a problem."
     validations:
       required: true
 
   - type: dropdown
     id: knownIssueCheck
     attributes:
-      label: "Did you check if there's a problem that you are trying to figure out on (this issue)[https://github.com/JordanSantiagoYT/FNF-JS-Engine/issues/359]?"
+      label: "Did you check if there's a problem that you are trying to figure out on the issue linked below?"
+      description: "[Click me here.](https://github.com/JordanSantiagoYT/FNF-JS-Engine/issues/359)"
       options:
         - "No"
         - "Yes"

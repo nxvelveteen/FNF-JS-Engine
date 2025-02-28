@@ -126,9 +126,11 @@ class TitleState extends MusicBeatState
     				// Extract the changelog after the version number
     				returnedData[1] = data.substring(versionEndIndex + 1, data.length);
 				updateVersion = returnedData[0];
-				var curVersion:String = MainMenuState.psychEngineJSVersion.trim();
-				trace('version online: ' + updateVersion + ', your version: ' + curVersion);
-				if(updateVersion != curVersion) {
+				final curVersion:String = MainMenuState.psychEngineJSVersion.trim();
+				final cleanVersion:String = curVersion.split(" (")[0]; // Removes everything after " ("
+				trace(cleanVersion);
+				trace('version online: ' + updateVersion + ', your version: ' + cleanVersion);
+				if(updateVersion != cleanVersion) {
 					trace('versions arent matching!');
 					OutdatedState.currChanges = returnedData[1];
 					mustUpdate = true;

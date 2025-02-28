@@ -104,8 +104,7 @@ same goes for *Lua Scripts*, comment out or delete the line with `LUA_ALLOWED`, 
 - He's the owner... What do you think?
 
 @TheStinkern
-- Was originaly going to only answer issues and try to fix it.
-  - Also trying to learn haxe a bit.
+- Small coder
 
 @moxie-coder
 - Codes part of the engine

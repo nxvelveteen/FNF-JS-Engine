@@ -35,6 +35,7 @@ import flixel.addons.transition.FlxTransitionableState;
 import flixel.system.FlxAssets.FlxShader;
 import Shaders;
 import openfl.filters.ShaderFilter;
+import utils.*;
 
 #if (!flash && sys)
 import flixel.addons.display.FlxRuntimeShader;
@@ -234,6 +235,15 @@ class FunkinLua {
 		set('scriptName', scriptName);
 		set('currentModDirectory', Paths.currentModDirectory);
 
+		// breaking the fourth wall shit
+		if (ClientPrefs.SAM) {
+			set('user_path', 'Boyfriend.dat');
+			set("user_name", "Boyfriend"); // usable for things like Exploitation
+		}
+		else {
+			set('user_path', CoolSystemStuff.getUserPath);
+			set("user_name", CoolSystemStuff.getUsername);
+		}
 		#if windows
 		set('buildTarget', 'windows');
 		#elseif linux

@@ -5525,7 +5525,7 @@ class PlayState extends MusicBeatState
 			}
 
 			stagesFunc(function(stage:BaseStage) stage.noteMiss(daNote));
-			callOnLuas('noteMiss', [notes.members.indexOf(daNote), daNote.noteData, daNote.noteType, daNote.isSustainNote]);
+			callOnLuas('noteMiss', [(daNote.isSustainNote ? sustainNotes : notes).members.indexOf(daNote), daNote.noteData, daNote.noteType, daNote.isSustainNote]);
 			if (ClientPrefs.missRating && ClientPrefs.ratingPopups) popUpScore(daNote, true);
 		}
 		if (daNoteAlt != null)
@@ -5642,7 +5642,7 @@ class PlayState extends MusicBeatState
 						spawnedNote.setupNoteData(targetNote);
 					}
 
-					if (!ClientPrefs.noSpawnFunc) callOnLuas('onSpawnNote', [(!targetNote.isSustainNote ? notes.members.indexOf(notes.members[0]) : sustainNotes.members.indexOf(sustainNotes.members[0])), targetNote.noteData, targetNote.noteType, targetNote.isSustainNote]);
+					if (!ClientPrefs.noSpawnFunc) callOnLuas('onSpawnNote', [(!spawnedNote.isSustainNote ? notes.members.indexOf(spawnedNote) : sustainNotes.members.indexOf(spawnedNote)), targetNote.noteData, targetNote.noteType, targetNote.isSustainNote]);
 					notesAddedCount++;
 					if (unspawnNotes[notesAddedCount] != null) targetNote = unspawnNotes[notesAddedCount];
 					else break;
@@ -5851,7 +5851,7 @@ class PlayState extends MusicBeatState
 
 			if (!ClientPrefs.noHitFuncs) 
 			{
-				callOnLuas((oppTrigger ? 'opponentNoteHit' : 'goodNoteHit'), [notes.members.indexOf(note), Math.abs(note.noteData), note.noteType, note.isSustainNote]);
+				callOnLuas((oppTrigger ? 'opponentNoteHit' : 'goodNoteHit'), [(note.isSustainNote ? sustainNotes : notes).members.indexOf(note), Math.abs(note.noteData), note.noteType, note.isSustainNote]);
 				stagesFunc(function(stage:BaseStage) (oppTrigger ? stage.opponentNoteHit(note) : stage.goodNoteHit(note)));
 			}
 
@@ -5986,7 +5986,7 @@ class PlayState extends MusicBeatState
 
 			if (!ClientPrefs.noHitFuncs) 
 			{
-				callOnLuas((!opponentChart ? 'opponentNoteHit' : 'goodNoteHit'), [notes.members.indexOf(daNote), Math.abs(daNote.noteData), daNote.noteType, daNote.isSustainNote]);
+				callOnLuas((!opponentChart ? 'opponentNoteHit' : 'goodNoteHit'), [(daNote.isSustainNote ? sustainNotes : notes).members.indexOf(daNote), Math.abs(daNote.noteData), daNote.noteType, daNote.isSustainNote]);
 				stagesFunc(function(stage:BaseStage) (!opponentChart ? stage.opponentNoteHit(daNote) : stage.goodNoteHit(daNote)));
 			}
 

@@ -38,6 +38,13 @@ class MiscSettingsSubState extends BaseOptionsMenu
 			false); //Default value
 		addOption(option);
 
+		var option:Option = new Option('Self Awareness Mode', //Name
+			'If checked, the two lua user functions doesnt take your username/userpath', //Description
+			'SAM', //Save data variable name
+			'bool', //Variable type
+			false); //Default value
+		addOption(option);
+
 		var option:Option = new Option('Always Play Cutscenes', //Name
 			'If checked, cutscenes will always play even if you\nenter the song through Freeplay.', //Description
 			'alwaysTriggerCutscene', //Save data variable name

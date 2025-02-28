@@ -1,6 +1,6 @@
 name: Bug report
 description: Report bugs with the engine here
-labels: [bug, status: pending triage]
+labels: [bug, "status: pending triage"]
 body:
   - type: textarea
     id: description
@@ -22,7 +22,8 @@ body:
   - type: dropdown
     id: knownIssueCheck
     attributes:
-      label: "Did you check if there's a problem that you are trying to figure out on (this issue)[https://github.com/JordanSantiagoYT/FNF-JS-Engine/issues/359]?"
+      label: "Did you check if there's a problem that you are trying to figure out on the issue linked below?"
+      description: "[Click me here.](https://github.com/JordanSantiagoYT/FNF-JS-Engine/issues/359)"
       options:
         - "No"
         - "Yes"
