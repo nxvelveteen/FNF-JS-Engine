@@ -189,13 +189,6 @@ class VisualsUISubState extends BaseOptionsMenu
 			'bool',
 			true);
 		addOption(option);
-
-		var option:Option = new Option('Show Playback Speed on Time Bar',
-			'If checked, the timebar will also show the current Playback Speed you are playing at.',
-			'timebarShowSpeed',
-			'bool',
-			false);
-		addOption(option);
 		
 		var option:Option = new Option('Botplay Watermark',
 			'If checked, some texts will have a watermark if Botplay is enabled.',
@@ -523,7 +516,7 @@ class VisualsUISubState extends BaseOptionsMenu
 			'daMenuMusic',
 			'string',
 			'Default',
-			['Default', 'Anniversary', 'Mashup', 'Base Game', 'DDTO+', 'Dave & Bambi', 'Dave & Bambi (Old)', 'VS Impostor', 'VS Nonsense V2', 'None', 'Christmas']);
+			['Default', 'Anniversary', 'Mashup', 'Base Game', 'DDTO+', 'Dave & Bambi', 'Dave & Bambi (Old)', 'VS Impostor', 'VS Nonsense V2']);
 		addOption(option);
 		option.onChange = onChangeMenuMusic;
 		
@@ -637,17 +630,8 @@ class VisualsUISubState extends BaseOptionsMenu
 	var menuMusicChanged:Bool = false;
 	function onChangeMenuMusic()
 	{
-		var museTween:FlxTween = null;
-
-		if (ClientPrefs.daMenuMusic != 'Default') 
-			FlxG.sound.playMusic(Paths.music('freakyMenu-' + ClientPrefs.daMenuMusic));
-		else if (ClientPrefs.daMenuMusic != 'None')
-			FlxG.sound.playMusic(Paths.music('freakyMenu'));
-		else{
-			// FlxG.music.stop();
-			museTween = FlxTween.tween(FlxG.sound.music, {volume: 0}, 2, {onComplete: function(tween) tween.destroy()});
-		}
-		
+			if (ClientPrefs.daMenuMusic != 'Default') FlxG.sound.playMusic(Paths.music('freakyMenu-' + ClientPrefs.daMenuMusic));
+			if (ClientPrefs.daMenuMusic == 'Default') FlxG.sound.playMusic(Paths.music('freakyMenu'));
 		menuMusicChanged = true;
 	}
 

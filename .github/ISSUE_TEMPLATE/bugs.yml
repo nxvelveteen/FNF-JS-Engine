@@ -14,8 +14,8 @@ body:
     attributes:
       label: "Did you check if the problem occurs in the latest build?"
       options:
-        - "Yes"
         - "No"
+        - "Yes"
     validations:
       required: true
 

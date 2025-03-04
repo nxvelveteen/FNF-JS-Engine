@@ -962,7 +962,7 @@ class PlayState extends MusicBeatState
 		}
 
 
-		if(ClientPrefs.timeBarType == 'Song Name' && !ClientPrefs.timebarShowSpeed)
+		if(ClientPrefs.timeBarType == 'Song Name')
 		{
 			timeTxt.text = SONG.song;
 		}
@@ -2181,14 +2181,15 @@ class PlayState extends MusicBeatState
 				case 'oppt' | 'dad': doPan = dadCanPan;
 			}
 			//FlxG.elapsed is stinky poo poo for this, it just makes it look jank as fuck
-			if (doPan) {
+			if (doPan && cameraSpeed > 0) {
 				if (fps == 0) fps = 1;
+
 				switch (anim.split('-')[0])
 				{
-					case 'singUP': moveCamTo[1] = -40*ClientPrefs.panIntensity*240*playbackRate/fps;
-					case 'singDOWN': moveCamTo[1] = 40*ClientPrefs.panIntensity*240*playbackRate/fps;
-					case 'singLEFT': moveCamTo[0] = -40*ClientPrefs.panIntensity*240*playbackRate/fps;
-					case 'singRIGHT': moveCamTo[0] = 40*ClientPrefs.panIntensity*240*playbackRate/fps;
+					case 'singUP': moveCamTo[1] = -40*ClientPrefs.panIntensity*240/fps;
+					case 'singDOWN': moveCamTo[1] = 40*ClientPrefs.panIntensity*240/fps;
+					case 'singLEFT': moveCamTo[0] = -40*ClientPrefs.panIntensity*240/fps;
+					case 'singRIGHT': moveCamTo[0] = 40*ClientPrefs.panIntensity*240/fps;
 				}
 			}
 		}
@@ -3776,15 +3777,7 @@ class PlayState extends MusicBeatState
 								timeTxt.text = SONG.song + ' (' + CoolUtil.formatTime(Conductor.songPosition) + ' / ' + CoolUtil.formatTime(songLength) + ')';
 						}
 
-						if(ClientPrefs.timebarShowSpeed)
-						{
-							playbackRateDecimal = FlxMath.roundDecimal(playbackRate, 2);
-							if (ClientPrefs.timeBarType != 'Song Name')
-								timeTxt.text += ' (' + (!ffmpegMode ? playbackRateDecimal + 'x)' : 'Rendering)');
-							else timeTxt.text = SONG.song + ' (' + (!ffmpegMode ? playbackRateDecimal + 'x)' : 'Rendering)');
-						}
 						if (cpuControlled && ClientPrefs.timeBarType != 'Song Name' && ClientPrefs.botWatermark) timeTxt.text += ' (Bot)';
-						if(ClientPrefs.timebarShowSpeed && cpuControlled && ClientPrefs.timeBarType == 'Song Name' && ClientPrefs.botWatermark) timeTxt.text = SONG.song + ' (' + (!ffmpegMode ? FlxMath.roundDecimal(playbackRate, 2) + 'x)' : 'Rendering)') + ' (Bot)';
 					}
 				}
 				if(ffmpegMode) {
@@ -4592,7 +4585,7 @@ class PlayState extends MusicBeatState
 				}
 
 			case 'Change Song Name':
-				if(ClientPrefs.timeBarType == 'Song Name' && !ClientPrefs.timebarShowSpeed)
+				if(ClientPrefs.timeBarType == 'Song Name')
 				{
 					if (value1.length > 1)
 						timeTxt.text = value1;
@@ -6821,8 +6814,6 @@ class PlayState extends MusicBeatState
 
 	var curLight:Int = -1;
 	var curLightEvent:Int = -1;
-
-	// Render mode stuff.. If SGWLC isn't ok with this I will remove it :thumbsup:
 
 	public static var process:Process;
 	var ffmpegExists:Bool = false;
