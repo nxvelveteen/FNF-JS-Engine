@@ -1,6 +1,4 @@
-1.44.0;
+1.44.1;
 
-Added the option to change how fast the rainbow note cycle is (inspired by Nael2xd)
-Wheatley Space easter egg
-Video cutscenes can now be skipped
-Hopefully fixed a crash that occurs because of the way skipping works
+"Show Playback Speed in Time Bar" has been removed due to being useless
+The Autosave in the Chart Editor can now be turned off
