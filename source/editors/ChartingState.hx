@@ -523,6 +523,7 @@ class ChartingState extends MusicBeatState
 		}
 		// TODO: expand this more & maybe port the 1.0 system to here
 		autoSaveTimer = new FlxTimer().start(autoSaveLength, function(tmr:FlxTimer) {
+			if (!ClientPrefs.autosaveCharts) return;
 			FlxTween.tween(autosaveIndicator, {alpha: 1}, 1, {
 				ease: FlxEase.quadInOut,
 				onComplete: function (twn:FlxTween) {

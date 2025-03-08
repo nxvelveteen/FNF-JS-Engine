@@ -22,8 +22,8 @@ body:
   - type: dropdown
     id: knownIssueCheck
     attributes:
-      label: "Did you check if there's a problem that you are trying to figure out on the issue linked below?"
-      description: "[Click me here.](https://github.com/JordanSantiagoYT/FNF-JS-Engine/issues/359)"
+      label: "Did you check if there's a problem that you are trying to figure out?"
+      description: "[Click me here to see the Known Issues and Fixes. Please?](https://github.com/JordanSantiagoYT/FNF-JS-Engine/issues/359)"
       options:
         - "No"
         - "Yes"
@@ -74,7 +74,7 @@ body:
         - "Windows"
         - "Linux"
         - "Mac"
-        - "HTML5"
+        #- "HTML5" # i like how this doesnt work and its still on this template
         - "Android"
         - "iOS"
         - "Flash/Air-based target"

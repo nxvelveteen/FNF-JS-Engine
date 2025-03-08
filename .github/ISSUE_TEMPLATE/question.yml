@@ -38,4 +38,11 @@ body:
         - "No"
         - "Yes"
     validations:
-      required: true      
+      required: true
+
+  - type: textarea
+    id: cmdLogs
+    attributes:
+      label: "Command Prompt/Terminal logs/Crash logs (if existing)"
+    validations:
+      required: false

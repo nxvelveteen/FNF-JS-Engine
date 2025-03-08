@@ -26,7 +26,7 @@ class MainMenuState extends MusicBeatState
 {
 	public static final gitCommit:String = HaxeCommit.getGitCommitHash();
 
-	public static var psychEngineJSVersionNumber:String = '1.44.0'; //This is also used for Discord RPC
+	public static var psychEngineJSVersionNumber:String = '1.44.1'; //This is also used for Discord RPC
 	public static var psychEngineJSVersion:String = psychEngineJSVersionNumber #if commit + ' ($gitCommit)' #end; //This is also used for Discord RPC
 	public static var psychEngineVersion:String = '0.6.3'; //This is also used for Discord RPC
 	public static var curSelected:Int = 0;
@@ -210,7 +210,17 @@ class MainMenuState extends MusicBeatState
 			});
 		});
 	}
+	override function beatHit()
+	{
+		if (curBeat % 2 == 0) 
+		{
+			super.beatHit();
+	
+			FlxG.camera.zoom += 0.025;
 
+			FlxTween.tween(FlxG.camera, {zoom: 1}, Conductor.crochet / 1200, {ease: FlxEase.quadOut});
+		}
+	}
 	function changeTipText() {
 		var selectedText:String = '';
 		var textArray:Array<String> = CoolUtil.coolTextFile(Paths.txt('funnyTips'));

@@ -50,6 +50,13 @@ body:
     validations:
       required: true
 
+  - type: textarea
+    id: cmdLogs
+    attributes:
+      label: "Command Prompt/Terminal logs/Crash logs (if existing)"
+    validations:
+      required: false
+
   - type: dropdown
     id: btarget
     attributes:

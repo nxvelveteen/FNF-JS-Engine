@@ -73,6 +73,13 @@ class MiscSettingsSubState extends BaseOptionsMenu
 		option.displayFormat = '%vs';
 		addOption(option);
 
+		var option:Option = new Option('Autosave',
+			'If checked, the Chart Editor will autosave.',
+			'autosaveCharts',
+			'bool',
+			true);
+		addOption(option);
+
 		cameras = [FlxG.cameras.list[FlxG.cameras.list.length-1]];
 		
 		super();
