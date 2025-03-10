@@ -604,7 +604,6 @@ class Note extends FlxSprite
 		}
 
 		strumTime = chartNoteData.strumTime;
-		if(!inEditor) strumTime += ClientPrefs.noteOffset;
 		noteData = chartNoteData.noteData % 4;
 		noteType = chartNoteData.noteType;
 		animSuffix = chartNoteData.animSuffix;
@@ -633,6 +632,8 @@ class Note extends FlxSprite
 			if (rgbShader == null) rgbShader = new RGBShaderReference(this, initializeGlobalRGBShader(noteData, this));
 			updateRGBColors();
 		}
+
+		if(!inEditor) strumTime += ClientPrefs.noteOffset;
 
 		if (noteType == 'Hurt Note' && !ClientPrefs.enableColorShader)
 		{

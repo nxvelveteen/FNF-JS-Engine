@@ -235,15 +235,10 @@ class FunkinLua {
 		set('scriptName', scriptName);
 		set('currentModDirectory', Paths.currentModDirectory);
 
-		// breaking the fourth wall shit
-		if (ClientPrefs.SAM) {
-			set('user_path', 'Boyfriend.dat');
-			set("user_name", "Boyfriend"); // usable for things like Exploitation
-		}
-		else {
-			set('user_path', CoolSystemStuff.getUserPath);
-			set("user_name", CoolSystemStuff.getUsername);
-		}
+		// If you don't want this to show, you can use the lua script to change it
+		set('user_path', CoolSystemStuff.getUserPath());
+		set("user_name", CoolSystemStuff.getUsername());
+
 		#if windows
 		set('buildTarget', 'windows');
 		#elseif linux

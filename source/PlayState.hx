@@ -5599,7 +5599,7 @@ class PlayState extends MusicBeatState
 
 			if (!targetNote.wasHit)
 			{
-				while (targetNote != null && targetNote.strumTime <= Conductor.songPosition) {
+				while (targetNote != null && targetNote.strumTime <= Conductor.songPosition - ClientPrefs.noteOffset) {
 					targetNote.wasHit = true;
 					targetNote.mustPress ? goodNoteHit(null, targetNote) : opponentNoteHit(null, targetNote);
 					notesAddedCount++;
@@ -6228,7 +6228,7 @@ class PlayState extends MusicBeatState
 		{
 			var timeSub:Float = Conductor.songPosition - Conductor.offset;
 			var syncTime:Float = 20 * Math.max(playbackRate, 1);
-			if (Math.abs(FlxG.sound.music.time - timeSub) > syncTime ||
+			if (FlxG.sound.music.time < FlxG.sound.music.length && Math.abs(FlxG.sound.music.time - timeSub) > syncTime ||
 			(vocals.length > 0 && vocals.time < vocals.length && Math.abs(vocals.time - timeSub) > syncTime) ||
 			(opponentVocals.length > 0 && opponentVocals.time < opponentVocals.length && Math.abs(opponentVocals.time - timeSub) > syncTime))
 			{
