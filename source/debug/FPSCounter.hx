@@ -101,7 +101,7 @@ class FPSCounter extends TextField
 			text += '\nCurrent state: ${Type.getClassName(Type.getClass(FlxG.state))}';
 			if (FlxG.state.subState != null)
 				text += '\nCurrent substate: ${Type.getClassName(Type.getClass(FlxG.state.subState))}';
-			text += "\nOS: " + '${System.platformLabel} ${System.platformVersion}';
+			#if !linux text += "\nOS: " + '${System.platformLabel} ${System.platformVersion}'; #end
 		}
 	}
 
