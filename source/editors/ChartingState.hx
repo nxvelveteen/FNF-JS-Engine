@@ -4328,14 +4328,13 @@ class ChartingState extends MusicBeatState
 
 		if ((data != null) && (data.length > 0))
 		{
+			var gamingName:String = Paths.formatToSongPath(_song.song);
+
+			if (difficulty.toLowerCase() != 'normal')
+				gamingName = gamingName + '-' + Paths.formatToSongPath(difficulty);
 			if (!isAuto)
 			{
 				#if mobile
-				var gamingName:String = Paths.formatToSongPath(_song.song);
-
-				if (difficulty.toLowerCase() != 'normal')
-					gamingName = gamingName + '-' + Paths.formatToSongPath(difficulty);
-
 				StorageUtil.saveContent('$gamingName.json', data.trim());
 				#else
 				_file = new FileReference();
@@ -4343,11 +4342,6 @@ class ChartingState extends MusicBeatState
 				_file.addEventListener(Event.CANCEL, onSaveCancel);
 				_file.addEventListener(IOErrorEvent.IO_ERROR, onSaveError);
 				
-				var gamingName:String = Paths.formatToSongPath(_song.song);
-
-				if (difficulty.toLowerCase() != 'normal')
-					gamingName = gamingName + '-' + Paths.formatToSongPath(difficulty);
-
 				_file.save(data.trim(), gamingName + ".json");
 				#end
 			} else {
