@@ -1,10 +1,6 @@
-1.44.2;
+1.45.0;
 
-Fixed quant colors not working properly if offsets are brought into play.
-Fixed a crash that would occur if you had scripts run globally whilst Self-Awareness Mode was disabled.
-The option was also removed since it isn't necessary. If you don't want it to show then change it with the lua script.
-
-1.44.1;
-
-"Show Playback Speed in Time Bar" has been removed due to being useless
-The Autosave in the Chart Editor can now be turned off
+Autosave revamp: Now saves multiple backups to a folder instead of to your autosave
+Lua Extra Keys is now supported again! yayyyyyy! (Use the script i made since the original is incompatible)
+Mid-song resyncing is now gone for GOOD!
+Attempted to fix monstrous lag when turning on "Show Debug Info" on Linux builds
