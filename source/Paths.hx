@@ -87,7 +87,7 @@ class Paths
 		trace(defaultSkin);
 	}
 
-	public static function initNote(keys:Int = 4, ?noteSkin:String)
+	public static function initNote(?noteSkin:String)
 	{
 		// Do this to be able to just copy over the note animations and not reallocate it
 		if (noteSkin.length < 1) noteSkin = defaultSkin;
@@ -95,9 +95,9 @@ class Paths
 		spr.frames = getSparrowAtlas(noteSkin.length > 1 ? noteSkin : defaultSkin);
 
 		// Use a for loop for adding all of the animations in the note spritesheet, otherwise it won't find the animations for the next recycle
-		for (d in 0...keys)
+		for (d in 0...Note.colArray.length)
 		{
-			spr.animation.addByPrefix('purpleholdend', 'pruple end hold'); // ?????
+			if (d == 0) spr.animation.addByPrefix('purpleholdend', 'pruple end hold'); // ?????
 			spr.animation.addByPrefix(Note.colArray[d] + 'holdend', Note.colArray[d] + ' hold end');
 			spr.animation.addByPrefix(Note.colArray[d] + 'hold', Note.colArray[d] + ' hold piece');
 			spr.animation.addByPrefix(Note.colArray[d] + 'Scroll', Note.colArray[d] + '0');

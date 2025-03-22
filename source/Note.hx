@@ -173,7 +173,7 @@ class Note extends FlxSprite
 		if (!pixelNote && texture != value)
 		{
 			changeSize = false;
-			if (!Paths.noteSkinFramesMap.exists(value)) Paths.initNote(4, value);
+			if (!Paths.noteSkinFramesMap.exists(value)) Paths.initNote(value);
 			if (frames != @:privateAccess Paths.noteSkinFramesMap.get(value)) frames = @:privateAccess Paths.noteSkinFramesMap.get(value);
 			if (animation != @:privateAccess Paths.noteSkinAnimsMap.get(value)) animation.copyFrom(@:privateAccess Paths.noteSkinAnimsMap.get(value));
 
@@ -236,7 +236,7 @@ class Note extends FlxSprite
 		}
 	}
 
-	public static function initializeGlobalRGBShader(noteData:Int, ?note:Note = null)
+	public static function initializeGlobalRGBShader(noteData:Int = 0, ?note:Note = null)
 	{
 		if (note == null)
 		{
@@ -246,7 +246,7 @@ class Note extends FlxSprite
 				globalRgbShaders[noteData] = newRGB;
 
 				var arr:Array<FlxColor> = ClientPrefs.noteColorStyle != 'Quant-Based' ? (!PlayState.isPixelStage) ? ClientPrefs.arrowRGB[noteData] : ClientPrefs.arrowRGBPixel[noteData] : ClientPrefs.quantRGB[noteData];
-				if (noteData > -1 && noteData <= arr.length)
+				if (arr != null && noteData > -1 && noteData <= arr.length)
 				{
 					newRGB.r = arr[0];
 					newRGB.g = arr[1];
@@ -469,9 +469,10 @@ class Note extends FlxSprite
 			}
 		}
 
-		if(copyScaleX && !isSustainNote) //if i did this on sustain notes it would break, sorry!
+		if(copyScaleX)
 		{
 			scale.x = strum.scale.x;
+			if (isSustainNote) updateHitbox();
 		}
 		if(copyScaleY && !isSustainNote)
 		{
@@ -526,14 +527,16 @@ class Note extends FlxSprite
 	var noteColor:RGBPalette;
 	var superCoolColor = null;
 	var arr:Array<Int> = [255, 255, 255];
+	var rainbowTime = 0.0;
 	public function updateRGBColors()
 	{
 		if (rgbShader == null && useRGBShader) rgbShader = new RGBShaderReference(this, initializeGlobalRGBShader(noteData, this));
 		else switch(ClientPrefs.noteColorStyle)
 		{
 			case 'Rainbow':
+			rainbowTime = (ClientPrefs.rainbowTime != 0 ? ClientPrefs.rainbowTime * 1000 : Conductor.crochet);
 			superCoolColor = new FlxColor(0xFFFF0000);
-			superCoolColor.hue = (strumTime / (ClientPrefs.rainbowTime * 1000) * 360) % 360;
+			superCoolColor.hue = (strumTime / rainbowTime * 360) % 360;
 			rgbShader.r = superCoolColor;
 			rgbShader.g = FlxColor.WHITE;
 			rgbShader.b = superCoolColor.getDarkened(0.7);
@@ -604,7 +607,7 @@ class Note extends FlxSprite
 		}
 
 		strumTime = chartNoteData.strumTime;
-		noteData = chartNoteData.noteData % 4;
+		noteData = chartNoteData.noteData;
 		noteType = chartNoteData.noteType;
 		animSuffix = chartNoteData.animSuffix;
 		noAnimation = noMissAnimation = chartNoteData.noAnimation;
@@ -661,7 +664,7 @@ class Note extends FlxSprite
 		if (isSustainNote) {
 			offsetX += width / 2;
 			copyAngle = false;
-			animation.play(colArray[noteData % 4] + (chartNoteData.isSustainEnd ? 'holdend' : 'hold'));
+			animation.play(colArray[noteData] + (chartNoteData.isSustainEnd ? 'holdend' : 'hold'));
 			updateHitbox();
 			offsetX -= width / 2;
 
@@ -671,7 +674,7 @@ class Note extends FlxSprite
 			updateHitbox();
 		}
 		else {
-			animation.play(colArray[noteData % 4] + 'Scroll');
+			animation.play(colArray[noteData] + 'Scroll');
 			if (!copyAngle) copyAngle = true;
 			offsetX = 0; //Just in case we recycle a sustain note to a regular note
 			if (useRGBShader && shouldCenterOffsets)

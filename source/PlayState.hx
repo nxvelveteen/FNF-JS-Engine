@@ -692,9 +692,6 @@ class PlayState extends MusicBeatState
 		dadGroup = new FlxSpriteGroup(DAD_X, DAD_Y);
 		gfGroup = new FlxSpriteGroup(GF_X, GF_Y);
 
-		startCallback = startCountdown;
-		endCallback = endSong;
-
 		switch (curStage)
 		{
 			case 'stage': new stages.StageWeek1(); //Week 1
@@ -716,7 +713,7 @@ class PlayState extends MusicBeatState
 
 		if (Note.globalRgbShaders.length > 0) Note.globalRgbShaders = [];
 		Paths.initDefaultSkin(SONG.arrowSkin);
-		Paths.initNote(4, SONG.arrowSkin);
+		Paths.initNote(SONG.arrowSkin);
 
 		if(isPixelStage) {
 			introSoundsSuffix = '-pixel';
@@ -885,7 +882,6 @@ class PlayState extends MusicBeatState
 			if(gf != null)
 				gf.visible = false;
 		}
-		callOnLuas('onCreate');
 
 		var file:String = Paths.json(songName + '/dialogue'); //Checks for json/Psych Engine dialogue
 		if (OpenFlAssets.exists(file)) {
@@ -1189,6 +1185,8 @@ class PlayState extends MusicBeatState
 
 		trace ('Loading chart...');
 		generateSong(SONG.song, startOnTime);
+
+		callOnLuas('onCreate');
 
 		if (SONG.event7 == null || SONG.event7 == '') SONG.event7 == 'None';
 
@@ -1589,6 +1587,9 @@ class PlayState extends MusicBeatState
 			}
 		}
 		#end
+		
+		startCallback = startCountdown;
+		endCallback = endSong;
 
 		startCallback();
 		RecalculateRating();
@@ -2903,7 +2904,7 @@ class PlayState extends MusicBeatState
 						noteDensity: currentMultiplier,
 						ignoreNote: songNotes[3] == 'Hurt Note' && gottaHitNote
 					};
-					if (swagNote.noteskin.length > 0 && !Paths.noteSkinFramesMap.exists(swagNote.noteskin)) inline Paths.initNote(4, swagNote.noteskin);
+					if (swagNote.noteskin.length > 0 && !Paths.noteSkinFramesMap.exists(swagNote.noteskin)) inline Paths.initNote(swagNote.noteskin);
 
 					if(!Std.isOfType(songNotes[3], String)) swagNote.noteType = ChartingState.noteTypeList[songNotes[3]]; //Backward compatibility + compatibility with Week 7 charts
 
@@ -3733,11 +3734,11 @@ class PlayState extends MusicBeatState
 		if (startedCountdown && !paused)
 		{
 			Conductor.songPosition += elapsed * 1000 * playbackRate;
-			if (Conductor.songPosition >= Conductor.offset)
+			if (Conductor.songPosition >= Conductor.offset && !ffmpegMode)
 			{
 				Conductor.songPosition = FlxMath.lerp(FlxG.sound.music.time + Conductor.offset, Conductor.songPosition, Math.exp(-elapsed * 5));
 				var timeDiff:Float = Math.abs((FlxG.sound.music.time + Conductor.offset) - Conductor.songPosition);
-				if (timeDiff > 1000 * playbackRate)
+				if (timeDiff > 1000 * Math.max(playbackRate, 1))
 					Conductor.songPosition = Conductor.songPosition + 1000 * FlxMath.signOf(timeDiff);
 			}
 		}

@@ -180,7 +180,7 @@ class EditorPlayState extends MusicBeatState
 			FlxG.stage.addEventListener(KeyboardEvent.KEY_UP, onKeyRelease);
 		}
 
-		Paths.initNote(4, PlayState.SONG.arrowSkin);
+		Paths.initNote(PlayState.SONG.arrowSkin);
 		Paths.initDefaultSkin(PlayState.SONG.arrowSkin);
 		cachePopUpScore();
 
@@ -272,7 +272,7 @@ class EditorPlayState extends MusicBeatState
 						wasSpawned: false,
 						ignoreNote: songNotes[3] == 'Hurt Note' && gottaHitNote
 					};
-					if (swagNote.noteskin.length > 0 && !Paths.noteSkinFramesMap.exists(swagNote.noteskin)) Paths.initNote(4, swagNote.noteskin);
+					if (swagNote.noteskin.length > 0 && !Paths.noteSkinFramesMap.exists(swagNote.noteskin)) Paths.initNote(swagNote.noteskin);
 
 					if(!Std.isOfType(songNotes[3], String)) swagNote.noteType = ChartingState.noteTypeList[songNotes[3]]; //Backward compatibility + compatibility with Week 7 charts
 		
