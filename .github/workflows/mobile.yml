@@ -52,16 +52,6 @@ jobs:
           haxelib run lime config JAVA_HOME $JAVA_HOME_17_X64
           haxelib run lime config ANDROID_SETUP true
 
-      - name: Compile hxcpp
-        run: |
-          HxcppPath=$(haxelib libpath hxcpp | tr -d '\r')
-          echo "Using HxcppPath: $HxcppPath"
-          cd $HxcppPath/tools/run
-          haxe compile.hxml
-          cd ..
-          cd ./hxcpp
-          haxe compile.hxml
-
       - name: Compile (Android)
         if: startsWith(matrix.os, 'ubuntu')
         run: haxelib run lime build android -D ${{ inputs.buildFlags }}
