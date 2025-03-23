@@ -33,7 +33,8 @@ body:
   - type: dropdown
     id: dupeCheck
     attributes:
-      label: "Did you check for any similar issues? Check first. If there is one, then do not report the issue, or it will be marked as a duplicate."
+      label: "Did you check for any similar issues?"
+      description: "Check if there is one. Don't report the issue if you find an issue related to this one, or it will be closed as a duplicate."
       options:
         - "No"
         - "Yes"
