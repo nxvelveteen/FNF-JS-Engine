@@ -3734,12 +3734,16 @@ class PlayState extends MusicBeatState
 		if (startedCountdown && !paused)
 		{
 			Conductor.songPosition += elapsed * 1000 * playbackRate;
-			if (Conductor.songPosition >= Conductor.offset && !ffmpegMode)
+			if (!ffmpegMode)
 			{
-				Conductor.songPosition = FlxMath.lerp(FlxG.sound.music.time + Conductor.offset, Conductor.songPosition, Math.exp(-elapsed * 5));
-				var timeDiff:Float = Math.abs((FlxG.sound.music.time + Conductor.offset) - Conductor.songPosition);
-				if (timeDiff > 1000 * Math.max(playbackRate, 1))
-					Conductor.songPosition = Conductor.songPosition + 1000 * FlxMath.signOf(timeDiff);
+				if (FlxG.sound.music.time > Conductor.offset)
+				{
+					Conductor.songPosition = FlxMath.lerp(FlxG.sound.music.time + Conductor.offset, Conductor.songPosition, Math.exp(-elapsed * 5));
+					var timeDiff:Float = Math.abs((FlxG.sound.music.time + Conductor.offset) - Conductor.songPosition);
+					if (timeDiff > 1000 * Math.max(playbackRate, 1))
+						Conductor.songPosition = Conductor.songPosition + 1000 * FlxMath.signOf(timeDiff);
+				}
+				if (Conductor.songPosition < 200 && Math.abs(vocals.time - FlxG.sound.music.time) >= 20) setVocalsTime(FlxG.sound.music.time);
 			}
 		}
 
@@ -3872,11 +3876,7 @@ class PlayState extends MusicBeatState
 							noteIndex++;
 						}
 				}
-				if (FlxG.sound.music.time < 0 || Conductor.songPosition < 0)
-				{
-					FlxG.sound.music.time = 0;
-					if (canResync) resyncVocals();
-				}
+				if (canResync) resyncVocals();
 				SONG.song.toLowerCase() != 'anti-cheat-song' ? loopSongLol() : loopCallback(0);
 			}
 		}
@@ -4831,7 +4831,7 @@ class PlayState extends MusicBeatState
 		if (pb >= 64 && pb < 128) return 3.2;
 		if (pb >= 128 && pb < 256) return 6.4;
 		if (pb >= 256 && pb < 512) return 12.8;
-		if (pb >= 512 && pb < 1024) return 25.6;
+		if (pb >= 512) return 25.6;
 		return 0.05;
 	}
 

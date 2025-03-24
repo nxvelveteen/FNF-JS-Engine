@@ -33,11 +33,11 @@ jobs:
         shell: bash
         run: |
           cd ${{ runner.temp }}
-          echo "Downloading Android NDK r29-beta1..."
-          curl -sSfL -o android-ndk.zip "https://dl.google.com/android/repository/android-ndk-r29-beta1-linux.zip"
-          echo "Extracting Android NDK r29-beta1..."
+          echo "Downloading Android NDK r27c..."
+          curl -sSfL -o android-ndk.zip "https://dl.google.com/android/repository/android-ndk-r27c-linux.zip"
+          echo "Extracting Android NDK r27c..."
           unzip -qq android-ndk.zip
-          echo "NDK r29-beta1 successfully downloaded and extracted!"
+          echo "NDK r27c successfully downloaded and extracted!"
 
       - name: Install Libraries
         run: |
@@ -48,7 +48,7 @@ jobs:
         if: startsWith(matrix.os, 'ubuntu')
         run: |
           haxelib run lime config ANDROID_SDK $ANDROID_HOME
-          haxelib run lime config ANDROID_NDK_ROOT ${{ runner.temp }}/android-ndk-r29-beta1
+          haxelib run lime config ANDROID_NDK_ROOT ${{ runner.temp }}/android-ndk-r27c
           haxelib run lime config JAVA_HOME $JAVA_HOME_17_X64
           haxelib run lime config ANDROID_SETUP true
 
