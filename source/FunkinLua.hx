@@ -2878,13 +2878,13 @@ class FunkinLua {
 			PlayState.instance.addShaderToCamera(camera, new ChromaticAberrationEffect(chromeOffset));
 			
 		});
-		/*
+		#if !mobile
 		Lua_helper.add_callback(lua, "addScanlineEffect", function(camera:String,lockAlpha:Bool=false) {
 			
 			PlayState.instance.addShaderToCamera(camera, new ScanlineEffect(lockAlpha));
 			
 		});
-		**/
+		#end
 		Lua_helper.add_callback(lua, "addGrainEffect", function(camera:String,grainSize:Float,lumAmount:Float,lockAlpha:Bool=false) {
 			
 			PlayState.instance.addShaderToCamera(camera, new GrainEffect(grainSize,lumAmount,lockAlpha));
@@ -2895,14 +2895,13 @@ class FunkinLua {
 			PlayState.instance.addShaderToCamera(camera, new TiltshiftEffect(blurAmount,center));
 			
 		});
-		/*
+		#if !mobile
 		Lua_helper.add_callback(lua, "addVCREffect", function(camera:String,glitchFactor:Float = 0.0,distortion:Bool=true,perspectiveOn:Bool=true,vignetteMoving:Bool=true) {
 			
 			PlayState.instance.addShaderToCamera(camera, new VCRDistortionEffect(glitchFactor,distortion,perspectiveOn,vignetteMoving));
 			
 		});
-		*/
-		
+		#end
 		// shader clear
 		
 		Lua_helper.add_callback(lua, "clearShadersFromCamera", function(cameraName)
