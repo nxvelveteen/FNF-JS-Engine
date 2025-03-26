@@ -4345,11 +4345,26 @@ class ChartingState extends MusicBeatState
 				_file.save(data.trim(), gamingName + ".json");
 				#end
 			} else {
-				// better save system!
+				// create backups folder if it doesn't exist yet
 				if (!FileSystem.exists('backups/')) {
 					FileSystem.createDirectory("backups/");
 					File.saveContent('backups/README.txt', "This is where your backups are stored.\nIf your engine freezes/crashes and you didn't save it, you will be happy that the backups are now stored in there instead of the single autosave so you can restore it whenever you want!");
 				}
+
+				// Get list of backup files
+				var backups = FileSystem.readDirectory('backups/')
+					.filter(f -> f.endsWith(".json"))
+					.map(f -> 'backups/' + f)
+					.filter(f -> FileSystem.exists(f) && !FileSystem.isDirectory(f));
+
+				// Then, sort by modification time (oldest first)
+				backups.sort((a, b) -> {
+					return FlxSort.byValues(FlxSort.ASCENDING, FileSystem.stat(a).mtime.getTime(), FileSystem.stat(b).mtime.getTime());
+				});
+
+				// If the limit is exceeded, delete the oldest backups.
+				while (backups.length >= 5)
+					FileSystem.deleteFile(backups.shift());
 
 				var dateNow:String = Date.now().toString();
 				dateNow = dateNow.replace(" ", "_");
