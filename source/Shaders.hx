@@ -99,7 +99,7 @@ class ChromaticAberrationEffect extends Effect
 
 }
 
-
+/*
 class ScanlineEffect extends Effect
 {
 	
@@ -111,7 +111,7 @@ class ScanlineEffect extends Effect
 	
 	
 }
-
+*/
 
 class Scanline extends FlxShader
 {
@@ -447,7 +447,7 @@ class Grain extends FlxShader
 	
 	
 }
-
+/* // can these commented out shaders get fixed sometime?
 class VCRDistortionEffect extends Effect
 {
   public var shader:VCRDistortionShader = new VCRDistortionShader();
@@ -623,7 +623,7 @@ class VCRDistortionShader extends FlxShader // https://www.shadertoy.com/view/ld
     super();
   }
 }
-
+*/
 
 /*class VHSFilterAccurate extends FlxShader {
 	@:glFragmentSource('// Automatically converted with https://github.com/TheLeerName/ShadertoyToFlixel
