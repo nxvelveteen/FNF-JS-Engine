@@ -1,6 +1,6 @@
 package shaders;
 
-import flixel.FlxFixedShader;
+import backend.FlxFixedShader;
 import Note;
 
 class RGBPalette {
