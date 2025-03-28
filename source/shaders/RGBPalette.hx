@@ -1,6 +1,6 @@
 package shaders;
 
-import flixel.system.FlxAssets.FlxShader;
+import flixel.FlxFixedShader;
 import Note;
 
 class RGBPalette {
@@ -120,7 +120,7 @@ class RGBShaderReference
 	}
 }
 
-class RGBPaletteShader extends FlxShader {
+class RGBPaletteShader extends FlxFixedShader {
 	@:glFragmentHeader('
 		#pragma header
 		

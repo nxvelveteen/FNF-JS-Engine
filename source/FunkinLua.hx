@@ -32,7 +32,7 @@ import openfl.utils.Assets;
 import flixel.math.FlxMath;
 import flixel.util.FlxSave;
 import flixel.addons.transition.FlxTransitionableState;
-import flixel.system.FlxAssets.FlxShader;
+import backend.FlxFixedShader;
 import Shaders;
 import openfl.filters.ShaderFilter;
 import utils.*;

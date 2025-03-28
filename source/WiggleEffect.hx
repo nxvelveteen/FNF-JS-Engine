@@ -1,7 +1,7 @@
 package;
 
 // STOLEN FROM HAXEFLIXEL DEMO LOL
-import flixel.system.FlxAssets.FlxShader;
+import backend.FlxFixedShader;
 
 enum WiggleEffectType
 {
@@ -69,7 +69,7 @@ class WiggleEffect
 	}
 }
 
-class WiggleShader extends FlxShader
+class WiggleShader extends FlxFixedShader
 {
 	@:glFragmentSource('
 		#pragma header
