@@ -595,13 +595,9 @@ class PlayState extends MusicBeatState
 
 		// String that contains the mode defined here so it isn't necessary to call changePresence for each mode
 		if (isStoryMode)
-		{
 			detailsText = "Story Mode: " + WeekData.getCurrentWeek().weekName;
-		}
 		else
-		{
 			detailsText = "Freeplay";
-		}
 
 		// String for when the game is paused
 		detailsPausedText = "BRB! - " + detailsText;
@@ -691,6 +687,9 @@ class PlayState extends MusicBeatState
 		boyfriendGroup = new FlxSpriteGroup(BF_X, BF_Y);
 		dadGroup = new FlxSpriteGroup(DAD_X, DAD_Y);
 		gfGroup = new FlxSpriteGroup(GF_X, GF_Y);
+
+		startCallback = startCountdown;
+		endCallback = endSong;
 
 		switch (curStage)
 		{
@@ -1156,7 +1155,6 @@ class PlayState extends MusicBeatState
 		add(grpNoteSplashes);
 		add(grpHoldSplashes);
 
-
 		if(ClientPrefs.timeBarType == 'Song Name' && ClientPrefs.timeBarStyle == 'VS Impostor')
 		{
 			timeTxt.size = 14;
@@ -1587,9 +1585,6 @@ class PlayState extends MusicBeatState
 			}
 		}
 		#end
-		
-		startCallback = startCountdown;
-		endCallback = endSong;
 
 		startCallback();
 		RecalculateRating();
@@ -2079,92 +2074,6 @@ class PlayState extends MusicBeatState
 		shouldDrainHealth = (opponentDrain || (opponentChart ? boyfriend.healthDrain : dad.healthDrain));
 		if (!opponentDrain && !Math.isNaN((opponentChart ? boyfriend : dad).drainAmount)) healthDrainAmount = opponentChart ? boyfriend.drainAmount : dad.drainAmount;
 		if (!opponentDrain && !Math.isNaN((opponentChart ? boyfriend : dad).drainFloor)) healthDrainFloor = opponentChart ? boyfriend.drainFloor : dad.drainFloor;
-	}
-
-	function schoolIntro(?dialogueBox:DialogueBox):Void
-	{
-		if (dialogueBox == null){
-			startCountdown();
-			return;
-		} // don't load any of this, since there's not even any dialog
-
-		inCutscene = true;
-		var black:FlxSprite = new FlxSprite(-100, -100).makeGraphic(FlxG.width * 2, FlxG.height * 2, FlxColor.BLACK);
-		black.scrollFactor.set();
-		add(black);
-
-		var red:FlxSprite = new FlxSprite(-100, -100).makeGraphic(FlxG.width * 2, FlxG.height * 2, 0xFFff1b31);
-		red.scrollFactor.set();
-
-		var senpaiEvil:FlxSprite = new FlxSprite();
-		senpaiEvil.frames = Paths.getSparrowAtlas('weeb/senpaiCrazy');
-		senpaiEvil.animation.addByPrefix('idle', 'Senpai Pre Explosion', 24, false);
-		senpaiEvil.setGraphicSize(Std.int(senpaiEvil.width * 6));
-		senpaiEvil.scrollFactor.set();
-		senpaiEvil.updateHitbox();
-		senpaiEvil.screenCenter();
-		senpaiEvil.x += 300;
-
-		var songName:String = Paths.formatToSongPath(SONG.song);
-		if (songName == 'roses' || songName == 'thorns')
-		{
-			remove(black);
-
-			if (songName == 'thorns')
-			{
-				add(red);
-				camHUD.visible = false;
-			}
-		}
-
-		new FlxTimer().start(0.3, function(tmr:FlxTimer)
-		{
-			black.alpha -= 0.15;
-
-			if (black.alpha > 0)
-			{
-				tmr.reset(0.3);
-			}
-			else
-			{
-				if (Paths.formatToSongPath(SONG.song) == 'thorns')
-				{
-					add(senpaiEvil);
-					senpaiEvil.alpha = 0;
-					new FlxTimer().start(0.3, function(swagTimer:FlxTimer)
-					{
-						senpaiEvil.alpha += 0.15;
-						if (senpaiEvil.alpha < 1)
-						{
-							swagTimer.reset();
-						}
-						else
-						{
-							senpaiEvil.animation.play('idle');
-							FlxG.sound.play(Paths.sound('Senpai_Dies'), 1, false, null, true, function()
-							{
-								remove(senpaiEvil);
-								remove(red);
-								FlxG.camera.fade(FlxColor.WHITE, 0.01, true, function()
-								{
-									add(dialogueBox);
-									camHUD.visible = true;
-								}, true);
-							});
-							new FlxTimer().start(3.2, function(deadTime:FlxTimer)
-							{
-								FlxG.camera.fade(FlxColor.WHITE, 1.6, false);
-							});
-						}
-					});
-				}
-				else
-				{
-					add(dialogueBox);
-				}
-				remove(black);
-			}
-		});
 	}
 
 	var fps:Float = 60;

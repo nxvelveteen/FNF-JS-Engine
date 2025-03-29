@@ -30,10 +30,10 @@ class SchoolEvil extends BaseStage
 		add(bg);
 		setDefaultGF('gf-pixel');
 
-		FlxG.sound.playMusic(Paths.music('LunchboxScary'), 0);
-		FlxG.sound.music.fadeIn(1, 0, 0.8);
 		if(isStoryMode && !seenCutscene)
 		{
+			FlxG.sound.playMusic(Paths.music('LunchboxScary'), 0);
+			FlxG.sound.music.fadeIn(1, 0, 0.8);
 			initDoof();
 			setStartCallback(schoolIntro);
 		}

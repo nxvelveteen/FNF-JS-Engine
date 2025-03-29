@@ -73,17 +73,16 @@ class School extends BaseStage
 		}
 		setDefaultGF('gf-pixel');
 
-		switch (songName)
-		{
-			case 'senpai':
-				FlxG.sound.playMusic(Paths.music('Lunchbox'), 0);
-				FlxG.sound.music.fadeIn(1, 0, 0.8);
-			case 'roses':
-				FlxG.sound.play(Paths.sound('ANGRY_TEXT_BOX'));
-		}
 		if(isStoryMode && !seenCutscene)
 		{
-			if(songName == 'roses') FlxG.sound.play(Paths.sound('ANGRY'));
+			switch (songName)
+			{
+				case 'senpai':
+					FlxG.sound.playMusic(Paths.music('Lunchbox'), 0);
+					FlxG.sound.music.fadeIn(1, 0, 0.8);
+				case 'roses':
+					FlxG.sound.play(Paths.sound('ANGRY_TEXT_BOX'));
+			}
 			initDoof();
 			setStartCallback(schoolIntro);
 		}
