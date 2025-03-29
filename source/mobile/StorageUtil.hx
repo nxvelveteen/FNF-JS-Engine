@@ -39,7 +39,7 @@ using StringTools;
 
 /**
  * A storage class for mobile.
- * @author Karim Akra and Lily Ross (mcagabe19)
+ * @author Karim Akra and Homura Akemi (HomuHomu833)
  */
 class StorageUtil
 {

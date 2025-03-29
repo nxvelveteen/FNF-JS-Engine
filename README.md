@@ -1,6 +1,6 @@
 <!-- this is an secret -->
 # NOTE
-THIS NOT THE JS ENGINE BASE REPO. THIS BRANCH IS MADE BY [mcagabe19](https://github.com/mcagabe19) AND ALL CREDITS GOES TO HER.
+THIS NOT THE JS ENGINE BASE REPO. THIS BRANCH IS MADE BY [HomuHomu833](https://github.com/HomuHomu833) AND ALL CREDITS GOES TO HER.
 
 <h1 align="center">
   <br>
@@ -71,7 +71,7 @@ Frequently Asked Questions (FAQs) are found in [here](https://github.com/JordanS
 
 **Q: Can I use this port for my mod(s)?**
 
-A: Yes, you can! just be sure to credit me ([@mcagabe19 on YouTube](https://www.youtube.com/@mcagabe19)) and give a link to this page. or [the link to download the latest release.](https://github.com/JordanSantiagoYT/FNF-JS-Engine/releases/latest)
+A: Yes, you can! just be sure to credit me ([@HomuHomu833 on YouTube](https://www.youtube.com/@HomuHomu833)) and give a link to this page. or [the link to download the latest release.](https://github.com/JordanSantiagoYT/FNF-JS-Engine/releases/latest)
 
 **Q: How do I change and add things?**
 
@@ -116,7 +116,7 @@ same goes for *Lua Scripts*, comment out or delete the line with `LUA_ALLOWED`, 
 @PatoFlamejanteTV
 - Small coding, also made a PDF guide for JS Engine.
 
-@mcagabe19
+@HomuHomu833
 - Ported JS Engine to mobile
 
 <details>

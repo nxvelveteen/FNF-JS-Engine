@@ -24,7 +24,7 @@ package android;
 
 /**
  * ...
- * @author Lily Ross (mcagabe19)
+ * @author Homura Akemi (HomuHomu833)
  */
 #if android
 import lime.system.JNI;

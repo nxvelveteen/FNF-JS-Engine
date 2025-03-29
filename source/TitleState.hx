@@ -109,7 +109,7 @@ class TitleState extends MusicBeatState
 		if (!FlxG.save.data.did_warning)
 		{
 			FlxG.save.data.did_warning = true;
-			CoolUtil.showPopUp("Please note that Jordan Santiago does not work on this port!\n\nIf you have any issues or questions with this version, please contact @mcagabe19!\n\n", "Notice!");
+			CoolUtil.showPopUp("Please note that Jordan Santiago does not work on this port!\n\nIf you have any issues or questions with this version, please contact @HomuHomu833!\n\n", "Notice!");
 		}
 
 		#if (CHECK_FOR_UPDATES)

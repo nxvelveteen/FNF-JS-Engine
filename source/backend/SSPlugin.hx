@@ -22,7 +22,7 @@ using StringTools;
 /**
  * @author SayofTheLor
  * @author zacksgamerz
- * @author mcagabe19
+ * @author HomuHomu833
  */
 class SSPlugin extends flixel.FlxBasic
 {
