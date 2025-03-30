@@ -479,7 +479,8 @@ class VisualsUISubState extends BaseOptionsMenu
 		option.changeValue = 0.1;
 		option.decimals = 1;
 		addOption(option);
-
+		
+		#if !mobile
 		var option:Option = new Option('FPS Counter',
 			'If unchecked, hides FPS Counter.',
 			'showFPS',
@@ -487,6 +488,7 @@ class VisualsUISubState extends BaseOptionsMenu
 			true);
 		addOption(option);
 		option.onChange = onChangeFPSCounter;
+		#end
 
 		var option:Option = new Option('Random Botplay Text',
 			"Uncheck this if you don't want to be insulted when\nyou use Botplay.",
@@ -573,6 +575,13 @@ class VisualsUISubState extends BaseOptionsMenu
 		addOption(option);
 		#end
 
+		var option:Option = new Option('Use Psych Engine\'s Crash Window',
+			"If checked, it will use the Original Psych Engine's Crash Window instead of the UI Type.",
+			'peOGCrash',
+			'bool',
+			false);
+		addOption(option);
+
 		cameras = [FlxG.cameras.list[FlxG.cameras.list.length-1]];
 
 		super();
@@ -641,9 +650,11 @@ class VisualsUISubState extends BaseOptionsMenu
 		super.destroy();
 	}
 
+	#if !mobile
 	function onChangeFPSCounter()
 	{
 		if(Main.fpsVar != null)
 			Main.fpsVar.visible = ClientPrefs.showFPS;
 	}
+	#end
 }

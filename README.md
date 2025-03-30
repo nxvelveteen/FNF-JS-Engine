@@ -1,17 +1,15 @@
 <!-- this is an secret -->
 # NOTE
 THIS NOT THE JS ENGINE BASE REPO. THIS BRANCH IS MADE BY [HomuHomu833](https://github.com/HomuHomu833) AND ALL CREDITS GOES TO HER.
-
 <h1 align="center">
   <br>
   <a href="https://github.com/JordanSantiagoYT/FNF-JS-Engine"><img src="/art/iconOG.png" alt="JSengine" width="150"></a>
   <br>
-  <b>JS Engine Mobile</b>
+  <b>JS Engine</b>
   <br>
   <i>(Jordan Santiago Engine)</i>
   <br>
 </h1>
-
 <h3 align="center">
   <b>JS Engine is a heavily modified Psych Engine fork, with lower-end devices and more customization in mind.</b>
 </h3>
@@ -47,8 +45,9 @@ This contains lots and lots of customizable and features built in to JS Engine, 
 - Spam modules! (for the DnB fans)
 - Cool customizable UI!
 - Multiple Chart Backups!
+- Custom Crash UI (Instead of Regular Psych Engine Crash)!
 
-There is like lots and lots of stuff Jordan have missed, but at least you would like those features built in **JS ENGINE**
+There is like lots and lots of stuff i've missed, but at least you would like those features built in **JS ENGINE**
 
 # Screenshots and Gameplays
 
@@ -87,7 +86,9 @@ A: Send [here.](https://github.com/JordanSantiagoYT/FNF-JS-Engine/pulls)
 
 # Compiling JS Engine
 
-Just look through [FunkinDroid COMPILING.md](https://github.com/FunkinDroidTeam/Funkin/blob/develop/docs/COMPILING.md) and for haxelibs install `hmm` and run `haxelib run hmm install` inside the repo.
+Refer to [the Build Instructions](./BUILDING.md)
+
+If you get an error while Compiling, go [here](https://github.com/JordanSantiagoYT/FNF-JS-Engine/issues/359) to see if the issue is on there, if not, make an issue
 
 ## Customization:
 
@@ -116,7 +117,7 @@ same goes for *Lua Scripts*, comment out or delete the line with `LUA_ALLOWED`, 
 @PatoFlamejanteTV
 - Small coding, also made a PDF guide for JS Engine.
 
-@HomuHomu833
+@mcagabe19
 - Ported JS Engine to mobile
 
 <details>

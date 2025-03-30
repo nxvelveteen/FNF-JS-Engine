@@ -104,6 +104,7 @@ class ClientPrefs { //default settings if it can't find a save file containing y
 	public static var debugInfo:Bool = false;
 	public static var tipTexts:Bool = true;
 	public static var discordRPC:Bool = true;
+	public static var peOGCrash:Bool = false;
 
 	//Graphics
 	public static var lowQuality:Bool = false;
