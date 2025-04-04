@@ -103,7 +103,7 @@ class CrashHandler {
     private static function onError(message:Dynamic):Void throw Std.string(message);
 }
 
-class Crash extends FlxState {
+class Crash extends MusicBeatState {
 	override public function create() {
 		if (FlxG.sound.music != null) FlxG.sound.music.stop();
 
