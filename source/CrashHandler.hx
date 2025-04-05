@@ -22,7 +22,7 @@ using StringTools;
 
 /**
  * Crash Handler.
- * @author YoshiCrafter29, Ne_Eo. MAJigsaw77 and mcagabe19
+ * @author YoshiCrafter29, Ne_Eo. MAJigsaw77 and HomuHomu833
 */
 
 class CrashHandler {
@@ -154,9 +154,11 @@ class Crash extends MusicBeatState {
 			crash[i].y = 110 + (20 * i);
 			add(crash[i]);
 		}
+
+		final key:String = (mobile.MobileControls.enabled) ? "button" : "key";
+		final enter:String = (mobile.MobileControls.enabled) ? "ENTER" : "A";
 		
-		var ENTER:String = (mobile.MobileControls.enabled) ? "A" : "ENTER";
-		var tip:FlxText = new FlxText(180, 0, 1280, "Press any key to restart. (Press " + ENTER + " to Report This Bug)");
+		var tip:FlxText = new FlxText(180, 0, 1280, "Press any " + key + " to restart. (Press " + enter + " to Report This Bug)");
 		tip.setFormat(Paths.font('vcr.ttf'), 36, FlxColor.WHITE, FlxTextAlign.CENTER);
 		tip.alpha = 0;
 		tip.screenCenter();
@@ -173,7 +175,8 @@ class Crash extends MusicBeatState {
 		var error:FlxSound = FlxG.sound.load(Paths.sound('error'));
 		error.play();
 
-		addVirtualPad(NONE, A);
+		addVirtualPad(NONE, A_B);
+		addVirtualPadCamera();
 
 		super.create();
 	}
@@ -220,6 +223,6 @@ class Crash extends MusicBeatState {
 					FlxG.switchState(MainMenuState.new);
 				}
 			}, 10);
-		} else if (!FlxG.keys.justPressed.F2) FlxG.switchState(MainMenuState.new);
+		} else if (!FlxG.keys.justPressed.F2 || virtualPad.buttonB.justPressed) FlxG.switchState(MainMenuState.new);
 	}
 }
