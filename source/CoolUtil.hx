@@ -153,6 +153,12 @@ class CoolUtil
 		return tasklist.contains("obs64.exe") || tasklist.contains("obs32.exe");
 	}
 
+	/**
+	 * Can be used to check if your using a specific version of an OS (or if your using a certain OS).
+	 */
+	 public static function hasVersion(vers:String)
+		return lime.system.System.platformLabel.toLowerCase().indexOf(vers.toLowerCase()) != -1;
+
 	public static function getSongDuration(musicTime:Float, musicLength:Float, precision:Int = 0):String
 	{
 		final secondsMax:Int = Math.floor((musicLength - musicTime) / 1000); // 1 second = 1000 miliseconds

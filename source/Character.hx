@@ -365,6 +365,7 @@ class Character extends FlxSprite
 			}
 		}
 
+
 		anim = getAnimationName();
 		if(isAnimationFinished() && animOffsets.exists('$anim-loop'))
 			playAnim('$anim-loop');

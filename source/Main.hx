@@ -176,6 +176,12 @@ class Main extends Sprite {
 		Lib.current.stage.window.setIcon(icon);
 		#end
 
+		#if windows
+		WindowColorMode.setDarkMode();
+		if (CoolUtil.hasVersion("Windows 10"))
+			WindowColorMode.redrawWindowHeader();
+		#end
+
 		#if mobile
 		lime.system.System.allowScreenTimeout = ClientPrefs.screensaver;
 		#if android
