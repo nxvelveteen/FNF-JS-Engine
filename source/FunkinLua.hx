@@ -2916,6 +2916,9 @@ class FunkinLua {
 		Lua_helper.add_callback(lua, "addGlitchEffect", function(camera:String,waveSpeed:Float = 0.1,waveFrq:Float = 0.1,waveAmp:Float = 0.1) {	
 			PlayState.instance.addShaderToCamera(camera, new GlitchEffect(waveSpeed,waveFrq,waveAmp));
 		});
+		Lua_helper.add_callback(lua, "addAdjustColorEffect", function(camera:String,hue:Float = 0,saturation:Float = 0,brightness:Float = 0,contrast:Float = 0) {	
+			PlayState.instance.addShaderToCamera(camera, new AdjustColorEffect(hue,saturation,brightness,contrast));
+		});
 		Lua_helper.add_callback(lua, "addGlitchShader", function(camera:String,waveAmp:Float = 0.1,waveFrq:Float = 0.1,waveSpeed:Float = 0.1) {
 			PlayState.instance.addShaderToCamera(camera, new GlitchEffect(waveSpeed,waveFrq,waveAmp));
 		});

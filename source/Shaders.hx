@@ -1,6 +1,7 @@
 package;
 
 // STOLEN FROM HAXEFLIXEL DEMO LOL
+import flixel.addons.display.FlxRuntimeShader;
 import openfl.display.BitmapData;
 import backend.FlxFixedShader;
 import openfl.display.ShaderInput;
@@ -368,10 +369,63 @@ class Grain extends FlxFixedShader
 	
 }
 
+class AdjustColorEffect extends Effect
+{
+  public var shader:AdjustColorShader = new AdjustColorShader();
+  public function new(hue:Float=0,saturation:Float=0,brightness:Float=0,contrast:Float=0)
+  {
+    shader.hue = 0;
+    shader.saturation= 0;
+    shader.brightness = 0;
+    shader.contrast = 0;
+  }
+}
+
+class AdjustColorShader extends FlxRuntimeShader
+{
+  public var hue(default, set):Float;
+  public var saturation(default, set):Float;
+  public var brightness(default, set):Float;
+  public var contrast(default, set):Float;
+
+  function set_hue(value:Float):Float
+  {
+    setFloat('hue', value);
+    hue = value;
+
+    return hue;
+  }
+
+  function set_saturation(value:Float):Float
+  {
+    setFloat('saturation', value);
+    saturation = value;
+
+    return saturation;
+  }
+
+  function set_brightness(value:Float):Float
+  {
+    setFloat('brightness', value);
+    brightness = value;
+
+    return brightness;
+  }
+
+  function set_contrast(value:Float):Float
+  {
+    setFloat('contrast', value);
+    contrast = value;
+
+    return contrast;
+  }
+}
+
 class VCRDistortionEffect extends Effect
 {
   public var shader:VCRDistortionShader = new VCRDistortionShader();
-  public function new(glitchFactor:Float,distortion:Bool=true,perspectiveOn:Bool=true,vignetteMoving:Bool=true){
+  public function new(glitchFactor:Float,distortion:Bool=true,perspectiveOn:Bool=true,vignetteMoving:Bool=true)
+  {
     shader.iTime.value = [0];
     shader.vignetteOn.value = [true];
     shader.perspectiveOn.value = [perspectiveOn];
@@ -380,8 +434,6 @@ class VCRDistortionEffect extends Effect
     shader.vignetteMoving.value = [vignetteMoving];
     shader.glitchModifier.value = [glitchFactor];
     shader.iResolution.value = [Lib.current.stage.stageWidth,Lib.current.stage.stageHeight];
-   // var noise = Assets.getBitmapData(Paths.image("noise2"));
-   // shader.noiseTex.input = noise;
    PlayState.instance.shaderUpdates.push(update);
   }
 
