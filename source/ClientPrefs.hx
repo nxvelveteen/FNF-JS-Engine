@@ -24,7 +24,6 @@ class ClientPrefs { //default settings if it can't find a save file containing y
 	public static var ghostTapping:Bool = true;
 	public static var autoPause:Bool = true;
 	public static var complexAccuracy:Bool = false;
-	public static var startingSync:Bool = false;
 	public static var noMarvJudge:Bool = false;
 	public static var noReset:Bool = false;
 	public static var antiCheatEnable:Bool = false;
@@ -75,7 +74,7 @@ class ClientPrefs { //default settings if it can't find a save file containing y
 	public static var ytWatermarkPosition:String = 'Hidden';
 	public static var strumLitStyle:String = 'Full Anim';
 	public static var bfIconStyle:String = 'Default';
-	public static var ratingType:String = 'Base FNF';
+	public static var ratingType:String = 'Default';
 	public static var simplePopups:Bool = false;
 	public static var iconBounceType:String = 'New Psych';
 	public static var colorRatingHit:Bool = true;

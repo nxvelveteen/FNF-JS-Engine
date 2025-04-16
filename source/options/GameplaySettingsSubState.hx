@@ -80,13 +80,6 @@ class GameplaySettingsSubState extends BaseOptionsMenu
 			'bool',
 			false);
 		addOption(option);
-		
-		var option:Option = new Option('Beginning Sync',
-			"If checked, the game will resync the vocals for the first 500ms of a song.",
-			'startingSync',
-			'bool',
-			false);
-		addOption(option);
 
 		var option:Option = new Option('Remove Perfect!! Judgement',
 			"If checked, removes the Perfect judgement.",
