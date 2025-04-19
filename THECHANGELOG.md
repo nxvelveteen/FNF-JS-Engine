@@ -1,6 +1,7 @@
-1.45.0;
+1.46.0;
 
-Autosave revamp: Now saves multiple backups to a folder instead of to your autosave
-Lua Extra Keys is now supported again! yayyyyyy! (Use the script i made since the original is incompatible)
-Mid-song resyncing is now gone for GOOD!
-Attempted to fix monstrous lag when turning on "Show Debug Info" on Linux builds
+The crash handler has been revamped! (creds to Nael2xd, if you don't want to use it then you can turn on the old one at the bottom of the Visuals & UI menu)
+There is now a limit for how many backups can be saved at a time.
+Fixed 2 issues with the new resync system
+Fixed Rating Type defaulting to "Base FNF" which caused issues
+Fixed an issue where songs would instantly start if a cutscene with music was triggered

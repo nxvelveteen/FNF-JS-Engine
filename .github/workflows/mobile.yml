@@ -63,9 +63,12 @@ jobs:
       - name: Make Ipa
         if: startsWith(matrix.os, 'macos')
         run: |
-          cd export/release/ios/build/*-iphoneos
+          brew install ldid
+          cd export/release/ios/build/Release-iphoneos/JSEngine.app
+          ldid -S../../../JSEngine/JSEngine.entitlements JSEngine
+          cd ..
           mkdir Payload
-          mv *.app Payload
+          mv JSEngine.app Payload
           zip -r JSEngine.ipa Payload
 
       - name: Upload Artifact (Android)
