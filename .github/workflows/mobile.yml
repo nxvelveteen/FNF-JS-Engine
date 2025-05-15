@@ -46,7 +46,7 @@ jobs:
 
       - name: Compile hxcpp
         run: |
-          cd C:/haxelib/hxcpp/git/tools/run
+          cd ${{ runner.temp }}/haxe/4.3.6/arm64/lib/hxcpp/git/tools/run
           haxe compile.hxml
           cd ..
           cd ./hxcpp
