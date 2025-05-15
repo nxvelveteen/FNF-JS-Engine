@@ -32,7 +32,6 @@ jobs:
         if: startsWith(matrix.os, 'ubuntu')
         shell: bash
         run: |
-          haxelib path hxcpp
           cd ${{ runner.temp }}
           echo "Downloading Android NDK r27c..."
           curl -sSfL -o android-ndk.zip "https://dl.google.com/android/repository/android-ndk-r27c-linux.zip"
@@ -47,6 +46,7 @@ jobs:
 
       - name: Compile hxcpp
         run: |
+          haxelib path hxcpp
           cd ${{ runner.temp }}/haxe/4.3.6/arm64/lib/hxcpp/git/tools/run
           haxe compile.hxml
           cd ..
