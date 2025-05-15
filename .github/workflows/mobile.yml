@@ -44,6 +44,15 @@ jobs:
           haxelib install hmm --quiet
           haxelib run hmm install --quiet
 
+      - name: Compile hxcpp
+        run: |
+          cd ${{ runner.temp }}/FNF-JS-Engine/FNF-JS-Engine/.haxelib/hxcpp/git/tools/run
+          haxe compile.hxml
+          cd ..
+          cd ./hxcpp
+          haxe compile.hxml
+          cd ../..
+
       - name: Configure Android
         if: startsWith(matrix.os, 'ubuntu')
         run: |
