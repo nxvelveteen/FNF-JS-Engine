@@ -63,11 +63,11 @@ jobs:
 
       - name: Compile (Android)
         if: startsWith(matrix.os, 'ubuntu')
-        run: lime build android -D ${{ inputs.buildFlags }}
+        run: haxelib run lime build android -D ${{ inputs.buildFlags }} --always
 
       - name: Compile (iOS)
         if: startsWith(matrix.os, 'macos')
-        run: lime build ios -nosign -D ${{ inputs.buildFlags }}
+        run: lime build ios -nosign -D ${{ inputs.buildFlags }} --always
 
       - name: Make Ipa
         if: startsWith(matrix.os, 'macos')
