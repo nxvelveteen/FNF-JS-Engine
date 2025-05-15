@@ -47,18 +47,18 @@ jobs:
       - name: Configure Android
         if: startsWith(matrix.os, 'ubuntu')
         run: |
-          haxelib run lime config ANDROID_SDK $ANDROID_HOME
+          haxelib run lime config ANDROID_SDK $ANDROID_HOME --always
           haxelib run lime config ANDROID_NDK_ROOT ${{ runner.temp }}/android-ndk-r27c
           haxelib run lime config JAVA_HOME $JAVA_HOME_17_X64
           haxelib run lime config ANDROID_SETUP true
 
       - name: Compile (Android)
         if: startsWith(matrix.os, 'ubuntu')
-        run: haxelib run lime build android -D ${{ inputs.buildFlags }} --always
+        run: haxelib run lime build android -D ${{ inputs.buildFlags }}
 
       - name: Compile (iOS)
         if: startsWith(matrix.os, 'macos')
-        run: lime build ios -nosign -D ${{ inputs.buildFlags }} --always
+        run: haxelib run lime build ios -nosign -D ${{ inputs.buildFlags }} --always
 
       - name: Make Ipa
         if: startsWith(matrix.os, 'macos')
