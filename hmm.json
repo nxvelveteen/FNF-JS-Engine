@@ -5,7 +5,7 @@
       "type": "git",
       "dir": null,
       "ref": "main",
-      "url": "https://github.com/MobilePorting/lime.git"
+      "url": "https://github.com/openfl/lime.git"
     },
     {
       "name": "openfl",
@@ -17,7 +17,7 @@
       "type": "git",
       "dir": null,
       "ref": "5.6.2",
-      "url": "https://github.com/MobilePorting/flixel.git"
+      "url": "https://github.com/HaxeFlixel/flixel"
     },
     {
       "name": "flixel-addons",
@@ -39,7 +39,7 @@
       "type": "git",
       "dir": null,
       "ref": "main",
-      "url": "https://github.com/MobilePorting/hxcpp.git"
+      "url": "https://github.com/HaxeFoundation/hxcpp"
     },
     {
       "name": "hxvlc",
@@ -73,7 +73,7 @@
       "type": "git",
       "dir": null,
       "ref": "master",
-      "url": "https://github.com/MobilePorting/linc_luajit"
+      "url": "https://github.com/superpowers04/linc_luajit"
     },
     {
       "name": "funkin.vis",
