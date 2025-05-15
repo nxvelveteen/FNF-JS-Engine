@@ -36,7 +36,7 @@
       "name": "hxcpp",
       "type": "git",
       "dir": null,
-      "ref": "main",
+      "ref": "master",
       "url": "https://github.com/HaxeFoundation/hxcpp"
     },
     {
