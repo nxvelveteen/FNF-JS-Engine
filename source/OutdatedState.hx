@@ -58,7 +58,7 @@ class OutdatedState extends MusicBeatState
 		add(warnText);
 
 		changelog = new FlxText(100, warnText.y + warnText.height + 20, 1080, currChanges, 16);
-		changelog.setFormat(Paths.font("vcr.ttf"), Std.int(16), FlxColor.WHITE, LEFT, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
+		changelog.setFormat(Paths.font("vcr.ttf"), 16, FlxColor.WHITE, LEFT, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
 		add(changelog);
 
 		updateText = new FlxText(0, 10, FlxG.width,
@@ -94,31 +94,12 @@ class OutdatedState extends MusicBeatState
 			if(leftState)
 			{
 				FlxG.sound.play(Paths.sound('cancelMenu'));
-				FlxTween.tween(warnText, {alpha: 0}, 1, {
-					onComplete: function (twn:FlxTween) {
-						FlxG.switchState(MainMenuState.new);
-					}
-				});
-				FlxTween.tween(changelog, {alpha: 0}, 1, {
-					onComplete: function (twn:FlxTween) {
-						FlxG.switchState(MainMenuState.new);
-					}
-				});
-				FlxTween.tween(updateText, {alpha: 0}, 1, {
-					onComplete: function (twn:FlxTween) {
-						FlxG.switchState(MainMenuState.new);
-					}
-				});
-				FlxTween.tween(checker, {alpha: 0}, 1, {
-					onComplete: function (twn:FlxTween) {
-						FlxG.switchState(MainMenuState.new);
-					}
-				});
-				FlxTween.tween(bg, {alpha: 0}, 1, {
-					onComplete: function (twn:FlxTween) {
-						FlxG.switchState(MainMenuState.new);
-					}
-				});
+				for (i in members)
+					FlxTween.tween(i, {alpha: 0}, 1, {
+						onComplete: function (twn:FlxTween) {
+							FlxG.switchState(MainMenuState.new);
+						}
+					});
 			}
 		}
 		super.update(elapsed);

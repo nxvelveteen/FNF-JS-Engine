@@ -168,6 +168,7 @@ class Note extends FlxSprite
 	}
 
 	var changeSize:Bool = false;
+
 	private function set_texture(value:String):String {
 		if (value.length == 0) value = Paths.defaultSkin;
 		if (!pixelNote && texture != value)
@@ -176,6 +177,8 @@ class Note extends FlxSprite
 			if (!Paths.noteSkinFramesMap.exists(value)) Paths.initNote(value);
 			if (frames != @:privateAccess Paths.noteSkinFramesMap.get(value)) frames = @:privateAccess Paths.noteSkinFramesMap.get(value);
 			if (animation != @:privateAccess Paths.noteSkinAnimsMap.get(value)) animation.copyFrom(@:privateAccess Paths.noteSkinAnimsMap.get(value));
+
+			antialiasing = ClientPrefs.globalAntialiasing;
 
 			if (!changeSize) 
 			{
@@ -191,13 +194,17 @@ class Note extends FlxSprite
 		return value;
 	}
 
+	var noteColor:Array<FlxColor>;
 	public function defaultRGB()
 	{
-		noteColor = inline initializeGlobalRGBShader(noteData);
+		noteColor = !PlayState.isPixelStage ? ClientPrefs.arrowRGB[noteData] : ClientPrefs.arrowRGBPixel[noteData];
 
-		rgbShader.r = noteColor.r;
-		rgbShader.g = noteColor.g;
-		rgbShader.b = noteColor.b;
+		if (noteColor != null && noteData > -1 && noteData <= noteColor.length)
+		{
+			rgbShader.r = noteColor[0];
+			rgbShader.g = noteColor[1];
+			rgbShader.b = noteColor[2];
+		}
 	}
 
 	private function set_noteType(value:String):String {
@@ -230,7 +237,7 @@ class Note extends FlxSprite
 			{
 				try{ rgbShader = new RGBShaderReference(this, initializeGlobalRGBShader(noteData, this)); }
 				catch(e) {};
-				if(PlayState.SONG != null && PlayState.SONG.disableNoteRGB) rgbShader.enabled = useRGBShader = false;
+				if(PlayState.SONG != null && PlayState.SONG.disableNoteRGB) useRGBShader = false;
 			}
 			else useRGBShader = false;
 		}
@@ -524,7 +531,6 @@ class Note extends FlxSprite
 		_lastValidChecked = '';
 	}
 
-	var noteColor:RGBPalette;
 	var superCoolColor = null;
 	var arr:Array<Int> = [255, 255, 255];
 	var rainbowTime = 0.0;
@@ -602,8 +608,8 @@ class Note extends FlxSprite
 		if ((chartNoteData.noteskin.length < 1 && chartNoteData.texture.length < 1) && texture != Paths.defaultSkin)
 		{
 			texture = Paths.defaultSkin;
-			useRGBShader = ClientPrefs.enableColorShader;
-			shouldCenterOffsets = ClientPrefs.enableColorShader;
+			useRGBShader = (ClientPrefs.enableColorShader && PlayState.SONG != null && !PlayState.SONG.disableNoteRGB);
+			shouldCenterOffsets = useRGBShader;
 		}
 
 		strumTime = chartNoteData.strumTime;

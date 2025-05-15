@@ -1,5 +1,14 @@
 -- Lua stuff
-
+--[[
+The function properties still works if you change the function names
+ For example:
+	function onEvent(name, v1, v2)
+	--value 1 is the camera flash length, value 2 is the flash color
+		if name == 'flashCamera' then
+			cameraFlash('camGame', v2, v1)
+		end
+	end
+]]-- The functions still work, its just with different function names
 function onCreate()
 	-- When the lua file is started/created, some variables weren't created yet
 end

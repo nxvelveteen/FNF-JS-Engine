@@ -1,5 +1,5 @@
 name: Feature Request
-description: 'No, I am not going to add 6K/etc notes to the engine, this will break noteskins.'
+description: "Make an issue to either add or fix something."
 labels: [enhancement, status: pending triage]
 body:
   - type: textarea
@@ -11,14 +11,15 @@ body:
     id: eyetest
     attributes:
       label: To test your sight, and reliability, please select the option of what should NOT be requested.
+      description: "If it's code optimization, and the optimization is yours, make a [https://github.com/JordanSantiagoYT/FNF-JS-Engine/pulls](Pull Request) please."
       options:
-        - Proper credit that was forgotten
-        - Thing that would not cause problems
-        - Useful feature
-        - Actual feedback
-        - A good idea
-        - Stage Editor and 6K+ support.
-        - Better LUA mod support idea
-        - Code optimization that would make the game faster. (You should make a Pull Request if this is your request, by the way.)
+        - Proper credit that was forgotten.
+        - Thing that would not cause problems.
+        - Useful feature.
+        - Actual feedback.
+        - A good idea.
+        - Stage Editor.
+        - Better LUA mod support idea.
+        - Code optimization that would make the game faster.
     validations:
       required: true

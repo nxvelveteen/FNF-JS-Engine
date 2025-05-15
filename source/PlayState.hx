@@ -1756,7 +1756,8 @@ class PlayState extends MusicBeatState
 			spr.y += newText.height + 2;
 		});
 		luaDebugGroup.add(newText);
-
+		newText.setFormat(Paths.font("old_windows.ttf"));
+		
 		Sys.println(text);
 		#end
 	}
@@ -1765,7 +1766,7 @@ class PlayState extends MusicBeatState
 		if (!ClientPrefs.ogHPColor) {
 				healthBar.createFilledBar(FlxColor.fromRGB(leftColorArray[0], leftColorArray[1], leftColorArray[2]),
 				FlxColor.fromRGB(rightColorArray[0], rightColorArray[1], rightColorArray[2]));
-		} else if (ClientPrefs.ogHPColor) {
+		} else {
 				healthBar.createFilledBar(0xFFFF0000, 0xFF66FF33);
 		}
 
@@ -3720,9 +3721,8 @@ class PlayState extends MusicBeatState
 				if(!cpuControlled) {
 					keyShit();
 				}
-				else if (ClientPrefs.charsAndBG) {
-					playerDance();
-				}
+				else if (ClientPrefs.charsAndBG) playerDance();
+
 				amountOfRenderedNotes = 0;
 				for (group in [notes, sustainNotes])
 				{
@@ -6008,7 +6008,7 @@ class PlayState extends MusicBeatState
 		}
 		luaArray = [];
 
-		camFollow.put();
+		if (camFollow != null) camFollow.put();
 
 		#if hscript
 		if(FunkinLua.hscript != null) FunkinLua.hscript = null;

@@ -260,13 +260,30 @@ class TitleState extends MusicBeatState
 	{
 		if (!initialized)
 		{
-			if (date.getMonth() == 4 && date.getDate() == 1)
+			if (!ClientPrefs.disableAprilFools) 
 			{
-				FlxG.sound.playMusic(Paths.music('aprilFools'), 0);
-			}
-			else if(FlxG.sound.music == null)
+			#if APRIL_FOOLS
+				if (date.getMonth() == 3 && date.getDate() == 1)
+				{
+					FlxG.sound.playMusic(Paths.music('aprilFools'), 0);
+				}
+				else if(FlxG.sound.music == null)
+				{
+					FlxG.sound.playMusic(Paths.music('freakyMenu-' + ClientPrefs.daMenuMusic), 0);
+				}
+				#else
+				if(FlxG.sound.music == null)
+				{
+					FlxG.sound.playMusic(Paths.music('freakyMenu-' + ClientPrefs.daMenuMusic), 0);
+				}
+			#end
+			} 
+			else 
 			{
-				FlxG.sound.playMusic(Paths.music('freakyMenu-' + ClientPrefs.daMenuMusic), 0);
+				if(FlxG.sound.music == null)
+				{
+					FlxG.sound.playMusic(Paths.music('freakyMenu-' + ClientPrefs.daMenuMusic), 0);
+				}	
 			}
 		}
 

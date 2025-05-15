@@ -20,6 +20,16 @@ body:
       required: true
 
   - type: dropdown
+    id: commitBuildCheck
+    attributes:
+      label: "Commit build or Release build?"
+      options:
+        - "Commit Build"
+        - "Release build"
+    validations:
+      required: true
+
+  - type: dropdown
     id: knownIssueCheck
     attributes:
       label: "Did you check if this issue is already known?"
@@ -51,7 +61,8 @@ body:
   - type: textarea
     id: reproduce
     attributes:
-      label: "Have you identified any steps to reproduce the bug? If so, please describe them below in as much detail as possible. Use images if possible."
+      label: "Have you identified any steps to reproduce the bug?"
+      description: "If there is, please describe them below in as much detail as possible. Use images if possible."
     validations:
       required: false
 
@@ -62,7 +73,7 @@ body:
       options:
         - Lua
         - Source
-        - None (not modding with either/not using any mods)
+        - I'm not modding (Base game issue)
     validations:
       required: true
 

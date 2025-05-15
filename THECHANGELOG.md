@@ -1,7 +1,15 @@
-1.46.0;
+1.47.0;
 
-The crash handler has been revamped! (creds to Nael2xd, if you don't want to use it then you can turn on the old one at the bottom of the Visuals & UI menu)
-There is now a limit for how many backups can be saved at a time.
-Fixed 2 issues with the new resync system
-Fixed Rating Type defaulting to "Base FNF" which caused issues
-Fixed an issue where songs would instantly start if a cutscene with music was triggered
+-- PC Specific --
+
+Additions:
+New function: doTweenScale - Stinko
+Added an option to either enable or disable the april fools start up. It's in the Misc Options. - Stinko
+
+Fixes:
+doTweenZoom function crashing the engine if the object is not a camera - Stinko, Jordan Santiago
+Fixed the destroy function causing a crash - Jordan Santiago
+April fools startup actually happens on April 1st - Jordan Santiago
+
+Overhauls:
+Simplified code - Jordan Santiago
