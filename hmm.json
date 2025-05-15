@@ -69,6 +69,11 @@
       "version": null
     },
     {
+      "name": "format",
+      "type": "haxelib",
+      "version": null
+    },
+    {
       "name": "linc_luajit",
       "type": "git",
       "dir": null,
