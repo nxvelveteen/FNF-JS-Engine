@@ -9,8 +9,10 @@
     },
     {
       "name": "openfl",
-      "type": "haxelib",
-      "version": "9.3.3"
+      "type": "git",
+      "dir": null,
+      "ref": null,
+      "url": "https://github.com/th2l-devs/openfl"
     },
     {
       "name": "flixel",
