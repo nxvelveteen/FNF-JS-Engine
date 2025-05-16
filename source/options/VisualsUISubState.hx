@@ -666,3 +666,4 @@ class VisualsUISubState extends BaseOptionsMenu
 		if(Main.fpsVar != null)
 			Main.fpsVar.visible = ClientPrefs.showFPS;
 	}
+}
