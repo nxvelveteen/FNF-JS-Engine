@@ -32,6 +32,7 @@ class VisualsUISubState extends BaseOptionsMenu
 	var notes:FlxTypedGroup<StrumNote>;
 	var notesTween:Array<FlxTween> = [];
 	var noteY:Float = 90;
+	var date:Date = Date.now();
 	public function new()
 	{
 		title = 'Visuals and UI';
