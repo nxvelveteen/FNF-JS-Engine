@@ -4,8 +4,8 @@
       "name": "lime",
       "type": "git",
       "dir": null,
-      "ref": "develop",
-      "url": "https://github.com/openfl/lime"
+      "ref": null,
+      "url": "https://github.com/th2l-devs/lime"
     },
     {
       "name": "openfl",
@@ -16,8 +16,8 @@
       "name": "flixel",
       "type": "git",
       "dir": null,
-      "ref": "5.6.2",
-      "url": "https://github.com/HaxeFlixel/flixel"
+      "ref": null,
+      "url": "https://github.com/th2l-devs/flixel"
     },
     {
       "name": "flixel-addons",
@@ -38,8 +38,8 @@
       "name": "hxcpp",
       "type": "git",
       "dir": null,
-      "ref": "master",
-      "url": "https://github.com/HaxeFoundation/hxcpp"
+      "ref": null,
+      "url": "https://github.com/th2l-devs/hxcpp"
     },
     {
       "name": "hxvlc",
@@ -83,7 +83,7 @@
       "type": "git",
       "dir": null,
       "ref": "master",
-      "url": "https://github.com/superpowers04/linc_luajit"
+      "url": "https://github.com/th2l-devs/linc_luajit"
     },
     {
       "name": "funkin.vis",
