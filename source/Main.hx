@@ -154,7 +154,7 @@ class Main extends Sprite {
 		ClientPrefs.loadDefaultStuff();
 		#if ACHIEVEMENTS_ALLOWED Achievements.load(); #end
 
-		final funkinGame:FlxGame = new FlxGame(game.width, game.height, #if (mobile && MODS_ALLOWED) !CopyState.checkExistingFiles() ? CopyState : #end, #if (flixel < "5.0.0") game.zoom, #end game.framerate, game.framerate, game.skipSplash, game.startFullscreen);
+		final funkinGame:FlxGame = new FlxGame(game.width, game.height, #if (mobile && MODS_ALLOWED) !CopyState.checkExistingFiles() ? CopyState : #end game.initialState, #if (flixel < "5.0.0") game.zoom, #end game.framerate, game.framerate, game.skipSplash, game.startFullscreen);
 		// Literally just from Vanilla FNF but I implemented it my own way. -Torch
 		// torch is my friend btw :3 -moxie
 		@:privateAccess {
