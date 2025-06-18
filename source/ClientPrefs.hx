@@ -29,8 +29,6 @@ class ClientPrefs { //default settings if it can't find a save file containing y
 	public static var antiCheatEnable:Bool = false;
 	public static var instaRestart:Bool = false;
 	public static var ezSpam:Bool = false;
-	public static var shitGivesMiss:Bool = false;
-	public static var ratingIntensity:String = 'Normal';
 	public static var spaceVPose:Bool = true;
 	public static var ghostTapAnim:Bool = true;
 	public static var hitsoundVolume:Float = 0;
@@ -77,7 +75,6 @@ class ClientPrefs { //default settings if it can't find a save file containing y
 	public static var ratingType:String = 'Default';
 	public static var simplePopups:Bool = false;
 	public static var iconBounceType:String = 'New Psych';
-	public static var colorRatingHit:Bool = true;
 	public static var smoothHealth:Bool = true;
 	public static var smoothHPBug:Bool = false;
 	public static var noBopLimit:Bool = false;
@@ -135,7 +132,6 @@ class ClientPrefs { //default settings if it can't find a save file containing y
 	public static var pbRControls:Bool = false;
 	public static var rainbowFPS:Bool = false;
 	public static var noRenderGC:Bool = false;
-	public static var wheatleySpace:Bool = true;
 
 	//Unused
 	public static var cursing:Bool = true;
@@ -279,9 +275,9 @@ class ClientPrefs { //default settings if it can't find a save file containing y
 	
 	// i suck at naming things sorry
 	private static var importantMap:Map<String, Array<String>> = [
-		"saveBlackList" => ["keyBinds", "defaultKeys"],
+		"saveBlackList" => ["keyBinds", "defaultKeys", "defaultArrowRGB", "defaultPixelRGB", "defaultQuantRGB"],
 		"flixelSound" => ["volume", "sound"],
-		"loadBlackList" => ["keyBinds", "defaultKeys"],
+		"loadBlackList" => ["keyBinds", "defaultKeys", "defaultArrowRGB", "defaultPixelRGB", "defaultQuantRGB"],
 	];
 
 	public static var defaultArrowRGB:Array<Array<FlxColor>>;

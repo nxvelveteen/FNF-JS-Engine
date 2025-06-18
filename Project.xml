@@ -24,6 +24,8 @@
 	<set name="BUILD_DIR" value="export/debug" if="debug" />
 	<set name="BUILD_DIR" value="export/release" unless="debug" />
 	<set name="BUILD_DIR" value="export/32bit" if="32bits" />
+	<!-- because you need to rebuild the game everytime you enable tracy -->
+	<set name="BUILD_DIR" value="export/tracy" if="TRACY_ENABLED" />
 
 	<classpath name="source" />
 	
@@ -96,13 +98,14 @@
 	<assets path="assets/preload/models"        library="models"        /> 
 	<assets path="assets/preload/models"        library="models"        />
 
+	<assets path="assets/soundtray" embed="true" />
+
 	<haxelib name="grig.audio"/>
 	<haxelib name="funkin.vis"/>
 	
 	<section if="MODS_ALLOWED">
 		<assets path='example_mods' rename='mods' embed='false'/>
 	</section>
-	<assets path='art/readme.txt' rename='do NOT readme.txt' unless="mobile" />
 
 	<!-- OpenAL config -->
 	<section if="desktop">
@@ -113,11 +116,11 @@
 	<assets path="assets/fonts" />
 	<!-- _______________________________ Libraries ______________________________ -->
 
-	<haxelib name="lime" version="git"/>
-	<haxelib name="flixel" version="git"/>
+	<haxelib name="lime" />
+	<haxelib name="flixel" />
 	<haxelib name="flixel-ui" version="2.6.1" />
 	<haxelib name="flixel-addons" version="3.2.3" />
-	<haxelib name="away3d" version="git"/>
+	<haxelib name="away3d" />
 	
 	<!--JS stuff needed-->
 	<haxelib name="hscript" />
@@ -159,10 +162,21 @@
 	<!-- Do whatever you want I'm tired uninstall and install everytime -->
 	<certificate path="key.keystore" password="javascriptengine" alias="jsport" alias-password="javascriptengine" if="android" unless="debug" />
 
+	<section if="TRACY_ENABLED">
+		<haxedef name="HXCPP_TELEMETRY"/>
+		<haxedef name="HXCPP_TRACY"/>
+		<haxedef name="HXCPP_TRACY_MEMORY"/>
+		<haxedef name="HXCPP_TRACY_ON_DEMAND"/>
+	</section>
+
 	<!-- Javascript breaks with inline for reasons unknown -->
 	<haxedef name="no-inline" if="html5"/>
 
 	<haxedef name='no-deprecation-warnings' unless="debug" />
+
+	<!-- back in my day we used to have errors that gave little info -->
+	<haxedef name="message.reporting" value="pretty" unless="{haxe &lt; 4.3.1}"/>
+	<haxedef name="message.log-format" value="pretty" unless="{haxe &lt; 4.3.1}"/>
 
 	<!-- Disable Discord IO Thread -->
 	<haxedef name="DISCORD_DISABLE_IO_THREAD" if="hxdiscord_rpc" />
@@ -178,7 +192,7 @@
 	<!-- _________________________________ Custom _______________________________ -->
 
 	<!--Place custom nodes like icons here (higher priority to override the HaxeFlixel icon)-->
-	<assets path='art/iconOG.png' rename='icon.png' if="linux" />
+	<assets path='art/iconOG.png' rename='icon.png' if="linux || mac" />
 	
 	<icon path="art/icon16.png" size='16'/>
 	<icon path="art/icon32.png" size='32'/>

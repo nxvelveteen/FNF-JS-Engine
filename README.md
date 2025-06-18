@@ -46,6 +46,7 @@ This contains lots and lots of customizable and features built in to JS Engine, 
 - Cool customizable UI!
 - Multiple Chart Backups!
 - Custom Crash UI (Instead of Regular Psych Engine Crash)!
+- A nifty button in your Discord Profile!
 
 There is like lots and lots of stuff i've missed, but at least you would like those features built in **JS ENGINE**
 
@@ -70,7 +71,7 @@ Frequently Asked Questions (FAQs) are found in [here](https://github.com/JordanS
 
 **Q: Can I use this port for my mod(s)?**
 
-A: Yes, you can! just be sure to credit me ([@HomuHomu833 on YouTube](https://www.youtube.com/@HomuHomu833)) and give a link to this page. or [the link to download the latest release.](https://github.com/JordanSantiagoYT/FNF-JS-Engine/releases/latest)
+A: Yes, you can! just be sure to credit me ([@HomuHomu833 on YouTube](https://www.youtube.com/@HomuHomu833)) and give a link to the Engine's github/gamebanana, or [the link to download the latest release.](https://github.com/JordanSantiagoYT/FNF-JS-Engine/releases/latest)
 
 **Q: How do I change and add things?**
 
@@ -122,7 +123,7 @@ same goes for *Lua Scripts*, comment out or delete the line with `LUA_ALLOWED`, 
 
 <details>
   <summary><h2>OG Psych Engine Credits and Stuff</h2></summary>
-  
+
 * Shadow Mario - Programmer
 * RiverOaken - Artist
 

@@ -199,8 +199,6 @@ class TitleState extends MusicBeatState
 	var titleText:FlxSprite;
 	var swagShader:ColorSwap = null;
 
-	var wheatley:Bool = false;
-
 	/***************/
     /*    VIDEO    */
 	/***************/
@@ -212,11 +210,6 @@ class TitleState extends MusicBeatState
 		var fileName:String = Paths.video(name, library);
 
 		var insertWhateveryouWantHere:Dynamic = null;
-		// for source modders
-		insertWhateveryouWantHere = function(){
-			if (wheatley)
-				throw 'Is anyone there?';
-		}
 
 		#if sys
 		if (FileSystem.exists(fileName))
@@ -482,21 +475,6 @@ class TitleState extends MusicBeatState
 						FlxG.sound.play(Paths.sound('sarcasmComplete'));
 						trace('Were you talking about Portal 2?');
 						sarcasmKeysBuffer = '';
-
-		                var randomVar:Int = 0;
-						if (!ClientPrefs.wheatleySpace) randomVar = Std.random(15);
-			            if (ClientPrefs.wheatleySpace) randomVar = 8;
-		                trace(randomVar);
-	                	if (randomVar == 8)
-		                {
-			                trace('Hello? Anyone in there? Hello?...');
-							#if VIDEOS_ALLOWED
-							startVideo('alone');
-							wheatley = true; // I actually needed this for an check :P
-							#else 
-							throw 'Is anyone there?';
-							#end
-		                }
 				}
 			}
 		}

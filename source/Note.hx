@@ -2,11 +2,9 @@ package;
 
 import backend.NoteTypesConfig;
 import flixel.util.FlxColor;
-
-import shaders.RGBPalette;
-import shaders.RGBPalette.RGBShaderReference;
-
 import objects.SustainSplash;
+import shaders.RGBPalette.RGBShaderReference;
+import shaders.RGBPalette;
 
 using StringTools;
 

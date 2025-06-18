@@ -116,21 +116,6 @@ class GameplaySettingsSubState extends BaseOptionsMenu
 			false);
 		addOption(option);
 
-		var option:Option = new Option('Shit Gives Miss',
-			"If checked, hitting a Shit rating will count as a miss.",
-			'shitGivesMiss',
-			'bool',
-			false);
-		addOption(option);
-
-		var option:Option = new Option('SGM Intensity:',
-			"How intense would you want the threshold for missing from a rating to be?",
-			'ratingIntensity',
-			'string',
-			'Normal',
-			['Normal', 'Harsh', 'Very Harsh']);
-		addOption(option);
-
 		var option:Option = new Option('Enable Taunt Key',
 			"If checked, pressing the Taunt key will make BF go HEY!!",
 			'spaceVPose',

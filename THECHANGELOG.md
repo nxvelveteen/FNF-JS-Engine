@@ -1,15 +1,21 @@
-1.47.0;
-
--- PC Specific --
+1.48.0;
 
 Additions:
-New function: doTweenScale - Stinko
-Added an option to either enable or disable the april fools start up. It's in the Misc Options. - Stinko
+Discord RPC Button, which redirects to the source code of the engine - NAEL2XD
+
+Removals:
+Wheatley Space Easter egg
 
 Fixes:
-doTweenZoom function crashing the engine if the object is not a camera - Stinko, Jordan Santiago
-Fixed the destroy function causing a crash - Jordan Santiago
-April fools startup actually happens on April 1st - Jordan Santiago
+
+Fixed crash when pressing space as a character without an "hey" animation - Jordan Santiago
+Ratings are no longer under the underlay - Jordan Santiago
+Change Character event now changes the noteskin correctly  - Jordan Santiago
+Fixed compiling with OpenFL 9.2.2 - Moxie
+Source Code Compilation - Moxie
 
 Overhauls:
-Simplified code - Jordan Santiago
+
+Added the new volume tray - Moxie
+Changed the cursor - Moxie
+Optimized lua scripting - Moxie

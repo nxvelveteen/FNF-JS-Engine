@@ -1,25 +1,15 @@
 package;
 
-import Conductor.BPMChangeEvent;
-import flixel.FlxG;
-import flixel.addons.ui.FlxUIState;
-import flixel.math.FlxRect;
-import flixel.util.FlxTimer;
-import flixel.addons.transition.FlxTransitionableState;
-import flixel.tweens.FlxEase;
-import flixel.tweens.FlxTween;
-import flixel.FlxSprite;
-import lime.app.Application;
-import flixel.util.FlxColor;
-import flixel.util.FlxGradient;
-import flixel.FlxState;
-import flixel.FlxCamera;
-import flixel.FlxBasic;
 import backend.PsychCamera;
 import mobile.MobileControls;
 import mobile.flixel.FlxVirtualPad;
 import flixel.input.actions.FlxActionInput;
 import flixel.util.FlxDestroyUtil;
+import flixel.FlxCamera;
+import flixel.FlxG;
+import flixel.addons.transition.FlxTransitionableState;
+import flixel.addons.ui.FlxUIState;
+import lime.app.Application;
 import openfl.utils.Assets;
 
 class MusicBeatState extends FlxUIState
@@ -160,12 +150,12 @@ class MusicBeatState extends FlxUIState
 		super.create();
 
 		if(!_psychCameraInitialized && Type.getClassName(Type.getClass(FlxG.state)) != 'PlayState') initPsychCamera();
-		
+
 		if(!skip) {
 			openSubState(new CustomFadeTransition(0.7, true));
 		}
 		FlxTransitionableState.skipNextTransOut = false;
-		
+
 		try {windowNamePrefix = Assets.getText(Paths.txt("windowTitleBase", "preload"));}
 		catch(e) {}
 
@@ -237,7 +227,7 @@ class MusicBeatState extends FlxUIState
 			{
 				stepsToDo += Math.round(getBeatsOnSection() * 4);
 				if(stepsToDo > curStep) break;
-				
+
 				curSection++;
 			}
 		}

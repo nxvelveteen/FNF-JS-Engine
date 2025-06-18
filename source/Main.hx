@@ -1,16 +1,14 @@
 package;
 
+import backend.SSPlugin as ScreenShotPlugin;
+import debug.FPSCounter;
 import flixel.FlxGame;
+import lime.app.Application;
 import openfl.Lib;
 import openfl.display.Sprite;
-import debug.FPSCounter;
-import lime.app.Application;
-import backend.SSPlugin as ScreenShotPlugin;
-#if mobile
-import mobile.CopyState;
-#end
 
-#if linux
+using StringTools;
+#if (linux || mac)
 import lime.graphics.Image;
 #end
 
@@ -18,7 +16,9 @@ import lime.graphics.Image;
 import backend.ALSoftConfig; // Just to make sure DCE doesn't remove this, since it's not directly referenced anywhere else.
 #end
 
-using StringTools;
+#if mobile
+import mobile.CopyState;
+#end
 
 #if linux
 @:cppInclude('./external/gamemode_client.h')
@@ -154,7 +154,16 @@ class Main extends Sprite {
 		ClientPrefs.loadDefaultStuff();
 		#if ACHIEVEMENTS_ALLOWED Achievements.load(); #end
 
-		addChild(new FlxGame(game.width, game.height, #if (mobile && MODS_ALLOWED) !CopyState.checkExistingFiles() ? CopyState : #end game.initialState, #if (flixel < "5.0.0") game.zoom, #end game.framerate, game.framerate, game.skipSplash, game.startFullscreen));
+		final funkinGame:FlxGame = new FlxGame(game.width, game.height, #if (mobile && MODS_ALLOWED) !CopyState.checkExistingFiles() ? CopyState : #end, #if (flixel < "5.0.0") game.zoom, #end game.framerate, game.framerate, game.skipSplash, game.startFullscreen);
+		// Literally just from Vanilla FNF but I implemented it my own way. -Torch
+		// torch is my friend btw :3 -moxie
+		@:privateAccess {
+			final soundFrontEnd:flixel.system.frontEnds.SoundFrontEnd = new objects.CustomSoundTray.CustomSoundFrontEnd();
+			FlxG.sound = soundFrontEnd;
+			funkinGame._customSoundTray = objects.CustomSoundTray.CustomSoundTray;
+		}
+
+		addChild(funkinGame);
 
 		fpsVar = new FPSCounter(3, 3, 0x00FFFFFF);
 		addChild(fpsVar);
@@ -171,7 +180,7 @@ class Main extends Sprite {
 
 		FlxG.autoPause = false;
 
-		#if linux
+		#if (linux || mac)
 		var icon = Image.fromFile("icon.png");
 		Lib.current.stage.window.setIcon(icon);
 		#end
@@ -185,7 +194,7 @@ class Main extends Sprite {
 		#if mobile
 		lime.system.System.allowScreenTimeout = ClientPrefs.screensaver;
 		#if android
-		FlxG.android.preventDefaultKeys = [BACK]; 
+		FlxG.android.preventDefaultKeys = [BACK];
 		#end
 		#end
 
@@ -211,7 +220,7 @@ class Main extends Sprite {
 
 	static function resetSpriteCache(sprite:Sprite):Void {
 		@:privateAccess {
-		    sprite.__cacheBitmap = null;
+		  sprite.__cacheBitmap = null;
 			sprite.__cacheBitmapData = null;
 		}
 	}

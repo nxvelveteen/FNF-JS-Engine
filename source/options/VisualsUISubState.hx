@@ -103,7 +103,7 @@ class VisualsUISubState extends BaseOptionsMenu
 			'bool',
 			true);
 		addOption(option);
-		
+
 		var option:Option = new Option('Show Combo',
 			'If checked, the game will show your current combo.',
 			'showComboInfo',
@@ -190,7 +190,7 @@ class VisualsUISubState extends BaseOptionsMenu
 			'bool',
 			true);
 		addOption(option);
-		
+
 		var option:Option = new Option('Botplay Watermark',
 			'If checked, some texts will have a watermark if Botplay is enabled.',
 			'botWatermark',
@@ -270,7 +270,7 @@ class VisualsUISubState extends BaseOptionsMenu
 				ratingQuoteList);
 			addOption(option);
 		}
-				
+
 		var option:Option = new Option('Time Bar:',
 			"What should the Time Bar display?",
 			'timeBarType',
@@ -371,13 +371,6 @@ class VisualsUISubState extends BaseOptionsMenu
 			'string',
 			'Golden Apple',
 			['Golden Apple', 'Dave and Bambi', 'Old Psych', 'New Psych', 'VS Steve', 'Plank Engine', 'Strident Crisis', 'None']);
-		addOption(option);
-
-		var option:Option = new Option('Rating Accuracy Color',
-			'If checked, the ratings & combo will be colored based on the actual rating.',
-			'colorRatingHit',
-			'bool',
-			true);
 		addOption(option);
 
 		var option:Option = new Option('Health Tweening',
@@ -502,7 +495,7 @@ class VisualsUISubState extends BaseOptionsMenu
 			'bool',
 			true);
 		addOption(option);
-		
+
 		var option:Option = new Option('Pause Screen Song:',
 			"What song do you prefer for the Pause Screen?",
 			'pauseMusic',
@@ -511,8 +504,8 @@ class VisualsUISubState extends BaseOptionsMenu
 			['None', 'Breakfast', 'Tea Time']);
 		addOption(option);
 		option.onChange = onChangePauseMusic;
-				
-		#if APRIL_FOOLS 		
+
+		#if APRIL_FOOLS
 			if (!ClientPrefs.disableAprilFools || !(date.getMonth() == 3 && date.getDate() == 1)) {
 				var option:Option = new Option('Menu Song:',
 					"What song do you prefer when you're in menus?",
@@ -521,7 +514,7 @@ class VisualsUISubState extends BaseOptionsMenu
 					'Default',
 					['Default', 'Anniversary', 'Mashup', 'Base Game', 'DDTO+', 'Dave & Bambi', 'Dave & Bambi (Old)', 'VS Impostor', 'VS Nonsense V2']);
 				addOption(option);
-				option.onChange = onChangeMenuMusic;	
+				option.onChange = onChangeMenuMusic;
 			}
 		#else
 			var option:Option = new Option('Menu Song:',
@@ -531,9 +524,9 @@ class VisualsUISubState extends BaseOptionsMenu
 				'Default',
 				['Default', 'Anniversary', 'Mashup', 'Base Game', 'DDTO+', 'Dave & Bambi', 'Dave & Bambi (Old)', 'VS Impostor', 'VS Nonsense V2']);
 			addOption(option);
-			option.onChange = onChangeMenuMusic;		
+			option.onChange = onChangeMenuMusic;
 		#end
-		
+
 		#if CHECK_FOR_UPDATES
 		var option:Option = new Option('Check for Updates',
 			'On Release builds, turn this on to check for updates when you start the game.',
@@ -603,7 +596,7 @@ class VisualsUISubState extends BaseOptionsMenu
 	override function changeSelection(change:Int = 0)
 	{
 		super.changeSelection(change);
-		
+
 		if(noteOptionID < 0) return;
 
 		for (i in 0...Note.colArray.length)
@@ -625,7 +618,7 @@ class VisualsUISubState extends BaseOptionsMenu
 			note.centerOrigin();
 		});
 	}
-	
+
 	function changeNoteSkin(note:StrumNote)
 	{
 		var skin:String = Note.defaultNoteSkin;

@@ -1,32 +1,31 @@
 package;
 
+import flixel.animation.FlxAnimationController;
+import flixel.graphics.FlxGraphic;
+import flixel.graphics.FlxGraphic;
 import flixel.graphics.frames.FlxAtlasFrames;
 import flixel.graphics.frames.FlxFramesCollection;
-import flixel.graphics.FlxGraphic;
-import flixel.animation.FlxAnimationController;
+import haxe.Json;
+import haxe.io.Bytes;
+import haxe.io.Path;
+import lime.media.AudioBuffer;
+import lime.media.vorbis.VorbisFile;
+import lime.utils.Assets;
+import openfl.display.BitmapData;
 import openfl.display.BitmapData;
 import openfl.display3D.textures.RectangleTexture;
+import openfl.display3D.textures.RectangleTexture;
+import openfl.geom.Rectangle;
+import openfl.media.Sound;
+import openfl.system.System;
 import openfl.utils.AssetType;
 import openfl.utils.Assets as OpenFlAssets;
-import openfl.system.System;
-import openfl.geom.Rectangle;
 
-import lime.utils.Assets;
-import openfl.media.Sound;
-
+using StringTools;
 #if sys
-import sys.io.File;
 import sys.FileSystem;
+import sys.io.File;
 #end
-import flixel.graphics.FlxGraphic;
-import openfl.display.BitmapData;
-import haxe.Json;
-
-import openfl.display3D.textures.RectangleTexture;
-import lime.media.vorbis.VorbisFile;
-import lime.media.AudioBuffer;
-
-import haxe.io.Path;
 #if cpp
 import cpp.vm.Gc;
 #elseif hl
@@ -35,7 +34,6 @@ import hl.Gc;
 import neko.vm.Gc;
 #end
 
-using StringTools;
 
 @:access(openfl.display.BitmapData)
 class Paths
@@ -778,7 +776,18 @@ class Paths
                 sound = Sound.fromAudioBuffer(AudioBuffer.fromVorbisFile(VorbisFile.fromFile(file)));
             else
             #end
-            sound = Sound.fromFile(file);
+						try {
+							final header:Bytes = File.getBytes(file).sub(0, 4);
+							if (header.toString() != "OggS" && file != null) {
+								throw 'The file "$file" is not a valid OGG file (missing OggS header). It may have been renamed from another format like MP3.';
+							}
+							
+            	sound = Sound.fromFile(file);
+						}
+						catch(e)
+						{
+							throw 'Cannot load sound file: $file\nMake sure it is a properly encoded .ogg file.\nError: $e';
+						}
         }
         else
         #end

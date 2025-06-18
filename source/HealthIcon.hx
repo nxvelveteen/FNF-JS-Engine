@@ -49,27 +49,16 @@ class HealthIcon extends FlxSprite
 				trace("Warning: could not find the placeholder icon, expect crashes!");
 			}
 
-			loadGraphic(file); //Load stupidly first for getting the file size
+			final iSize:Float = Math.round(file.width / file.height);
+			loadGraphic(file, true, Math.floor(file.width / iSize), Math.floor(file.height));
 			initialWidth = width;
 			initialHeight = height;
-			var width2 = width;
-			if (width == 450) {
-				loadGraphic(file, true, Math.floor(width / 3), Math.floor(height)); //Then load it fr // winning icons go br
-				iconOffsets[0] = (width - 150) / 3;
-				iconOffsets[1] = (height - 150) / 3;
-			} else {
-				loadGraphic(file, true, Math.floor(width / 2), Math.floor(height)); //Then load it fr // winning icons go br
-				iconOffsets[0] = (width - 150) / 2;
-				iconOffsets[1] = (height - 150) / 2;
-			}
+			iconOffsets[0] = (width - 150) / iSize;
+			iconOffsets[1] = (height - 150) / iSize;
 
 			updateHitbox();
 
-			if (width2 == 450) {
-				animation.add(char, [0, 1, 2], 0, false, isPlayer);
-			} else {
-				animation.add(char, [0, 1], 0, false, isPlayer);
-			}
+			animation.add(char, [for(i in 0...frames.frames.length) i], 0, false, isPlayer);
 			animation.play(char);
 			this.char = char;
 

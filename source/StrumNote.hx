@@ -4,8 +4,8 @@ import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.graphics.frames.FlxAtlasFrames;
 import flixel.util.FlxColor;
-import shaders.RGBPalette;
 import shaders.RGBPalette.RGBShaderReference;
+import shaders.RGBPalette;
 
 using StringTools;
 
