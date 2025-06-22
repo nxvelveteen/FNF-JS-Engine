@@ -5149,7 +5149,7 @@ class PlayState extends MusicBeatState
 		var eventKey:FlxKey = event.keyCode;
 		var key:Int = getKeyFromEvent(eventKey);
 
-		if (!ClientPrefs.controllerMode && FlxG.keys.checkStatus(eventKey, JUST_PRESSED))
+		if ((!ClientPrefs.controllerMode && FlxG.keys.checkStatus(eventKey, JUST_PRESSED)) || (mobile.MobileControls.enabled && key > -1))
 			keyPressed(key);
 	}
 
@@ -5245,7 +5245,7 @@ class PlayState extends MusicBeatState
 		var key:Int = getKeyFromEvent(eventKey);
 		// trace('Pressed: ' + eventKey);
 
-		if (!ClientPrefs.controllerMode && key > -1)
+		if (!ClientPrefs.controllerMode || mobile.MobileControls.enabled && key > -1)
 			keyReleased(key);
 	}
 
@@ -5338,7 +5338,7 @@ class PlayState extends MusicBeatState
 		}
 
 		// TO DO: Find a better way to handle controller inputs, this should work for now
-		if(ClientPrefs.controllerMode || strumsBlocked.contains(true))
+		if((ClientPrefs.controllerMode || mobile.MobileControls.enabled) || strumsBlocked.contains(true))
 		{
 			if(releaseArray.contains(true))
 			{

@@ -1465,38 +1465,42 @@ class FunkinLua {
 			if(!color.startsWith('0x')) color = '0xff' + color;
 			return Std.parseInt(color);
 		});
+		registerFunction("keyboardJustPressed", function(name:String):Bool
+		{
+			var keyName = name.toUpperCase();
+			if (ClientPrefs.mobileCEx && keyName == "SPACE")
+			{
+				var mobileC:mobile.flixel.FlxButton = @:privateAccess {(mobile.MobileControls.mode == "Hitbox") ? PlayState.instance.mobileControls.hitbox.hints[4] : PlayState.instance.mobileControls.virtualPad.buttonEx;}
 
-		registerFunction("keyboardJustPressed", function(name:String)
-		{
-			final mobileC:mobile.flixel.FlxButton = @:privateAccess {(mobile.MobileControls.mode == "Hitbox") ? PlayState.instance.mobileControls.hitbox.hints[4] : PlayState.instance.mobileControls.virtualPad.buttonEx;}
-			return switch (name.toUpperCase()) {
-			case "SPACE":
-				ClientPrefs.mobileCEx ? mobileC.justPressed : false || Reflect.getProperty(FlxG.keys.justPressed, "SPACE");
-			default:
-				Reflect.getProperty(FlxG.keys.justPressed, name);
+				if (mobileC.justPressed)
+					return true;
 			}
+			return Reflect.getProperty(FlxG.keys.justPressed, keyName) == true;
 		});
-		registerFunction("keyboardPressed", function(name:String)
+		registerFunction("keyboardPressed", function(name:String):Bool
 		{
-			final mobileC:mobile.flixel.FlxButton = @:privateAccess {(mobile.MobileControls.mode == "Hitbox") ? PlayState.instance.mobileControls.hitbox.hints[4] : PlayState.instance.mobileControls.virtualPad.buttonEx;}
-			return switch (name.toUpperCase()) {
-			case "SPACE":
-				ClientPrefs.mobileCEx ? mobileC.pressed : false || Reflect.getProperty(FlxG.keys.pressed, "SPACE");
-			default:
-				Reflect.getProperty(FlxG.keys.pressed, name);
-			}
-		});
-		registerFunction("keyboardReleased", function(name:String)
-		{
-			final mobileC:mobile.flixel.FlxButton = @:privateAccess {(mobile.MobileControls.mode == "Hitbox") ? PlayState.instance.mobileControls.hitbox.hints[4] : PlayState.instance.mobileControls.virtualPad.buttonEx;}
-			return switch (name.toUpperCase()) {
-			case "SPACE":
-				ClientPrefs.mobileCEx ? mobileC.justReleased : false || Reflect.getProperty(FlxG.keys.justReleased, "SPACE");
-			default:
-				Reflect.getProperty(FlxG.keys.justReleased, name);
-			}
-		});
+			var keyName = name.toUpperCase();
+			if (ClientPrefs.mobileCEx && keyName == "SPACE")
+			{
+				var mobileC:mobile.flixel.FlxButton = @:privateAccess {(mobile.MobileControls.mode == "Hitbox") ? PlayState.instance.mobileControls.hitbox.hints[4] : PlayState.instance.mobileControls.virtualPad.buttonEx;}
 
+				if (mobileC.pressed)
+					return true;
+			}
+			return Reflect.getProperty(FlxG.keys.pressed, keyName) == true;
+		});
+		registerFunction("keyboardReleased", function(name:String):Bool
+		{
+			var keyName = name.toUpperCase();
+			if (ClientPrefs.mobileCEx && keyName == "SPACE")
+			{
+				var mobileC:mobile.flixel.FlxButton = @:privateAccess {(mobile.MobileControls.mode == "Hitbox") ? PlayState.instance.mobileControls.hitbox.hints[4] : PlayState.instance.mobileControls.virtualPad.buttonEx;}
+
+				if (mobileC.justReleased)
+					return true;
+			}
+			return Reflect.getProperty(FlxG.keys.justReleased, keyName) == true;
+		});
 		registerFunction("anyGamepadJustPressed", function(name:String)
 		{
 			return FlxG.gamepads.anyJustPressed(name);
@@ -1556,43 +1560,68 @@ class FunkinLua {
 			return Reflect.getProperty(controller.justReleased, name) == true;
 		});
 
-		registerFunction("keyJustPressed", function(name:String) {
+		registerFunction("keyJustPressed", function(name:String)
+		{
 			var key:Bool = false;
 			final mobileC:mobile.flixel.FlxButton = @:privateAccess {(mobile.MobileControls.mode == "Hitbox") ? PlayState.instance.mobileControls.hitbox.hints[4] : PlayState.instance.mobileControls.virtualPad.buttonEx;}
-			switch(name) {
-				case 'left': key = PlayState.instance.getControl('NOTE_LEFT_P');
-				case 'down': key = PlayState.instance.getControl('NOTE_DOWN_P');
-				case 'up': key = PlayState.instance.getControl('NOTE_UP_P');
-				case 'right': key = PlayState.instance.getControl('NOTE_RIGHT_P');
-				case 'accept': key = PlayState.instance.getControl('ACCEPT');
-				case 'back': key = PlayState.instance.getControl('BACK');
-				case 'pause': key = PlayState.instance.getControl('PAUSE');
-				case 'reset': key = PlayState.instance.getControl('RESET');
-				case 'space': key = ClientPrefs.mobileCEx ? mobileC.justPressed : false || FlxG.keys.justPressed.SPACE;//an extra key for convinience
+			switch (name)
+			{
+				case 'left':
+					key = PlayState.instance.getControl('NOTE_LEFT_P');
+				case 'down':
+					key = PlayState.instance.getControl('NOTE_DOWN_P');
+				case 'up':
+					key = PlayState.instance.getControl('NOTE_UP_P');
+				case 'right':
+					key = PlayState.instance.getControl('NOTE_RIGHT_P');
+				case 'accept':
+					key = PlayState.instance.getControl('ACCEPT');
+				case 'back':
+					key = PlayState.instance.getControl('BACK');
+				case 'pause':
+					key = PlayState.instance.getControl('PAUSE');
+				case 'reset':
+					key = PlayState.instance.getControl('RESET');
+				case 'space':
+					key = (ClientPrefs.mobileCEx && mobileC.justPressed) || FlxG.keys.justPressed.SPACE;
 			}
 			return key;
 		});
-		registerFunction("keyPressed", function(name:String) {
+		registerFunction("keyPressed", function(name:String)
+		{
 			var key:Bool = false;
 			final mobileC:mobile.flixel.FlxButton = @:privateAccess {(mobile.MobileControls.mode == "Hitbox") ? PlayState.instance.mobileControls.hitbox.hints[4] : PlayState.instance.mobileControls.virtualPad.buttonEx;}
-			switch(name) {
-				case 'left': key = PlayState.instance.getControl('NOTE_LEFT');
-				case 'down': key = PlayState.instance.getControl('NOTE_DOWN');
-				case 'up': key = PlayState.instance.getControl('NOTE_UP');
-				case 'right': key = PlayState.instance.getControl('NOTE_RIGHT');
-				case 'space': key = ClientPrefs.mobileCEx ? mobileC.pressed : false || FlxG.keys.pressed.SPACE;//an extra key for convinience
+			switch (name)
+			{
+				case 'left':
+					key = PlayState.instance.getControl('NOTE_LEFT');
+				case 'down':
+					key = PlayState.instance.getControl('NOTE_DOWN');
+				case 'up':
+					key = PlayState.instance.getControl('NOTE_UP');
+				case 'right':
+					key = PlayState.instance.getControl('NOTE_RIGHT');
+				case 'space':
+					key = (ClientPrefs.mobileCEx && mobileC.pressed) || FlxG.keys.pressed.SPACE;
 			}
 			return key;
 		});
-		registerFunction("keyReleased", function(name:String) {
+		registerFunction("keyReleased", function(name:String)
+		{
 			var key:Bool = false;
 			final mobileC:mobile.flixel.FlxButton = @:privateAccess {(mobile.MobileControls.mode == "Hitbox") ? PlayState.instance.mobileControls.hitbox.hints[4] : PlayState.instance.mobileControls.virtualPad.buttonEx;}
-			switch(name) {
-				case 'left': key = PlayState.instance.getControl('NOTE_LEFT_R');
-				case 'down': key = PlayState.instance.getControl('NOTE_DOWN_R');
-				case 'up': key = PlayState.instance.getControl('NOTE_UP_R');
-				case 'right': key = PlayState.instance.getControl('NOTE_RIGHT_R');
-				key = ClientPrefs.mobileCEx ? mobileC.justReleased : false || FlxG.keys.justReleased.SPACE;//an extra key for convinience
+			switch (name)
+			{
+				case 'left':
+					key = PlayState.instance.getControl('NOTE_LEFT_R');
+				case 'down':
+					key = PlayState.instance.getControl('NOTE_DOWN_R');
+				case 'up':
+					key = PlayState.instance.getControl('NOTE_UP_R');
+				case 'right':
+					key = PlayState.instance.getControl('NOTE_RIGHT_R');
+				case 'space':
+					key = (ClientPrefs.mobileCEx && mobileC.justReleased) || FlxG.keys.justReleased.SPACE;
 			}
 			return key;
 		});
