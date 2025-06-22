@@ -143,6 +143,7 @@ class PlayState extends MusicBeatState
 
 	public var notes:NoteGroup;
 	public var sustainNotes:NoteGroup;
+	public var killNotes:Array<Note> = [];
 	public var unspawnNotes:Array<PreloadedChartNote> = [];
 	public var unspawnNotesCopy:Array<PreloadedChartNote> = [];
 	public var eventNotes:Array<EventNote> = [];
@@ -632,7 +633,7 @@ class PlayState extends MusicBeatState
 				boyfriend: [770, 100],
 				girlfriend: [400, 130],
 				opponent: [100, 100],
-				hide_girlfriend: false,
+				hide_girlfriend: true,
 
 				camera_boyfriend: [0, 0],
 				camera_opponent: [0, 0],
@@ -3359,37 +3360,37 @@ class PlayState extends MusicBeatState
 		}
 		if (ClientPrefs.showNPS && (notesHitDateArray.length > 0 || oppNotesHitDateArray.length > 0)) {
 			notesToRemoveCount = 0;
+			var i = 0;
 
-			for (i in 0...notesHitDateArray.length) {
+			while (i < notesHitDateArray.length) {
 				if (!Math.isNaN(notesHitDateArray[i]) && (notesHitDateArray[i] + 1000 * npsSpeedMult < Conductor.songPosition)) {
 					notesToRemoveCount++;
 				}
+				i++;
 			}
 
 			if (notesToRemoveCount > 0) {
 				notesHitDateArray.splice(0, notesToRemoveCount);
 				notesHitArray.splice(0, notesToRemoveCount);
-				if (ClientPrefs.ratingCounter && judgeCountUpdateFrame <= 4 && judgementCounter != null) updateRatingCounter();
-				if (scoreTxtUpdateFrame <= 4 && scoreTxt != null) updateScore();
 			}
 
 			nps = 0;
-			for (value in notesHitArray) {
+			for (value in notesHitArray)
 				nps += value;
-			}
 
 			oppNotesToRemoveCount = 0;
+			i = 0;
 
-			for (i in 0...oppNotesHitDateArray.length) {
-				if (!Math.isNaN(notesHitDateArray[i]) && (oppNotesHitDateArray[i] + 1000 * npsSpeedMult < Conductor.songPosition)) {
+			while (i < oppNotesHitDateArray.length) {
+				if (!Math.isNaN(oppNotesHitDateArray[i]) && (oppNotesHitDateArray[i] + 1000 * npsSpeedMult < Conductor.songPosition)) {
 					oppNotesToRemoveCount++;
 				}
+				i++;
 			}
 
 			if (oppNotesToRemoveCount > 0) {
 				oppNotesHitDateArray.splice(0, oppNotesToRemoveCount);
 				oppNotesHitArray.splice(0, oppNotesToRemoveCount);
-				if (ClientPrefs.ratingCounter && judgeCountUpdateFrame <= 4 && judgementCounter != null) updateRatingCounter();
 			}
 
 			oppNPS = 0;
@@ -3403,28 +3404,9 @@ class PlayState extends MusicBeatState
 			if (nps > maxNPS) {
 				maxNPS = nps;
 			}
-			if (nps > oldNPS)
-				npsIncreased = true;
 
-			if (nps < oldNPS)
-				npsDecreased = true;
-
-			if (oppNPS > oldOppNPS)
-				oppNpsIncreased = true;
-
-			if (oppNPS < oldOppNPS)
-				oppNpsDecreased = true;
-
-			if (npsIncreased || npsDecreased || oppNpsIncreased || oppNpsDecreased) {
-				if (ClientPrefs.ratingCounter && judgeCountUpdateFrame <= 8 && judgementCounter != null) updateRatingCounter();
-				if (scoreTxtUpdateFrame <= 8 && scoreTxt != null) updateScore();
-				if (npsIncreased) npsIncreased = false;
-				if (npsDecreased) npsDecreased = false;
-				if (oppNpsIncreased) oppNpsIncreased = false;
-				if (oppNpsDecreased) oppNpsDecreased = false;
-				oldNPS = nps;
-				oldOppNPS = oppNPS;
-			}
+			if (ClientPrefs.ratingCounter && judgeCountUpdateFrame <= 8 && judgementCounter != null) updateRatingCounter();
+			if (scoreTxtUpdateFrame <= 8 && scoreTxt != null) updateScore();
 		}
 
 		if (ClientPrefs.showcaseMode && !ClientPrefs.charsAndBG) {
@@ -3714,7 +3696,7 @@ class PlayState extends MusicBeatState
 		// RESET = Quick Game Over Screen
 		if (!ClientPrefs.noReset && controls.RESET && canReset && !inCutscene && startedCountdown && !endingSong && !heyStopTrying)
 		{
-			health = 0;
+			doDeathCheck(true);
 			trace("RESET = True");
 		}
 		if (health <= 0) doDeathCheck();
@@ -3742,6 +3724,8 @@ class PlayState extends MusicBeatState
 					group.sort(FlxSort.byY, ClientPrefs.downScroll ? FlxSort.ASCENDING : FlxSort.DESCENDING);
 				}
 			}
+
+			destroyNotes();
 
 			while(eventNotes.length > 0 && Conductor.songPosition > eventNotes[0].strumTime) {
 
@@ -4825,10 +4809,7 @@ class PlayState extends MusicBeatState
 					if(!ClientPrefs.getGameplaySetting('practice', false) && !ClientPrefs.getGameplaySetting('botplay', false)) {
 						StoryMenuState.weekCompleted.set(WeekData.weeksList[storyWeek], true);
 
-						if (SONG.validScore)
-						{
-							Highscore.saveWeekScore(WeekData.getWeekFileName(), Std.int(campaignScore), storyDifficulty);
-						}
+						Highscore.saveWeekScore(WeekData.getWeekFileName(), Std.int(campaignScore), storyDifficulty);
 
 						FlxG.save.data.weekCompleted = StoryMenuState.weekCompleted;
 						FlxG.save.flush();
@@ -5168,6 +5149,7 @@ class PlayState extends MusicBeatState
 		// obtain notes that the player can hit
 		var plrInputNotes:Array<Note> = notes.members.filter(function(n:Note):Bool {
 			var canHit:Bool = !usingBotEnergy && !strumsBlocked[n.noteData] && n.canBeHit && n.mustPress && !n.tooLate && !n.wasGoodHit && !n.blockHit;
+			// trace('[keyPressed] Note? ${n != null}, noteData=${n.noteData}, strumTime=${n.strumTime}, canHit=$canHit, mustPress=${n.mustPress}, tooLate=${n.tooLate}, wasGoodHit=${n.wasGoodHit}, Conductor=${Conductor.songPosition}');
 			return n != null && canHit && !n.isSustainNote && n.noteData == key;
 		});
 		plrInputNotes.sort(sortHitNotes);
@@ -5307,6 +5289,7 @@ class PlayState extends MusicBeatState
 		if (startedCountdown && !char.stunned && generatedMusic)
 		{
 			// rewritten inputs???
+			/*
 			for (group in [notes, sustainNotes]) group.forEachAlive(function(daNote:Note)
 			{
 				// hold note functions
@@ -5315,6 +5298,24 @@ class PlayState extends MusicBeatState
 					goodNoteHit(daNote);
 				}
 			});
+			*/
+			for (group in [notes, sustainNotes]){
+				if (group.length > 0)
+				{
+					for (n in group.members)
+					{ // I can't do a filter here, that's kinda awesome
+						var canHit:Bool = (n != null && !usingBotEnergy && !strumsBlocked[n.noteData] && n.canBeHit && n.mustPress && !n.tooLate && !n.wasGoodHit && !n.blockHit);
+
+						if (canHit && n.isSustainNote)
+						{
+							var released:Bool = !holdArray[n.noteData];
+
+							if (!released)
+								goodNoteHit(n);
+						}
+					}
+				}
+			}
 
 			if(ClientPrefs.charsAndBG && (ClientPrefs.mobileCEx && ClientPrefs.mobileCExTaunt) && mobileC.justPressed || FlxG.keys.anyJustPressed(tauntKey) && !char.animation.curAnim.name.endsWith('miss') && char.specialAnim == false && ClientPrefs.spaceVPose){
 				if (char.animOffsets.exists('hey'))
@@ -5500,7 +5501,7 @@ class PlayState extends MusicBeatState
 	//This function handles note spawning.
 	var NOTE_SPAWN_TIME:Float = 0;
 	var targetNote:PreloadedChartNote = null;
-	var spawnedNote:Note = new Note();
+	var spawnedNote:Note;
 	function spawnNotes()
 	{
 		if (unspawnNotes[0] != null)
@@ -5524,12 +5525,17 @@ class PlayState extends MusicBeatState
 			if (ClientPrefs.showNotes || !ClientPrefs.showNotes && !cpuControlled)
 			{
 				while (targetNote.strumTime - Conductor.songPosition < (NOTE_SPAWN_TIME / targetNote.multSpeed)) {
-					if (ClientPrefs.fastNoteSpawn) (targetNote.isSustainNote ? sustainNotes : notes).spawnNote(targetNote);
-					else
-					{
+					if (ClientPrefs.fastNoteSpawn) {
 						spawnedNote = (targetNote.isSustainNote ? sustainNotes : notes).recycle(Note);
-						spawnedNote.setupNoteData(targetNote);
+						if (spawnedNote == null) {
+							spawnedNote = new Note();
+							(targetNote.isSustainNote ? sustainNotes : notes).add(spawnedNote);
+						}
+					} else {
+						spawnedNote = new Note();
+						(targetNote.isSustainNote ? sustainNotes : notes).add(spawnedNote);
 					}
+					spawnedNote.setupNoteData(targetNote);
 
 					if (!ClientPrefs.noSpawnFunc) callOnLuas('onSpawnNote', [(!spawnedNote.isSustainNote ? notes.members.indexOf(spawnedNote) : sustainNotes.members.indexOf(spawnedNote)), targetNote.noteData, targetNote.noteType, targetNote.isSustainNote]);
 					notesAddedCount++;
@@ -5947,8 +5953,37 @@ class PlayState extends MusicBeatState
 	}
 
 	public function invalidateNote(note:Note):Void {
-		note.exists = note.wasGoodHit = note.hitByOpponent = note.tooLate = note.canBeHit = false;
-		if (ClientPrefs.fastNoteSpawn) (note.isSustainNote ? sustainNotes : notes).pushToPool(note);
+		if (ClientPrefs.fastNoteSpawn){
+			note.exists = note.wasGoodHit = note.hitByOpponent = note.tooLate = note.canBeHit = false;
+			(note.isSustainNote ? sustainNotes : notes).pushToPool(note);
+		}
+		else {
+			/*
+			notes.remove(note, true);
+			note.kill();
+			note.destroy();
+			*/
+			if (!killNotes.contains(note))
+				killNotes.push(note);
+		}
+	}
+
+	public function destroyNotes():Void
+	{
+		if (ClientPrefs.fastNoteSpawn) return;
+
+		final iterator:Iterator<Note> = killNotes.iterator();
+
+		while (iterator.hasNext())
+		{
+			final note:Note = iterator.next();
+			note.active = note.visible = false;
+			if (!ClientPrefs.lowQuality || !cpuControlled)
+				note.kill();
+			notes.remove(note, true);
+			note.destroy();
+		}
+		killNotes = [];
 	}
 
 	public function spawnHoldSplashOnNote(note:Note, ?isDad:Bool = false) {
@@ -6725,26 +6760,16 @@ class PlayState extends MusicBeatState
 
 		ffmpegExists = true;
 
-		process = new Process('ffmpeg', [
-				'-v',
-				'quiet',
-				'-y',
-				'-f',
-				'rawvideo',
-				'-pix_fmt',
-				'rgba',
-				'-s',
-				lime.app.Application.current.window.width + 'x' + lime.app.Application.current.window.height,
-				'-r',
-				Std.string(targetFPS),
-				'-i',
-				'-',
-				'-c:v',
-				ClientPrefs.vidEncoder,
-				'-b:v',
-				Std.string(ClientPrefs.renderBitrate * 1000000),
-				Sys.getCwd() + 'assets/gameRenders/' + Paths.formatToSongPath(SONG.song) + '.mp4'
-			]);
+		var fileName = 'assets/gameRenders/' + Paths.formatToSongPath(SONG.song);
+		if(FileSystem.exists(fileName + '.mp4')) {
+			trace ('Duplicate video found! Adding anti-dupe...');
+			var dateNow:String = Date.now().toString();
+				dateNow = dateNow.replace(" ", "_");
+				dateNow = dateNow.replace(":", "'");
+            fileName += '-' + dateNow;
+        }
+
+		process = new Process('ffmpeg', ['-v', 'quiet', '-y', '-f', 'rawvideo', '-pix_fmt', 'rgba', '-s', lime.app.Application.current.window.width + 'x' + lime.app.Application.current.window.height, '-r', Std.string(targetFPS), '-i', '-', '-c:v', ClientPrefs.vidEncoder, '-b', Std.string(ClientPrefs.renderBitrate * 1000000), fileName + '.mp4']);
 		FlxG.autoPause = false;
 	}
 

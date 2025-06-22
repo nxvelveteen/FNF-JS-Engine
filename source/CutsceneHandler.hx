@@ -1,21 +1,20 @@
 package;
 
+import flixel.FlxBasic;
 import flixel.FlxCamera;
 import flixel.FlxG;
-import flixel.FlxBasic;
 import flixel.FlxObject;
 import flixel.FlxSprite;
+import flixel.addons.display.FlxPieDial;
 import flixel.graphics.atlas.FlxAtlas;
 import flixel.graphics.frames.FlxAtlasFrames;
 import flixel.group.FlxGroup.FlxTypedGroup;
+import flixel.group.FlxSpriteGroup;
 import flixel.sound.FlxSound;
 import flixel.tweens.FlxEase;
 import flixel.tweens.FlxTween;
-import flixel.util.FlxTimer;
-import flixel.group.FlxSpriteGroup;
-import animateatlas.AtlasFrameMaker;
 import flixel.util.FlxSort;
-import flixel.addons.display.FlxPieDial;
+import flixel.util.FlxTimer;
 
 typedef CutsceneEvent = {
 	var time:Float;
@@ -83,7 +82,7 @@ class CutsceneHandler extends FlxBasic
 			timedEvents[0].func();
 			timedEvents.shift();
 		}
-		
+
 		if(_canSkip && cutsceneTime > 0.1)
 		{
 			if(FlxG.keys.anyPressed(ClientPrefs.keyBinds.get('accept')))
@@ -110,7 +109,7 @@ class CutsceneHandler extends FlxBasic
 				PlayState.instance.remove(spr);
 				spr.destroy();
 			}
-			
+
 			skipSprite = FlxDestroyUtil.destroy(skipSprite);
 			destroy();
 			PlayState.instance.remove(this);

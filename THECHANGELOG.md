@@ -1,21 +1,14 @@
-1.48.0;
+1.48.1;
 
 Additions:
-Discord RPC Button, which redirects to the source code of the engine - NAEL2XD
+- Changed "Load Autosave" to "Load Backup From File" which allows you to load not only autosaves, but chart files individually.
+- Introduced TJSON support, currently for week JSONs, with potential for broader use. This is to assist those unfamiliar with JSON format.
 
 Removals:
-Wheatley Space Easter egg
+- Neo has been removed due to drama.
 
 Fixes:
-
-Fixed crash when pressing space as a character without an "hey" animation - Jordan Santiago
-Ratings are no longer under the underlay - Jordan Santiago
-Change Character event now changes the noteskin correctly  - Jordan Santiago
-Fixed compiling with OpenFL 9.2.2 - Moxie
-Source Code Compilation - Moxie
-
-Overhauls:
-
-Added the new volume tray - Moxie
-Changed the cursor - Moxie
-Optimized lua scripting - Moxie
+- Addressed an issue where notes were not despawning as expected, which should also improve input handling. (Hopefully)
+- Fixed issues with broken health icon sizes. (I hope)
+- Added support for icon metadata.
+- Implemented animated health icons for enhanced visual feedback.

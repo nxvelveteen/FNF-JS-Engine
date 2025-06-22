@@ -65,7 +65,7 @@
       "ref": "768740a56b26aa0c072720e0d1236b94afe68e3e",
       "url": "https://github.com/Dot-Stuff/flxanimate"
     },
-   {
+    {
       "name": "hxdiscord_rpc",
       "type": "haxelib",
       "version": null
@@ -104,9 +104,16 @@
     {
       "name": "away3d",
       "type": "git",
-      "dir":  null,
+      "dir": null,
       "ref": "master",
       "url": "https://github.com/moxie-coder/away3d"
+    },
+    {
+      "name": "tjson",
+      "type": "git",
+      "dir": null,
+      "ref": "master",
+      "url": "https://github.com/moxie-coder/tjson"
     }
   ]
 }

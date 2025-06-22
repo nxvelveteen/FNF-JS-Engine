@@ -1,29 +1,31 @@
 package;
 
-import flixel.util.FlxSave;
+import Song.SwagSong;
 import flixel.FlxG;
-import openfl.utils.Assets;
-import lime.utils.Assets as LimeAssets;
+import flixel.math.FlxMath;
+import flixel.sound.FlxSound;
+import flixel.text.FlxText;
+import flixel.tweens.FlxTween;
+import flixel.util.FlxColor;
+import flixel.util.FlxSave;
+import haxe.io.Bytes;
+import haxe.io.Path;
+import lime.app.Application;
 import lime.utils.AssetLibrary;
 import lime.utils.AssetManifest;
-import flixel.sound.FlxSound;
-import flixel.util.FlxColor;
-import flixel.tweens.FlxTween;
-import flixel.math.FlxMath;
-import haxe.io.Bytes;
-import Song.SwagSong;
-#if sys
-import sys.io.File;
-import sys.FileSystem;
-import sys.io.Process;
-#else
+import lime.utils.Assets as LimeAssets;
 import openfl.utils.Assets;
-#end
-import flixel.text.FlxText;
 import shaders.RGBPalette.RGBShaderReference;
 import utils.CoolSystemStuff;
 
 using StringTools;
+#if sys
+import sys.FileSystem;
+import sys.io.File;
+import sys.io.Process;
+#else
+import openfl.utils.Assets;
+#end
 
 #if cpp
 @:cppFileCode('#include <thread>')
@@ -53,7 +55,7 @@ class CoolUtil
 
 	public static var defaultSongs:Array<String> = ['tutorial', 'bopeebo', 'fresh', 'dad battle', 'spookeez', 'south', 'monster', 'pico', 'philly nice', 'blammed', 'satin panties', 'high', 'milf', 'cocoa', 'eggnog', 'winter horrorland', 'senpai', 'roses', 'thorns', 'ugh', 'guns', 'stress', 'darnell', 'lit up', '2hot'];
 	public static var defaultSongsFormatted:Array<String> = ['dad-battle', 'philly-nice', 'satin-panties', 'winter-horrorland', 'lit-up'];
-	
+
 	public static var defaultCharacters:Array<String> = ['dad', 'gf', 'gf-bent', 'gf-car', 'gf-christmas', 'gf-pixel', 'gf-tankmen', 'mom', 'mom-car', 'monster', 'monster-christmas', 'parents-christmas', 'pico', 'pico-player', 'senpai', 'senpai-angry', 'spirit', 'spooky', 'tankman', 'tankman-player'];
 
 	inline public static function quantize(f:Float, snap:Float){
@@ -91,51 +93,165 @@ class CoolUtil
 	}
 
 	public static function updateTheEngine():Void {
-		#if windows
-		// Get the directory of the executable
-		var exePath = Sys.programPath();
-		var exeDir = haxe.io.Path.directory(exePath);
+			// Get the directory of the executable
+			var exePath = Sys.programPath();
+			var exeDir = Path.directory(exePath);
 
-		// Construct the source directory path based on the executable location
-		var sourceDirectory = haxe.io.Path.join([exeDir, "update", "raw"]);
-		var sourceDirectory2 = haxe.io.Path.join([exeDir, "update"]);
+			// Construct the source and destination paths
+			var sourceDirectory = Path.join([exeDir, "update", "raw"]);
+			var destinationDirectory = exeDir;
 
-		// Escape backslashes for use in the batch script
-		sourceDirectory = sourceDirectory.split('\\').join('\\\\');
+			var scriptContent:String;
+			var scriptFileName:String;
+			var appName:String = "JSEngine"; // The base name of your executable/application bundle
 
-		var excludeFolder = "mods";
+			#if windows
+			scriptFileName = "update.bat";
+			// Escape backslashes for use in the batch script
+			var winSourceDir = sourceDirectory.split('\\').join('\\\\');
+			var winDestDir = destinationDirectory.split('\\').join('\\\\');
+			var winExeName = appName + ".exe";
 
-		// Construct the batch script with echo statements
-		var theBatch = "@echo off\r\n";
-		theBatch += "setlocal enabledelayedexpansion\r\n";
-		theBatch += "set \"sourceDirectory=" + sourceDirectory + "\"\r\n";
-		theBatch += "set \"sourceDirectory2=" + sourceDirectory2 + "\"\r\n";
-		theBatch += "set \"destinationDirectory=" + exeDir + "\"\r\n";
-		theBatch += "set \"excludeFolder=mods\"\r\n";
-		theBatch += "if not exist \"!sourceDirectory!\" (\r\n";
-		theBatch += "  echo Source directory does not exist: !sourceDirectory!\r\n";
-		theBatch += "  pause\r\n";
-		theBatch += "  exit /b\r\n";
-		theBatch += ")\r\n";
-		theBatch += "taskkill /F /IM JSEngine.exe\r\n";
-		theBatch += "echo JSE should have been killed now.\r\n";
-		theBatch += "echo Waiting for 5 seconds... (This is to make sure JSE is actually killed)\r\n";
-		theBatch += "timeout /t 5 /nobreak >nul\r\n";
-		theBatch += "cd /d \"%~dp0\"\r\n";
-		theBatch += "xcopy /e /y \"!sourceDirectory!\" \"!destinationDirectory!\"\r\n";
-		theBatch += "rd /s /q \"!sourceDirectory!\"\r\n";
-		theBatch += "start /d \"!destinationDirectory!\" JSEngine.exe\r\n";
-		theBatch += "rd /s /q \"%~dp0\\update\"\r\n";
-		theBatch += "del \"%~f0\"\r\n";
-		theBatch += "endlocal\r\n";
+			scriptContent = "@echo off\r\n";
+			scriptContent += "setlocal enabledelayedexpansion\r\n";
+			scriptContent += "set \"sourceDirectory=" + winSourceDir + "\"\r\n";
+			scriptContent += "set \"destinationDirectory=" + winDestDir + "\"\r\n";
+			scriptContent += "if not exist \"!sourceDirectory!\" (\r\n";
+			scriptContent += "   echo Source directory does not exist: !sourceDirectory!\r\n";
+			scriptContent += "   pause\r\n";
+			scriptContent += "   exit /b\r\n";
+			scriptContent += ")\r\n";
+			scriptContent += "taskkill /F /IM " + winExeName + " >nul 2>&1\r\n"; // >nul 2>&1 to suppress success messages
+			scriptContent += "echo Waiting for 5 seconds to ensure application is closed...\r\n";
+			scriptContent += "timeout /t 5 /nobreak >nul\r\n";
+			scriptContent += "echo Copying files from !sourceDirectory! to !destinationDirectory!...\r\n";
+			scriptContent += "xcopy /e /y /i \"!sourceDirectory!\" \"!destinationDirectory!\"\r\n"; // /i assumes dest is dir if missing
+			scriptContent += "echo Cleaning up temporary update files...\r\n";
+			scriptContent += "rd /s /q \"!sourceDirectory!\" >nul 2>&1\r\n"; // Delete raw folder
+			scriptContent += "rd /s /q \"%~dp0\\update\" >nul 2>&1\r\n"; // Delete parent update folder
+			scriptContent += "echo Restarting application...\r\n";
+			scriptContent += "start /b \"\" \"!destinationDirectory!\\" + winExeName + "\"\r\n"; // Use /b to prevent new window, empty "" for title
+			scriptContent += "del \"%~f0\" >nul 2>&1\r\n"; // Delete self
+			scriptContent += "endlocal\r\n";
 
-		// Save the batch file in the executable's directory
-		File.saveContent(haxe.io.Path.join([exeDir, "update.bat"]), theBatch);
+			#elseif mac
+			scriptFileName = "update.sh";
+			var currentAppBundlePath = Path.directory(Path.directory(exePath));
+			if (!currentAppBundlePath.endsWith(".app")) {
+					 Application.current.window.alert("Could not determine application bundle path for update. Please update manually.");
+					 Sys.exit(1);
+			}
 
-		// Execute the batch file
-		new Process(exeDir + "/update.bat", []);
-		Sys.exit(0);
-		#end
+			var macExeName = appName; // The actual executable name inside MacOS/
+
+			scriptContent = "#!/bin/bash\n";
+			scriptContent += "set -e\n"; // Exit immediately if a command exits with a non-zero status.
+			scriptContent += "source_dir=\"" + sourceDirectory + "\"\n"; // This will be like /path/to/game/update/raw
+			scriptContent += "current_app_bundle_path=\"" + currentAppBundlePath + "\"\n"; // This will be like /path/to/game/JSEngine.app
+
+			// The new .app bundle will be inside source_dir
+			var newAppBundleInSource = Path.join([sourceDirectory, appName + ".app"]);
+			scriptContent += "new_app_bundle_in_source=\"" + newAppBundleInSource + "\"\n";
+
+			scriptContent += "echo \"Source directory: $source_dir\"\n";
+			scriptContent += "echo \"Current app bundle path: $current_app_bundle_path\"\n";
+			scriptContent += "echo \"New app bundle in source: $new_app_bundle_in_source\"\n";
+
+			scriptContent += "if [ ! -d \"$source_dir\" ]; then\n";
+			scriptContent += "  echo \"Source directory does not exist: $source_dir\"\n";
+			scriptContent += "  read -p \"Press Enter to continue...\"\n"; // Keep terminal open for user to see error
+			scriptContent += "  exit 1\n";
+			scriptContent += "fi\n";
+
+			scriptContent += "if [ ! -d \"$new_app_bundle_in_source\" ]; then\n";
+			scriptContent += "  echo \"New application bundle not found in update source: $new_app_bundle_in_source\"\n";
+			scriptContent += "  read -p \"Press Enter to continue...\"\n";
+			scriptContent += "  exit 1\n";
+			scriptContent += "fi\n";
+
+
+			scriptContent += "echo \"Attempting to kill existing application...\"\n";
+			scriptContent += "killall \"" + macExeName + "\" || true\n"; // `|| true` to prevent script from exiting if app isn't running
+			scriptContent += "echo \"Waiting for 5 seconds to ensure application is closed...\"\n";
+			scriptContent += "sleep 5\n";
+
+			scriptContent += "echo \"Copying new application bundle...\"\n";
+			// Remove the old app bundle first, then copy the new one.
+			scriptContent += "rm -rf \"$current_app_bundle_path\"\n";
+			scriptContent += "cp -R \"$new_app_bundle_in_source\" \"$current_app_bundle_path\"\n"; // Copy the new .app bundle to replace the old one
+
+			scriptContent += "echo \"Cleaning up temporary update files...\"\n";
+			scriptContent += "rm -rf \"$source_dir\"\n"; // Delete raw folder
+			scriptContent += "rm -rf \"" + Path.join([exeDir, "update"]) + "\"\n"; // Delete parent update folder
+			scriptContent += "echo \"Restarting application...\"\n";
+			scriptContent += "open -a \"$current_app_bundle_path\"\n"; // Open the .app bundle
+			scriptContent += "rm -- \"$0\"\n"; // Delete self (the update.sh script)
+
+			#elseif linux
+			scriptFileName = "update.sh";
+			var linuxExeName = appName; // The actual executable name (e.g., JSEngine)
+
+			scriptContent = "#!/bin/bash\n";
+			scriptContent += "set -e\n";
+			scriptContent += "source_dir=\"" + sourceDirectory + "\"\n";
+			scriptContent += "destination_dir=\"" + destinationDirectory + "\"\n";
+			scriptContent += "echo \"Source directory: $source_dir\"\n";
+			scriptContent += "echo \"Destination directory: $destination_dir\"\n";
+
+			scriptContent += "if [ ! -d \"$source_dir\" ]; then\n";
+			scriptContent += "  echo \"Source directory does not exist: $source_dir\"\n";
+			scriptContent += "  read -p \"Press Enter to continue...\"\n";
+			scriptContent += "  exit 1\n";
+			scriptContent += "fi\n";
+
+			scriptContent += "echo \"Attempting to kill existing application...\"\n";
+			scriptContent += "killall \"" + linuxExeName + "\" || true\n"; // `|| true` to prevent script from exiting if app isn't running
+			scriptContent += "echo \"Waiting for 5 seconds to ensure application is closed...\"\n";
+			scriptContent += "sleep 5\n";
+
+			scriptContent += "echo \"Copying files...\"\n";
+			scriptContent += "cp -R \"$source_dir\"/* \"$destination_dir/\"\n"; // Copy contents of raw to destination
+			scriptContent += "echo \"Setting executable permissions for " + linuxExeName + "...\"\n";
+			scriptContent += "chmod +x \"$destination_dir/" + linuxExeName + "\"\n"; // Ensure executable bit is set
+
+			scriptContent += "echo \"Cleaning up temporary update files...\"\n";
+			scriptContent += "rm -rf \"$source_dir\"\n"; // Delete raw folder
+			scriptContent += "rm -rf \"" + Path.join([exeDir, "update"]) + "\"\n"; // Delete parent update folder
+			scriptContent += "echo \"Restarting application...\"\n";
+			scriptContent += "nohup \"$destination_dir/" + linuxExeName + "\" > /dev/null 2>&1 &\n"; // Run in background, detach from shell
+			scriptContent += "rm -- \"$0\"\n"; // Delete self (the update.sh script)
+
+			#else
+			// Fallback for unsupported platforms or just exit
+			Application.current.window.alert("Automatic update is not supported on this platform.");
+			Sys.exit(0);
+			return; // Exit the function early
+			#end
+
+			// Save the script file
+			var scriptPath = Path.join([exeDir, scriptFileName]);
+			File.saveContent(scriptPath, scriptContent);
+
+			#if (mac || linux)
+			// Make the script executable on Unix-like systems
+			try {
+					var chmodProcess = new Process("chmod", ["+x", scriptPath]);
+					var chmodResult = chmodProcess.exitCode();
+					if (chmodResult != 0) {
+							trace("Error setting script executable permissions: " + chmodResult);
+							Application.current.window.alert("Could not set update script permissions. Please run the game as administrator or manually update.");
+							Sys.exit(1); // Exit with an error code
+					}
+			} catch (e:Dynamic) {
+					trace("Exception while setting script executable permissions: " + e);
+					Application.current.window.alert("An error occurred during update: " + e);
+					Sys.exit(1);
+			}
+			#end
+
+			// Execute the script
+			new Process(scriptPath, []);
+			Sys.exit(0); // Exit the current game instance
 	}
 
 	public static function checkForOBS():Bool
@@ -260,7 +376,7 @@ class CoolUtil
 	static var stepCrochet:Float = 0;
 	static var latestBpmChangeIndex = 0;
 	static var latestBpmChange = null;
-	public static function checkNoteQuant(note:Note, timeToCheck:Float, ?rgbShader:RGBShaderReference) 
+	public static function checkNoteQuant(note:Note, timeToCheck:Float, ?rgbShader:RGBShaderReference)
 	{
 		if (ClientPrefs.noteColorStyle == 'Quant-Based' && (ClientPrefs.showNotes && ClientPrefs.enableColorShader))
 		{
@@ -290,9 +406,9 @@ class CoolUtil
 					beat = beats[i];
 					foundQuant = i;
 					break;
-				}			
+				}
 			}
-			
+
 			if (rgbShader != null) {
 				rgbShader.r = ClientPrefs.quantRGB[foundQuant][0];
 				rgbShader.g = ClientPrefs.quantRGB[foundQuant][1];
@@ -300,7 +416,7 @@ class CoolUtil
 			}
 		}
 	}
-	
+
 	public static function getDifficultyFilePath(num:Null<Int> = null)
 	{
 		if(num == null) num = PlayState.storyDifficulty;
@@ -383,7 +499,7 @@ class CoolUtil
 
 		minAndMaxs.push(min);
 		minAndMaxs.push(max);
-		
+
 		return minAndMaxs;
 	}
 
@@ -421,7 +537,7 @@ class CoolUtil
 		final daList:Array<String> = string.trim().split('\n');
 		return [for(i in 0...daList.length) daList[i].trim()];
 	}
-	
+
 	public static function floorDecimal(value:Float, decimals:Int):Float
 	{
 		if(decimals < 1)

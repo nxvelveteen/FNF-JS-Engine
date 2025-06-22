@@ -28,7 +28,7 @@
 	<set name="BUILD_DIR" value="export/tracy" if="TRACY_ENABLED" />
 
 	<classpath name="source" />
-	
+
 	<!-- PSYCH ENGINE CUSTOMIZATION -->
 	<define name="MODS_ALLOWED" if="desktop || mobile" unless="web" />
 	<define name="LUA_ALLOWED" if="desktop || mobile" unless="web" />
@@ -40,13 +40,14 @@
 
 	<assets path="assets/preload" rename="assets" exclude="*.ogg" if="web"/>
 	<assets path="assets/preload" rename="assets" exclude="*.mp3" unless="web"/>
+	<assets path='art/debugThingyMajiggy.bat' rename='Open me to use the debug terminal.bat' />
 
 	<!-- DONT ENABLE THIS!! -->
 	<define name="CHECK_FOR_UPDATES" if="officialBuild" unless="ios" />
 
 	<define name="PRELOAD_ALL" unless="web" />
 	<define name="NO_PRELOAD_ALL" unless="PRELOAD_ALL"/>
-	
+
 	<library name="videos"        preload="true" />
 	<library name="splash"        preload="true" />
 	<section if="PRELOAD_ALL">
@@ -61,7 +62,7 @@
 		<library name="weekend1"      preload="true" />
 		<library name="models"        preload="true" />
 	</section>
-	
+
 	<section if="NO_PRELOAD_ALL">
 		<library name="songs"         preload="false" />
 		<library name="shared"        preload="false" />
@@ -74,7 +75,7 @@
 		<library name="weekend1"      preload="false" />
 		<library name="models"        preload="false" />
 	</section>
-	
+
 	<assets path="assets/videos"        library="videos"        if="VIDEOS_ALLOWED"/>
 	<assets path="assets/songs"         library="songs"         exclude="*.ogg" if="web"/>
 	<assets path="assets/songs"         library="songs"         exclude="*.mp3" unless="web"/>
@@ -95,14 +96,14 @@
 	<assets path="assets/week7"         library="week7"         exclude="*.ogg" if="web"/>
 	<assets path="assets/week7"         library="week7"         exclude="*.mp3" unless="web"/>
 	<assets path="assets/weekend1"      library="weekend1"      exclude="*.mp3" unless="web"/>
-	<assets path="assets/preload/models"        library="models"        /> 
+	<assets path="assets/preload/models"        library="models"        />
 	<assets path="assets/preload/models"        library="models"        />
 
 	<assets path="assets/soundtray" embed="true" />
 
 	<haxelib name="grig.audio"/>
 	<haxelib name="funkin.vis"/>
-	
+
 	<section if="MODS_ALLOWED">
 		<assets path='example_mods' rename='mods' embed='false'/>
 	</section>
@@ -121,11 +122,12 @@
 	<haxelib name="flixel-ui" version="2.6.1" />
 	<haxelib name="flixel-addons" version="3.2.3" />
 	<haxelib name="away3d" />
-	
+
 	<!--JS stuff needed-->
 	<haxelib name="hscript" />
 	<haxedef name="hscriptPos" />
 	<haxelib name="linc_luajit" if="LUA_ALLOWED"/>
+	<haxelib name="tjson" />
 	<!--<haxelib name="hxCodec" if="VIDEOS_ALLOWED"/>-->
 
 	<haxelib name="hxvlc" if="VIDEOS_ALLOWED" ersion="git"/>
@@ -144,13 +146,13 @@
 	<!--Allow working memory greater than 1 Gig. NOTE: i recommend using Flixel 5.2.2 for this to work!-->
 	<!--<haxedef name="HXCPP_GC_BIG_BLOCKS" if="cpp"/>-->
 	<!--also fixes like any "Memory Exhausted" issues you might get when compiling-->
-	
+
 	<!-- Show debug traces for hxCodec -->
 	<haxedef name="HXC_DEBUG_TRACE" if="debug" />
-	
+
 	<!--Disable the Flixel core debugger. Automatically gets set whenever you compile in release mode!-->
 	<haxedef name="FLX_NO_DEBUG" unless="debug" />
-	
+
 	<haxedef name="HXCPP_CHECK_POINTER" />
 	<haxedef name="HXCPP_STACK_LINE" />
 	<haxedef name="HXCPP_STACK_TRACE" />
@@ -188,12 +190,12 @@
 
 	<!-- Allow Access to Engine Files in mobile -->
 	<haxedef name="SHARE_MOBILE_FILES" if="mobile" />
-	
+
 	<!-- _________________________________ Custom _______________________________ -->
 
 	<!--Place custom nodes like icons here (higher priority to override the HaxeFlixel icon)-->
 	<assets path='art/iconOG.png' rename='icon.png' if="linux || mac" />
-	
+
 	<icon path="art/icon16.png" size='16'/>
 	<icon path="art/icon32.png" size='32'/>
 	<icon path="art/icon64.png" size='64'/>

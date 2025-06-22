@@ -3309,11 +3309,19 @@ class FunkinLua {
 	{
 		switch(spriteType.toLowerCase().trim())
 		{
-			case "texture" | "textureatlas" | "tex":
-				spr.frames = AtlasFrameMaker.construct(image);
+			case "texture", "textureatlas", "tex":
+				case "texture_noaa", "textureatlas_noaa", "tex_noaa":
+					// Deprecated loader — only kept for legacy support
+					// You should use FlxAnimate instead!
+					spr.frames = AtlasFrameMaker.construct(
+						image,
+						null,
+						spriteType.indexOf("_noaa") == -1
+					);
+					trace("Using legacy TextureAtlas loader. Consider migrating to FlxAnimate.");
 
-			case "texture_noaa" | "textureatlas_noaa" | "tex_noaa":
-				spr.frames = AtlasFrameMaker.construct(image, null, true);
+			case 'aseprite' | 'jsoni8':
+				spr.frames = Paths.getAsepriteAtlas(image);
 
 			case "packer" | "packeratlas" | "pac":
 				spr.frames = Paths.getPackerAtlas(image);

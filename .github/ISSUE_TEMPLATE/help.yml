@@ -9,29 +9,11 @@ body:
     validations:
       required: true
 
-  - type: dropdown
+  - type: textarea
     id: buildVersion
     attributes:
-      label: "What version are you using?"
-      description: "You HAVE to answer this."
-      options:
-      # add a version to these options before making a release please.
-      # - stinko
-          - "No Selected Version"
-          - "1.47.0"
-          - "1.46.0"
-          - "1.45.0"
-          - "1.44.0"
-          - "1.43.0"
-          - "1.42.0"
-          - "1.41.0"
-          - "1.40.0"
-          - "1.39.0"
-          - "1.38.0"
-          - "1.37.0"
-          - "1.36.0"
-          - "1.35.0"
-          - "Version Lower than 1.35.0"
+      label: "What version did the bug occur?"
+      description: "You HAVE to answer this. If you don't know what version, please go to the main menu and look at the bottem-left of the window."
     validations:
       required: true
 
@@ -67,7 +49,7 @@ body:
         - "Yes"
     validations:
       required: true
-      
+
   - type: dropdown
     id: dupeCheck
     attributes:

@@ -75,7 +75,7 @@ class Paths
 	];
 	#end
 
-	public static var defaultSkin = 'noteskins/NOTE_assets' + Note.getNoteSkinPostfix(); 
+	public static var defaultSkin = 'noteskins/NOTE_assets' + Note.getNoteSkinPostfix();
 	//Function that initializes the first note. This way, we can recycle the notes
 	public static function initDefaultSkin(?noteSkin:String, ?inEditor:Bool = false)
 	{
@@ -118,7 +118,7 @@ class Paths
 		splashAnimation = new FlxAnimationController(spr);
 
 		// Use a for loop for adding all of the animations in the splash spritesheet, otherwise it won't find the animations for the next recycle
-		
+
 		var config = splashConfigs.get(splashSkin);
 		if (config == null) config = initSplashConfig(splashSkin);
 		var maxAnims:Int = 0;
@@ -153,7 +153,7 @@ class Paths
 		splashAnimation.findByPrefix(animFrames, anim); // adds valid frames to animFrames
 
 		if(animFrames.length < 1) return false;
-	
+
 		splashAnimation.addByPrefix(name, anim, framerate, loop);
 		return true;
 	}
@@ -162,7 +162,7 @@ class Paths
 		var path:String = Paths.getSharedPath('images/' + skin + '.txt');
 		if (!FileSystem.exists(path)) path = Paths.modsTxt(skin);
 		if (!FileSystem.exists(path)) path = Paths.getSharedPath('images/noteSplashes/noteSplashes' + NoteSplash.getSplashSkinPostfix() + '.txt');
-		
+
 		var configFile:Array<String> = CoolUtil.coolTextFile(path);
 
 		if (configFile.length < 1) return null;
@@ -491,7 +491,7 @@ class Paths
 			var songKey:String = '${formatToSongPath(song)}/Voices';
 			if(postfix != null) songKey += '-' + postfix;
 			songKey += '-$difficulty';
-			if (FileSystem.exists(Paths.modFolders('songs/' + songKey + '.$SOUND_EXT')) || FileSystem.exists('assets/songs/' + songKey + '.$SOUND_EXT')) 
+			if (FileSystem.exists(Paths.modFolders('songs/' + songKey + '.$SOUND_EXT')) || FileSystem.exists('assets/songs/' + songKey + '.$SOUND_EXT'))
 			{
 				var voices = returnSound('songs', songKey);
 				return voices;
@@ -514,7 +514,7 @@ class Paths
 		if (difficulty != null)
 		{
 			var songKey:String = '${formatToSongPath(song)}/Inst-$difficulty';
-			if (FileSystem.exists(Paths.modFolders('songs/' + songKey + '.$SOUND_EXT')) || FileSystem.exists('assets/songs/' + songKey + '.$SOUND_EXT')) 
+			if (FileSystem.exists(Paths.modFolders('songs/' + songKey + '.$SOUND_EXT')) || FileSystem.exists('assets/songs/' + songKey + '.$SOUND_EXT'))
 			{
 				var inst = returnSound('songs', songKey);
 				return inst;
@@ -531,7 +531,7 @@ class Paths
 		if (difficulty != null) {
 			var formattedDifficulty:String = formatToSongPath(difficulty);
 			if (difficulty.contains(' ')) difficulty = formattedDifficulty;
-			
+
 			var eventsKey:String = formatToSongPath(song) + '/events-${difficulty.toLowerCase()}';
 			if (FileSystem.exists(Paths.json(eventsKey)) || FileSystem.exists(Paths.modsJson(eventsKey)))
 				return (!onlyEventsString ? eventsKey : 'events-${difficulty.toLowerCase()}');
@@ -646,7 +646,7 @@ class Paths
 
 			if (FileSystem.exists(mods(currentModDirectory + '/' + key)) || FileSystem.exists(mods(key)))
 				return true;
-			
+
 			if (FileSystem.exists(mods('$key')))
 				return true;
 		}
@@ -656,6 +656,46 @@ class Paths
 			return true;
 		}
 		return false;
+	}
+	// temp shit lol
+	inline static public function exists(key:String, type:AssetType = null, ?library:String)
+	{
+		#if sys
+		if (FileSystem.exists(key)) {
+			return true;
+		}
+		#end
+		
+		if (OpenFlAssets.exists(key, type)) {
+			return true;
+		}
+		return false;
+	}
+
+	inline static public function existsPath(key:String, type:AssetType = null, ?library:String)
+	{
+		#if sys
+		if (FileSystem.exists(getPath(key, type, library))) {
+			return true;
+		}
+		#end
+		
+		if (OpenFlAssets.exists(getPath(key, type, library), type)) {
+			return true;
+		}
+		return false;
+	}
+	
+	inline public static function getContent(path:String) {
+		#if sys
+		if (path.contains(':'))
+			path = path.substring(path.indexOf(':') + 1);
+		if (FileSystem.exists(path))
+			return File.getContent(path);
+		return null;
+		#else
+		return OpenFlAssets.getText(path);
+		#end
 	}
 
 	static public function getAtlas(key:String, ?parentFolder:String = null):FlxAtlasFrames
@@ -689,7 +729,7 @@ class Paths
 
 	static public function getMultiAtlas(keys:Array<String>, ?parentFolder:String = null):FlxAtlasFrames
 	{
-		
+
 		var parentFrames:FlxAtlasFrames = Paths.getAtlas(keys[0].trim());
 		if(keys.length > 1)
 		{
@@ -726,7 +766,7 @@ class Paths
 		var imageLoaded:FlxGraphic = image(key, parentFolder);
 		#if MODS_ALLOWED
 		var txtExists:Bool = false;
-		
+
 		var txt:String = modsTxt(key);
 		if(FileSystem.exists(txt)) txtExists = true;
 
@@ -781,7 +821,7 @@ class Paths
 							if (header.toString() != "OggS" && file != null) {
 								throw 'The file "$file" is not a valid OGG file (missing OggS header). It may have been renamed from another format like MP3.';
 							}
-							
+
             	sound = Sound.fromFile(file);
 						}
 						catch(e)
@@ -933,7 +973,7 @@ class Paths
 	public static function loadTopMod()
 	{
 		Paths.currentModDirectory = '';
-		
+
 		#if MODS_ALLOWED
 		var list:Array<String> = Paths.getGlobalMods();
 		if(list != null && list[0] != null)
@@ -947,14 +987,14 @@ class Paths
 		var changedAnimJson = false;
 		var changedAtlasJson = false;
 		var changedImage = false;
-		
+
 		if(spriteJson != null)
 		{
 			changedAtlasJson = true;
 			spriteJson = File.getContent(spriteJson);
 		}
 
-		if(animationJson != null) 
+		if(animationJson != null)
 		{
 			changedAnimJson = true;
 			animationJson = File.getContent(animationJson);

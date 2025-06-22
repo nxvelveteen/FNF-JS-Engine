@@ -1,32 +1,32 @@
 package;
 
-import openfl.display.BlendMode;
-import flixel.util.FlxAxes;
-import flixel.addons.display.FlxBackdrop;
+import JSEZip;
 import Prompt;
-import lime.app.Application;
+import flixel.FlxG;
+import flixel.FlxSprite;
+import flixel.addons.display.FlxBackdrop;
+import flixel.math.FlxMath;
+import flixel.text.FlxText;
+import flixel.ui.FlxBar;
+import flixel.util.FlxAxes;
+import flixel.util.FlxColor;
 import flixel.util.FlxTimer;
+import haxe.Http;
 import haxe.zip.Compress;
 import haxe.zip.Entry;
 import haxe.zip.Reader;
-import JSEZip;
 import haxe.zip.Uncompress;
-import sys.io.File;
-import openfl.utils.ByteArray;
-import lime.utils.Bytes;
-import openfl.net.URLRequest;
+import haxe.zip.Writer;
+import lime.app.Application;
 import lime.app.Event;
+import lime.utils.Bytes;
+import openfl.display.BlendMode;
 import openfl.events.ProgressEvent;
 import openfl.net.URLLoader;
-import haxe.zip.Writer;
-import flixel.math.FlxMath;
+import openfl.net.URLRequest;
+import openfl.utils.ByteArray;
 import sys.FileSystem;
-import haxe.Http;
-import flixel.ui.FlxBar;
-import flixel.FlxG;
-import flixel.util.FlxColor;
-import flixel.text.FlxText;
-import flixel.FlxSprite;
+import sys.io.File;
 import sys.io.Process;
 
 using StringTools;
@@ -103,7 +103,7 @@ class UpdateState extends MusicBeatState
 
 		getUpdateLink();
 		prepareUpdate();
-		startDownload();
+		checkAndStartDownload();
 	}
 
 	var lastVare:Float = 0;
@@ -153,7 +153,7 @@ class UpdateState extends MusicBeatState
 				progressText.text = FlxMath.roundDecimal(entire_progress, 2) + "%";
 				download_info.text = currentFile;
 				download_info.x = (progBar_bg.x + progBar_bg.width) - download_info.width;
-			default: 
+			default:
 		}
 	}
 
@@ -201,6 +201,11 @@ class UpdateState extends MusicBeatState
 		else
 		{
 			trace("update folder found");
+			// delete any dirs if the update got interrupted
+			if (FileSystem.exists("./update/temp/")) FileSystem.deleteDirectory("./update/temp/");
+			if (FileSystem.exists("./update/raw/")) FileSystem.deleteDirectory("./update/raw/");
+			FileSystem.createDirectory("./update/temp/");
+			FileSystem.createDirectory("./update/raw/");
 		}
 		#end
 	}
@@ -210,61 +215,61 @@ class UpdateState extends MusicBeatState
 
 	public function startDownload()
 	{
-		trace("starting download process...");
+			if (fatalError)
+					return;
 
-		final url:String = requestUrl(online_url);
-		if (url != null && url.indexOf('Not Found') != -1)
-		{
-			trace('File not found error!');
-			fatalError = true;
-		}
-
-		zip.load(new URLRequest(online_url));
-		if (fatalError)
-		{
-			// trace('File size is small! Assuming it couldn\'t find the url!');
-			lime.app.Application.current.window.alert('Couldn\'t find the URL for the file! Cancelling download!');
-			FlxG.resetGame();
-			return;
-		}
-
-		/*var aa = new Http(online_url);
-			aa.request();
-			trace(aa.responseHeaders);
-			trace(aa.responseHeaders.get("size"));
-
-			maxFileSize = Std.parseInt(aa.responseHeaders.get("size")); 
-
-			content = requestUrl(online_url);
-			sys.io.File.write(path, true).writeString(content);
-			trace(content.length + " bytes downloaded"); */
+			trace("starting actual file download via URLLoader...");
+			try {
+					zip.load(new URLRequest(online_url));
+			} catch (e:Dynamic) {
+					trace('Failed to initiate URLLoader download: ' + e);
+					Application.current.window.alert('Failed to start the download. Please try again.');
+					FlxG.resetGame();
+			}
 	}
 
-	public function requestUrl(url:String):String
-	{
-		httpHandler = new Http(url);
-		var r = null;
-		httpHandler.onData = function(d)
-		{
-			r = d;
-		}
-		httpHandler.onError = function(e)
-		{
-			trace("error while downloading file, error: " + e);
-			fatalError = true;
-		}
-		httpHandler.request(false);
-		return r;
+	public function checkAndStartDownload() {
+			trace("Checking update URL existence...");
+			var httpCheck = new Http(online_url);
+
+			httpCheck.onStatus = function(status:Int):Void {
+					trace('HTTP Status for URL check: ' + status);
+					if (status == 200) { // HTTP 200 OK
+							trace("Update file found. Initiating download...");
+							startDownload(); // Now proceed with the actual download
+					} else if (status == 404) { // HTTP 404 Not Found
+							trace('File not found at URL: ' + online_url);
+							fatalError = true;
+							Application.current.window.alert('Couldn\'t find the update file! The file may have been moved or doesn\'t exist for this version. Please check for a new version manually or report this issue.');
+							FlxG.resetGame();
+					} else { // Handle other HTTP errors
+							trace('Unexpected HTTP status for URL check: ' + status);
+							fatalError = true;
+							Application.current.window.alert('An error occurred while checking for updates (Status: ' + status + '). Please try again later.');
+							FlxG.resetGame();
+					}
+			}
+
+			httpCheck.onError = function(msg:String):Void {
+					trace('HTTP Error during URL check: ' + msg);
+					fatalError = true;
+					Application.current.window.alert('A network error occurred while checking for updates: ' + msg + '. Please check your internet connection.');
+					FlxG.resetGame();
+			}
+
+			try {
+					// Use customRequest with HEAD method for efficiency
+					httpCheck.customRequest(false, null, "HEAD");
+			} catch (e:Dynamic) {
+					trace('Failed to send HEAD request: ' + e);
+					fatalError = true;
+					Application.current.window.alert('Failed to connect to the update server. Please check your internet connection.');
+					FlxG.resetGame();
+			}
 	}
 
 	function convert_size(bytes:Int)
 	{
-		// public static String readableFileSize(long size) {
-		//	if(size <= 0) return "0";
-		//	final String[] units = new String[] { "B", "kB", "MB", "GB", "TB" };
-		//	int digitGroups = (int) (Math.log10(size)/Math.log10(1024));
-		//	return new DecimalFormat("#,##0.#").format(size/Math.pow(1024, digitGroups)) + " " + units[digitGroups];
-		// }
 		if (bytes == 0)
 		{
 			return "0B";

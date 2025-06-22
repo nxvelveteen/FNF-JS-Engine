@@ -22,7 +22,7 @@ using StringTools;
 
 /**
  * Crash Handler.
- * @author YoshiCrafter29, Ne_Eo. MAJigsaw77 and HomuHomu833
+ * @author YoshiCrafter29, MAJigsaw77 and HomuHomu833
 */
 
 class CrashHandler {
@@ -40,7 +40,7 @@ class CrashHandler {
 			e.stopImmediatePropagation();
 
 			errorMessage = "";
-	
+
 			var m:String = e.error;
 			if (Std.isOfType(e.error, Error)) {
 				var err = cast(e.error, Error);
@@ -57,9 +57,9 @@ class CrashHandler {
 			var dateNow:String = Date.now().toString();
 			dateNow = dateNow.replace(" ", "_");
 			dateNow = dateNow.replace(":", "'");
-	
+
 			path = "crash/JSEngine_" + dateNow + ".log";
-	
+
 			for(stackItem in stack) {
 				switch(stackItem) {
 					case CFunction: stackLabelArr.push("Non-Haxe (C) Function");
@@ -74,15 +74,15 @@ class CrashHandler {
 				}
 			}
 			stackLabel = stackLabelArr.join('\r\n');
-	
+
 			errorMessage += 'Uncaught Error: $m\n\n$stackLabel';
 			trace(errorMessage);
-	
+
 			try {
 				if (!FileSystem.exists("crash/")) FileSystem.createDirectory("crash/");
 				File.saveContent(path, '$errorMessage\n\nCrash Happend on JS Engine v${MainMenuState.psychEngineJSVersionNumber}!');
 			} catch(e) trace('Couldn\'t save error message. (${e.message})');
-	
+
 			Sys.println(errorMessage);
 			Sys.println("Crash dump saved in " + Path.normalize(path));
 		} catch(e:Dynamic) trace(e);
@@ -157,7 +157,7 @@ class Crash extends MusicBeatState {
 
 		final key:String = (mobile.MobileControls.enabled) ? "button" : "key";
 		final enter:String = (mobile.MobileControls.enabled) ? "ENTER" : "A";
-		
+
 		var tip:FlxText = new FlxText(180, 0, 1280, "Press any " + key + " to restart. (Press " + enter + " to Report This Bug)");
 		tip.setFormat(Paths.font('vcr.ttf'), 36, FlxColor.WHITE, FlxTextAlign.CENTER);
 		tip.alpha = 0;

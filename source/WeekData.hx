@@ -1,13 +1,10 @@
 package;
 
 #if MODS_ALLOWED
-import sys.io.File;
 import sys.FileSystem;
+import sys.io.File;
 #end
-import lime.utils.Assets;
-import openfl.utils.Assets as OpenFlAssets;
-import haxe.Json;
-import haxe.format.JsonParser;
+import tjson.TJSON as Json;
 
 using StringTools;
 
@@ -22,17 +19,17 @@ typedef WeekFile =
 	var weekName:String;
 	var freeplayColor:Array<Int>;
 	var startUnlocked:Bool;
-	var hiddenUntilUnlocked:Bool;
+	var ?hiddenUntilUnlocked:Null<Bool>;
 	var hideStoryMode:Bool;
 	var hideFreeplay:Bool;
-	var difficulties:String;
+	var ?difficulties:String;
 }
 
 class WeekData {
 	public static var weeksLoaded:Map<String, WeekData> = new Map<String, WeekData>();
 	public static var weeksList:Array<String> = [];
 	public var folder:String = '';
-	
+
 	// JSON variables
 	public var songs:Array<Dynamic>;
 	public var weekCharacters:Array<String>;
@@ -42,7 +39,7 @@ class WeekData {
 	public var weekName:String;
 	public var freeplayColor:Array<Int>;
 	public var startUnlocked:Bool;
-	public var hiddenUntilUnlocked:Bool;
+	public var hiddenUntilUnlocked:Null<Bool>;
 	public var hideStoryMode:Bool;
 	public var hideFreeplay:Bool;
 	public var difficulties:String;
@@ -67,20 +64,17 @@ class WeekData {
 		return weekFile;
 	}
 
-	// HELP: Is there any way to convert a WeekFile to WeekData without having to put all variables there manually? I'm kind of a noob in haxe lmao
 	public function new(weekFile:WeekFile, fileName:String) {
-		songs = weekFile.songs;
-		weekCharacters = weekFile.weekCharacters;
-		weekBackground = weekFile.weekBackground;
-		weekBefore = weekFile.weekBefore;
-		storyName = weekFile.storyName;
-		weekName = weekFile.weekName;
-		freeplayColor = weekFile.freeplayColor;
-		startUnlocked = weekFile.startUnlocked;
-		hiddenUntilUnlocked = weekFile.hiddenUntilUnlocked;
-		hideStoryMode = weekFile.hideStoryMode;
-		hideFreeplay = weekFile.hideFreeplay;
-		difficulties = weekFile.difficulties;
+		var template = createWeekFile();
+		for (i in Reflect.fields(weekFile)) {
+			if (Reflect.hasField(template, i)) { //just doing Reflect.hasField on itself doesnt work for some reason so we are doing it on a template
+				Reflect.setProperty(this, i, Reflect.field(weekFile, i));
+			}
+		}
+
+		if (hiddenUntilUnlocked == null) {
+			hiddenUntilUnlocked = false;
+		}
 
 		this.fileName = fileName;
 	}
@@ -248,7 +242,7 @@ class WeekData {
 	public static function loadTheFirstEnabledMod()
 	{
 		Paths.currentModDirectory = '';
-		
+
 		#if (MODS_ALLOWED)
 		if (FileSystem.exists("modsList.txt"))
 		{
