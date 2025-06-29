@@ -55,6 +55,8 @@ class FlxFixedShader extends OriginalFlxShader
 
 		#if lime_opengles
 		var prefix = "#version 300 es\n";
+		#elseif mac
+		var prefix = "#version 120\n";
 		#else
 		var prefix = "#version 330\n";
 		#end
