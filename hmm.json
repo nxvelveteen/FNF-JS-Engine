@@ -45,8 +45,10 @@
     },
     {
       "name": "hxvlc",
-      "type": "haxelib",
-      "version": "1.9.2"
+      "type": "git",
+      "dir": null,
+      "ref": null,
+      "url": "https://github.com/th2l-devs/hxvlc"
     },
     {
       "name": "hscript",

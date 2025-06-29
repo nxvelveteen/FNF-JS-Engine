@@ -13,6 +13,7 @@ typedef IconMeta = {
 	// ?frameOrder:Array<String> // ["normal", "losing", "winning"]
 	// ?isAnimated:Bool,
 	?hasWinIcon:Bool,
+	?useLegacySystem:Bool
 }
 class HealthIcon extends FlxSprite
 {
@@ -66,16 +67,20 @@ class HealthIcon extends FlxSprite
 				trace("Warning: could not find the placeholder icon, expect crashes!");
 			}
 			final iSize:Float = Math.round(file.width / file.height);
-			/*
-			loadGraphic(file, true, Math.floor(file.width / iSize), Math.floor(file.height));
-			initialWidth = width;
-			initialHeight = height;
-			iconOffsets[0] = (width - 150) / iSize;
-			iconOffsets[1] = (height - 150) / iSize;
+			// TODO: clean up this fucking mess
+			if (iconMeta?.useLegacySystem)
+			{
+				loadGraphic(file, true, Math.floor(file.width / iSize), Math.floor(file.height));
+				initialWidth = width;
+				initialHeight = height;
+				iconOffsets[0] = (width - 150) / iSize;
+				iconOffsets[1] = (height - 150) / iSize;
 
-			updateHitbox();
-			*/
-			if (file.width == 300) {
+				updateHitbox();
+
+				animation.add(char, [for(i in 0...frames.frames.length) i], 0, false, isPlayer);
+			}
+			else if (file.width == 300) {
 				loadGraphic(file, true, Math.floor(file.width / 2), Math.floor(file.height));
 				iconOffsets[0] = (width - 150) / iSize;
 				iconOffsets[1] = (height - 150) / iSize;
@@ -147,6 +152,7 @@ class HealthIcon extends FlxSprite
 		}
 	}
 
+	// for animated icons
 	function checkAvailablePrefixes(xmlPath:String):Map<String, Bool> {
 		final result = new Map<String, Bool>();
 		result.set("normal", false);
@@ -194,7 +200,8 @@ class HealthIcon extends FlxSprite
 		var json:IconMeta = cast Json.parse(rawJson);
 		if (json.noAntialiasing == null) json.noAntialiasing = false;
 		if (json.fps == null) json.fps = 24;
-		if (json.hasWinIcon == null) json.hasWinIcon = true;
+		if (json.hasWinIcon == null) json.hasWinIcon = false;
+		if (json.useLegacySystem == null) json.useLegacySystem = false;
 		// if (json.frameOrder == null) json.frameOrder = ['normal', 'losing', 'winning'];
 		return json;
 	}

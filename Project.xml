@@ -130,7 +130,7 @@
 	<haxelib name="tjson" />
 	<!--<haxelib name="hxCodec" if="VIDEOS_ALLOWED"/>-->
 
-	<haxelib name="hxvlc" if="VIDEOS_ALLOWED" ersion="git"/>
+	<haxelib name="hxvlc" if="VIDEOS_ALLOWED"/>
 
 	<haxelib name="hxdiscord_rpc" if="DISCORD_ALLOWED" />
 	<haxelib name="flxanimate"/>

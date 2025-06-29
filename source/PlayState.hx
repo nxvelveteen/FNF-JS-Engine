@@ -141,8 +141,8 @@ class PlayState extends MusicBeatState
 
 	var tankmanAscend:Bool = false; // funni (2021 nostalgia oh my god)
 
-	public var notes:NoteGroup;
-	public var sustainNotes:NoteGroup;
+	public var notes:FlxTypedGroup<Note>;
+	public var sustainNotes:FlxTypedGroup<Note>;
 	public var killNotes:Array<Note> = [];
 	public var unspawnNotes:Array<PreloadedChartNote> = [];
 	public var unspawnNotesCopy:Array<PreloadedChartNote> = [];
@@ -1132,13 +1132,13 @@ class PlayState extends MusicBeatState
 
 		energyBarBG.cameras = energyBar.cameras = energyTxt.cameras = [camHUD];
 
-		sustainNotes = new NoteGroup();
+		sustainNotes = new FlxTypedGroup<Note>();
 		add(sustainNotes);
 
 		strumLineNotes = new FlxTypedGroup<StrumNote>();
 		add(strumLineNotes);
 
-		notes = new NoteGroup();
+		notes = new FlxTypedGroup<Note>();
 		add(notes);
 		notes.visible = sustainNotes.visible = ClientPrefs.showNotes; //that was easier than expected
 
@@ -1172,7 +1172,7 @@ class PlayState extends MusicBeatState
 		addMobileControls();
 
 		trace ('Loading chart...');
-		generateSong(SONG.song, startOnTime);
+		generateSong(startOnTime);
 
 		callOnLuas('onCreate');
 
@@ -2634,7 +2634,7 @@ class PlayState extends MusicBeatState
 	var assignedFirstData:Bool = false;
 	private var noteTypeMap:Map<String, Bool> = new Map<String, Bool>();
 	private var eventPushedMap:Map<String, Bool> = new Map<String, Bool>();
-	private function generateSong(dataPath:String, ?startingPoint:Float = 0):Void
+	private function generateSong(?startingPoint:Float = 0):Void
 	{
 		var offsetStart = (startingPoint > 0 ? 500 : 0);
 	   	final startTime = haxe.Timer.stamp();
@@ -5525,16 +5525,8 @@ class PlayState extends MusicBeatState
 			if (ClientPrefs.showNotes || !ClientPrefs.showNotes && !cpuControlled)
 			{
 				while (targetNote.strumTime - Conductor.songPosition < (NOTE_SPAWN_TIME / targetNote.multSpeed)) {
-					if (ClientPrefs.fastNoteSpawn) {
-						spawnedNote = (targetNote.isSustainNote ? sustainNotes : notes).recycle(Note);
-						if (spawnedNote == null) {
-							spawnedNote = new Note();
-							(targetNote.isSustainNote ? sustainNotes : notes).add(spawnedNote);
-						}
-					} else {
-						spawnedNote = new Note();
-						(targetNote.isSustainNote ? sustainNotes : notes).add(spawnedNote);
-					}
+					spawnedNote = new Note();
+					(targetNote.isSustainNote ? sustainNotes : notes).add(spawnedNote);
 					spawnedNote.setupNoteData(targetNote);
 
 					if (!ClientPrefs.noSpawnFunc) callOnLuas('onSpawnNote', [(!spawnedNote.isSustainNote ? notes.members.indexOf(spawnedNote) : sustainNotes.members.indexOf(spawnedNote)), targetNote.noteData, targetNote.noteType, targetNote.isSustainNote]);
@@ -5953,25 +5945,12 @@ class PlayState extends MusicBeatState
 	}
 
 	public function invalidateNote(note:Note):Void {
-		if (ClientPrefs.fastNoteSpawn){
-			note.exists = note.wasGoodHit = note.hitByOpponent = note.tooLate = note.canBeHit = false;
-			(note.isSustainNote ? sustainNotes : notes).pushToPool(note);
-		}
-		else {
-			/*
-			notes.remove(note, true);
-			note.kill();
-			note.destroy();
-			*/
-			if (!killNotes.contains(note))
-				killNotes.push(note);
-		}
+		if (!killNotes.contains(note))
+			killNotes.push(note);
 	}
 
 	public function destroyNotes():Void
 	{
-		if (ClientPrefs.fastNoteSpawn) return;
-
 		final iterator:Iterator<Note> = killNotes.iterator();
 
 		while (iterator.hasNext())
@@ -6742,11 +6721,13 @@ class PlayState extends MusicBeatState
 
 	private function initRender():Void
 	{
-		if (!FileSystem.exists(#if linux 'ffmpeg' #else 'ffmpeg.exe' #end))
+		#if windows
+		if (!FileSystem.exists('ffmpeg.exe'))
 		{
 			trace("\"FFmpeg\" not found! (Is it in the same folder as JSEngine?)");
 			return;
 		}
+		#end
 
 		if(!FileSystem.exists('assets/gameRenders/')) { //In case you delete the gameRenders folder
 			trace ('gameRenders folder not found! Creating the gameRenders folder...');
@@ -6769,8 +6750,13 @@ class PlayState extends MusicBeatState
             fileName += '-' + dateNow;
         }
 
-		process = new Process('ffmpeg', ['-v', 'quiet', '-y', '-f', 'rawvideo', '-pix_fmt', 'rgba', '-s', lime.app.Application.current.window.width + 'x' + lime.app.Application.current.window.height, '-r', Std.string(targetFPS), '-i', '-', '-c:v', ClientPrefs.vidEncoder, '-b', Std.string(ClientPrefs.renderBitrate * 1000000), fileName + '.mp4']);
-		FlxG.autoPause = false;
+		try{
+			process = new Process('ffmpeg', ['-v', 'quiet', '-y', '-f', 'rawvideo', '-pix_fmt', 'rgba', '-s', lime.app.Application.current.window.width + 'x' + lime.app.Application.current.window.height, '-r', Std.string(targetFPS), '-i', '-', '-c:v', ClientPrefs.vidEncoder, '-b', Std.string(ClientPrefs.renderBitrate * 1000000), fileName + '.mp4']);
+			FlxG.autoPause = false;
+		}catch(e:Dynamic){
+			trace("Error initializing FFmpeg process: " + e);
+			process = null;
+		}
 	}
 
 	private function pipeFrame():Void
