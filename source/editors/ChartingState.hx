@@ -51,7 +51,6 @@ import openfl.utils.ByteArray;
 import openfl.events.UncaughtErrorEvent;
 using StringTools;
 #if sys
-import openfl.media.Sound;
 import sys.FileSystem;
 import sys.io.File;
 #end
@@ -902,34 +901,39 @@ class ChartingState extends MusicBeatState
             // Kinda stupid but it works
             openSubState(new Prompt('This action will clear current progress.\n\nProceed?', 0, function() {
                 try {
-                    final json:SwagSong = Song.parseJSONshit(f);
+				  var wrapper: SwagSong = Song.parseJSON(f);
+				  if (wrapper.song == null) {
+					CoolUtil.coolError(
+					  "Failed to load JSON – not a valid chart.json.",
+					  "JS Engine Anti-Crash Tool"
+					);
+					return;
+				  }
 
-                    if (json.song == null) {
-                        CoolUtil.coolError("Failed to load JSON, Likely because you're loading something other than a chart.json or has an unknown error", "JS Engine Anti-Crash Tool");
-                        return;
-                    }
+				  // 2) Compute where our backup should live
+				  var songPath = Paths.formatToSongPath(wrapper.song);
+				  var backupPath = Paths.getBackupFilePath(songPath, "backup");
 
-                    CoolUtil.difficulties.push("backup");
-                    final songN:String = Paths.formatToSongPath(json.song);
-                    final poop:String = Highscore.formatSong(songN, CoolUtil.difficulties.length - 1);
-                    final s:String = Paths.modsJson('$songN/$poop');
-                    CoolUtil.difficulties.pop();
+				  // 3) Ensure the directory exists
+				  var backupDir = haxe.io.Path.directory(backupPath);
+				if (!FileSystem.exists(backupDir) && !FileSystem.isDirectory(backupDir))
+				  FileSystem.createDirectory(backupDir);
 
-                    var foldershit:String = "";
-                    final folders:Array<String> = s.split("/");
-                    for (folder in 0...folders.length - 1) {
-                        foldershit += '${folders[folder]}/' + (Paths.currentModDirectory != "" && folder == 0 ? '${Paths.currentModDirectory}/' : '');
-                        FileSystem.createDirectory(foldershit);
-                    }
+				  // 4) If there's already a backup, rename it so we don’t overwrite
+				  if (FileSystem.exists(backupPath)) {
+					FileSystem.rename(backupPath, backupPath + "~");
+				  }
 
-                    if (FileSystem.exists(s)) {
-                        FileSystem.rename(s, '$s~'); // So that it won't overwrite your current chart
-                    }
-                    File.saveContent(s, f);
+				  // 5) Write out the backup file
+				  File.saveContent(backupPath, f);
 
-                    PlayState.SONG = Song.loadFromJson(poop, songN);
-                    CoolUtil.currentDifficulty = "backup";
-                    FlxG.resetState();
+				  // 6) Immediately use the object you already loaded
+				  PlayState.SONG = wrapper;
+				  CoolUtil.currentDifficulty = "backup";
+
+				  // 7) Kick off the state reset
+				  FlxG.resetState();
+
                 } catch(e) {
                     CoolUtil.coolError('Failed to load JSON, is it a character.json or a stage.json instead of a chart.json?\nError: $e', "JS Engine Anti-Crash Tool");
                 };
@@ -4206,7 +4210,7 @@ class ChartingState extends MusicBeatState
 			var shit = Json.stringify({ //doin this so it doesnt act as a reference
 				"song": _song
 			});
-			var song:SwagSong = Song.parseJSONshit(shit);
+			var song:SwagSong = Song.parseJSON(shit);
 
 			undos.unshift(song.notes);
 			redos = []; //Reset redos

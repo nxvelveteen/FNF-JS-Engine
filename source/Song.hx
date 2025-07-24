@@ -136,13 +136,13 @@ class Song
 				rawJson = Assets.getText(path);
 		}
 
-		var songJson:Dynamic = parseJSONshit(rawJson);
+		var songJson:Dynamic = parseJSON(rawJson);
 		if(jsonInput != 'events') StageData.loadDirectory(songJson);
 		onLoadJson(songJson);
 		return songJson;
 	}
 
-	public static function parseJSONshit(rawJson:String):SwagSong {
+	public static function parseJSON(rawJson:String):SwagSong {
 		return cast Json.parse(rawJson).song;
 	}
 }

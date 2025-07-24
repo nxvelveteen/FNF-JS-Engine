@@ -3217,14 +3217,8 @@ class PlayState extends MusicBeatState
 		if (ffmpegMode) elapsed = 1 / ClientPrefs.targetFPS;
 		if (screenshader.Enabled)
 		{
-			if(disableTheTripperAt == curStep)
-			{
+			if(disableTheTripperAt <= curStep || isDead)
 				disableTheTripper = true;
-			}
-			if(isDead)
-			{
-				disableTheTripper = true;
-			}
 
 			FlxG.camera.filters = [new ShaderFilter(screenshader.shader)];
 			screenshader.update(elapsed);

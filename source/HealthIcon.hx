@@ -13,7 +13,7 @@ typedef IconMeta = {
 	?fps:Int,
 	// ?frameOrder:Array<String> // ["normal", "losing", "winning"]
 	// ?isAnimated:Bool,
-	?hasWinIcon:Bool
+	//?hasWinIcon:Bool
 }
 class HealthIcon extends FlxSprite
 {
@@ -68,7 +68,7 @@ class HealthIcon extends FlxSprite
 			}
 
 			//cleaned up to be less confusing. also floor is used so iSize has to definitively be 3 to use winning icons
-			final iSize:Float = Math.floor(iconAsset.width / iconAsset.height);
+			final iSize:Float = Math.round(iconAsset.width / iconAsset.height);
 			initialWidth = width;
 			initialHeight = height;
 			if (Paths.fileExists('images/$name.xml', TEXT)) {
@@ -89,25 +89,10 @@ class HealthIcon extends FlxSprite
 				animation.addByPrefix('winning', hasWinning ? 'winning' : 'normal', fps, loop, isPlayer);
 				playAnim('normal');
 			} else {
-				if (iconMeta?.hasWinIcon || iSize == 3) {
-					loadGraphic(iconAsset, true, Math.floor(iconAsset.width / 3), Math.floor(iconAsset.height)); //Then load it fr // winning icons go br
-					initialWidth = width;
-					initialHeight = height;
-					iconOffsets[0] = (width - 150) / 3;
-					iconOffsets[1] = (height - 150) / 3;
-					updateHitbox();
-
-					animation.add(char, [0, 1, 2], 0, false, isPlayer);
-				} else {
-					loadGraphic(iconAsset, true, Math.floor(iconAsset.width / 2), Math.floor(iconAsset.height)); //Then load it fr // winning icons go br
-					initialWidth = width;
-					initialHeight = height;
-					iconOffsets[0] = (width - 150) / 2;
-					iconOffsets[1] = (height - 150) / 2;
-					updateHitbox();
-
-					animation.add(char, [0, 1], 0, false, isPlayer);
-				}
+				loadGraphic(iconAsset, true, Math.floor(iconAsset.width / iSize), Math.floor(iconAsset.height));
+				iconOffsets[0] = (width - 150) / iSize;
+				iconOffsets[1] = (height - 150) / iSize;
+				animation.add(char, [for(i in 0...frames.frames.length) i], 0, false, isPlayer);
 			}
 
 			// animation.add(char, [for(i in 0...frames.frames.length) i], 0, false, isPlayer);
@@ -169,7 +154,7 @@ class HealthIcon extends FlxSprite
 		var json:IconMeta = cast Json.parse(rawJson);
 		if (json.noAntialiasing == null) json.noAntialiasing = false;
 		if (json.fps == null) json.fps = 24;
-		if (json.hasWinIcon == null) json.hasWinIcon = false;
+		//if (json.hasWinIcon == null) json.hasWinIcon = false;
 		// if (json.frameOrder == null) json.frameOrder = ['normal', 'losing', 'winning'];
 		return json;
 	}

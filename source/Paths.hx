@@ -918,6 +918,12 @@ class Paths
 		return 'mods/' + key;
 	}
 
+	public static function getBackupFilePath(songPath:String, diff:String):String {
+	  final fileName = songPath + "-" + diff + ".json";
+	  return Paths.modsJson("$songPath/$fileName");
+	}
+
+
 	public static var globalMods:Array<String> = [];
 
 	static public function getGlobalMods()
